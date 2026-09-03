@@ -56,7 +56,7 @@ window.FAMILY_VIDEOS = [
     location: "Rhodites, Komotini, Greece",
     duration: "01:43",
   },
-    {
+  {
     id: "hmGC60n--10",
     title: "Lucas and the cafeteria of friendship, where all the superzings, bad and good, are reconciled",
     year: "2023",
