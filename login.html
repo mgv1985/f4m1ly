@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f3ead8" />
+    <title>The Family Archive</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="login-page">
+    <main class="login-card">
+      <div class="login-mark" aria-hidden="true">✦</div>
+      <p class="eyebrow">THE FAMILY ARCHIVE</p>
+      <h1>Private collection.</h1>
+      <form id="loginForm">
+        <label class="sr-only" for="password">Password</label>
+        <input id="password" type="password" placeholder="Password" autocomplete="current-password" autofocus required />
+        <button type="submit">Enter</button>
+        <p class="login-error" id="loginError" role="alert" hidden>That password is not correct.</p>
+      </form>
+    </main>
+    <script src="login.js"></script>
+  </body>
+</html>
