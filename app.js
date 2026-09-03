@@ -6,23 +6,26 @@ const search = document.querySelector("#searchInput");
 const emptyState = document.querySelector("#emptyState");
 let activeCategory = "All";
 
+const getTags = (video) => video.tags?.length ? video.tags : [video.category].filter(Boolean);
+
 const escapeHtml = (text) => String(text).replace(/[&<>'"]/g, (character) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#039;", '"': "&quot;",
 }[character]));
 
 function renderFilters() {
-  const categories = ["All", ...new Set(videos.map((video) => video.category))];
-  filters.innerHTML = categories.map((category) => `
-    <button class="filter ${category === activeCategory ? "active" : ""}" type="button" data-category="${escapeHtml(category)}">${escapeHtml(category)}</button>
+  const tags = ["All", ...new Set(videos.flatMap(getTags))];
+  filters.innerHTML = tags.map((tag) => `
+    <button class="filter ${tag === activeCategory ? "active" : ""}" type="button" data-tag="${escapeHtml(tag)}">${escapeHtml(tag)}</button>
   `).join("");
 }
 
 function renderVideos() {
   const term = search.value.trim().toLowerCase();
   const visible = videos.filter((video) => {
-    const matchesCategory = activeCategory === "All" || video.category === activeCategory;
-    const haystack = [video.title, video.year, video.category, video.location].join(" ").toLowerCase();
-    return matchesCategory && haystack.includes(term);
+    const tags = getTags(video);
+    const matchesTag = activeCategory === "All" || tags.includes(activeCategory);
+    const haystack = [video.title, video.year, video.category, video.location, ...tags].join(" ").toLowerCase();
+    return matchesTag && haystack.includes(term);
   });
 
   count.textContent = `${visible.length} ${visible.length === 1 ? "film" : "films"}`;
@@ -40,9 +43,9 @@ function renderVideos() {
 }
 
 filters.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-category]");
+  const button = event.target.closest("[data-tag]");
   if (!button) return;
-  activeCategory = button.dataset.category;
+  activeCategory = button.dataset.tag;
   renderFilters();
   renderVideos();
 });
