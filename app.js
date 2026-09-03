@@ -34,7 +34,7 @@ function renderVideos() {
     <tr style="--delay: ${index * 35}ms">
       <td class="title-cell"><a href="https://www.youtube.com/watch?v=${encodeURIComponent(video.id)}" target="_blank" rel="noopener noreferrer">${escapeHtml(video.title)}</a></td>
       <td data-label="Year">${escapeHtml(video.year || "—")}</td>
-      <td data-label="Collection"><span class="category-label">${escapeHtml(video.category || "—")}</span></td>
+      <td data-label="Collection"><button class="category-label" type="button" data-tag="${escapeHtml(video.category || "")}" ${video.category ? "" : "disabled"}>${escapeHtml(video.category || "—")}</button></td>
       <td data-label="Place">${escapeHtml(video.location || "—")}</td>
       <td data-label="Length">${escapeHtml(video.duration || "—")}</td>
       <td class="open-cell"><a href="https://www.youtube.com/watch?v=${encodeURIComponent(video.id)}" target="_blank" rel="noopener noreferrer" aria-label="Watch ${escapeHtml(video.title)} on YouTube">Watch <span aria-hidden="true">↗</span></a></td>
@@ -42,13 +42,16 @@ function renderVideos() {
   `).join("");
 }
 
-filters.addEventListener("click", (event) => {
+function selectTag(event) {
   const button = event.target.closest("[data-tag]");
   if (!button) return;
   activeCategory = button.dataset.tag;
   renderFilters();
   renderVideos();
-});
+}
+
+filters.addEventListener("click", selectTag);
+grid.addEventListener("click", selectTag);
 search.addEventListener("input", renderVideos);
 document.querySelector("#clearSearch").addEventListener("click", () => { search.value = ""; activeCategory = "All"; renderFilters(); renderVideos(); search.focus(); });
 

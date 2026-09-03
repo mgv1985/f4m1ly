@@ -47,7 +47,8 @@ h2 { font-size:clamp(42px,5vw,67px); letter-spacing:-.035em; }
 .title-cell { width:34%; }
 .title-cell a { color:var(--ink); font-family:"Newsreader",serif; font-size:clamp(21px,2vw,29px); line-height:1.1; text-decoration:none; background-image:linear-gradient(var(--red),var(--red)); background-position:0 100%; background-repeat:no-repeat; background-size:0 2px; transition:color .2s,background-size .25s; }
 .title-cell a:hover { color:var(--red); background-size:100% 2px; }
-.category-label { display:inline-block; padding:6px 10px; border:1px solid rgba(36,37,32,.25); border-radius:100px; color:var(--ink); font-size:9px; text-transform:uppercase; letter-spacing:.08em; }
+.category-label { display:inline-block; padding:6px 10px; border:1px solid rgba(36,37,32,.25); border-radius:100px; background:transparent; color:var(--ink); cursor:pointer; font-size:9px; text-transform:uppercase; letter-spacing:.08em; }
+.category-label:hover { border-color:var(--blue); background:var(--blue); color:#fff; }
 .open-cell a { color:var(--ink); font-size:10px; font-weight:600; letter-spacing:.05em; text-decoration:none; white-space:nowrap; }
 .open-cell a span { margin-left:8px; color:var(--red); font-size:15px; }
 .film-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:50px 22px; }
