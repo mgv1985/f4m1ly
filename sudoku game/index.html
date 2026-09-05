@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f1e8">
+  <title>Gridline Sudoku</title>
+  <script>
+    if (sessionStorage.getItem("familyArchiveAccess") !== "granted") {
+      window.location.replace("../login.html");
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Back to The Family Archive"><span class="brand-mark">9</span><span>GRIDLINE</span></a>
+    <nav aria-label="Main navigation"><a href="../index.html">Archive</a><a href="#play" data-route-link="game">Play</a><a href="#high-scores" data-route-link="scores">High Scores</a></nav>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+
+  <footer class="site-footer"><span>GRIDLINE / SUDOKU STUDIO</span><span>Think in patterns.</span></footer>
+  <script type="module" src="browser-api.js?v=1"></script>
+</body>
+</html>
