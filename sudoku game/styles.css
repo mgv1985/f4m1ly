@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --paper: #f5f1e8;
   --ink: #1e2b2b;
   --muted: #697474;
@@ -113,3 +113,5 @@ kbd { font: 11px "DM Mono", monospace; background: var(--panel); padding: 3px 5p
   .filter-row button { padding-inline: 12px; }
 }
 
+
+.scores-new-game { margin-top:18px; }
