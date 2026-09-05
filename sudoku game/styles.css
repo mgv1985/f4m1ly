@@ -124,3 +124,7 @@ kbd { font: 11px "DM Mono", monospace; background: var(--panel); padding: 3px 5p
 .score-success .success-mark { display:grid; width:48px; height:48px; place-items:center; margin-bottom:14px; border:2px solid #477f57; border-radius:50%; color:#477f57; font-size:24px; }
 .score-success h2 { margin:0; font-size:32px; }
 .score-success p { margin:8px 0 0; color:var(--muted); }
+/* Strong matching-digit frame */
+.cell.same-number { box-shadow:inset 0 0 0 3px #3d767c; }
+.cell.selected.same-number { box-shadow:inset 0 0 0 4px #285d63; }
+.erase-all { border-color:var(--accent-dark); color:var(--accent-dark); }
