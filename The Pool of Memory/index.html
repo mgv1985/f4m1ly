@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f2efe9">
+  <title>The Pool of Memory</title>
+  <script>
+    if (sessionStorage.getItem("familyArchiveAccess") !== "granted") {
+      window.location.replace("../login.html");
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <button class="brand-button" data-screen="start" aria-label="Back to home">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span>The Pool of Memory</span>
+      </button>
+      <div class="topbar-actions">
+        <a class="archive-link" href="../index.html">Family archive</a>
+        <button class="icon-button" id="sound-toggle" type="button" aria-label="Toggle sound" title="Toggle sound"><span id="sound-icon">◖</span></button>
+        <button class="text-button" data-screen="scores" type="button">High scores</button>
+      </div>
+    </header>
+
+    <section class="screen active" id="start-screen" aria-labelledby="start-title">
+      <div class="intro-copy">
+        <p class="eyebrow">A working memory arcade</p>
+        <h1 id="start-title">We do not remember days,<br><em>we remember moments.</em></h1>
+        <p class="intro-text">Memorize the numbers, then reveal them from smallest to largest.</p>
+        <button class="primary-button" id="start-button" type="button">Start game <span>→</span></button>
+      </div>
+      <div class="start-aside">
+        <div class="stat-line"><span>Starting level</span><strong>01</strong></div>
+        <div class="stat-line"><span>Starting lives</span><strong>♥ ♥ ♥</strong></div>
+        <div class="aside-rule"></div>
+        <p>Each correct tile adds <strong>100 × level</strong> points. One wrong move costs a life.</p>
+      </div>
+    </section>
+
+    <section class="screen" id="game-screen" aria-labelledby="game-heading">
+      <div class="game-header">
+        <div><p class="eyebrow">Active session</p><h2 id="game-heading">Recall sequence</h2></div>
+        <div class="hud">
+          <div class="hud-item"><span>Level</span><strong id="level-value">01</strong></div>
+          <div class="hud-item"><span>Score</span><strong id="score-value">0000</strong></div>
+          <div class="hud-item lives-item"><span>Lives</span><strong id="lives-value">♥ ♥ ♥</strong></div>
+        </div>
+      </div>
+      <div class="phase-bar"><span class="phase-label" id="phase-label">MEMORIZE</span><span class="phase-time" id="phase-time">5.0s</span></div>
+      <div class="board-wrap"><div class="board" id="board" aria-label="Number tiles"></div></div>
+      <p class="game-hint" id="game-hint">Keep the order in your head.</p>
+    </section>
+
+    <section class="screen centered-screen" id="gameover-screen" aria-labelledby="gameover-title">
+      <p class="eyebrow">Session complete</p><h1 id="gameover-title">Game over</h1>
+      <div class="result-metrics"><div><span>Final score</span><strong id="final-score">0</strong></div><div><span>Highest level</span><strong id="final-level">1</strong></div></div>
+      <form id="score-form" class="score-form"><label for="age-input">Your age</label><div class="age-row"><input id="age-input" type="number" min="1" max="120" required placeholder="e.g. 29"><button class="primary-button" type="submit">Submit score <span>→</span></button></div><p class="form-error" id="form-error" role="alert"></p></form>
+    </section>
+
+    <section class="screen centered-screen" id="submitted-screen" aria-labelledby="submitted-title">
+      <p class="eyebrow">Score recorded</p><h1 id="submitted-title">You made the board.</h1>
+      <div class="percentile-card"><div class="percentile-top"><span>Age group</span><strong id="result-group">26–40</strong></div><div class="percentile-score"><span>Your score</span><strong id="result-score">0</strong></div><div class="percentile-main"><span>Percentile</span><strong id="result-percentile">0th</strong></div><p id="result-copy">You scored higher than 0% of players in your age group.</p><small id="result-count"></small></div>
+      <div class="button-row"><button class="secondary-button" id="leaderboard-button" type="button">View age-group leaderboard</button><button class="primary-button" id="play-again-button" type="button">Play again <span>→</span></button></div>
+    </section>
+
+    <section class="screen" id="scores-screen" aria-labelledby="scores-title">
+      <div class="scores-header"><div><p class="eyebrow">The archive</p><h1 id="scores-title">High scores</h1></div><button class="secondary-button compact" data-screen="start" type="button">Back home</button></div>
+      <div class="group-tabs" role="tablist" aria-label="Age groups"><button class="group-tab active" data-group="Under 18" role="tab">&lt;18</button><button class="group-tab" data-group="18–25" role="tab">18–25</button><button class="group-tab" data-group="26–40" role="tab">26–40</button><button class="group-tab" data-group="41–60" role="tab">41–60</button><button class="group-tab" data-group="Over 60" role="tab">&gt;60</button></div>
+      <div class="table-wrap"><table><thead><tr><th>Rank</th><th>Score</th><th>Level</th><th>Age</th><th>Date</th></tr></thead><tbody id="scores-body"></tbody></table><div class="empty-state" id="empty-state">No scores here yet. Be the first.</div></div>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <footer><span>RM-01 / TRAIN YOUR RECALL</span><span>© 2026</span></footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
