@@ -146,3 +146,8 @@ kbd { font: 11px "DM Mono", monospace; background: var(--panel); padding: 3px 5p
   .tool-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }
   .tool-row .tool { min-width:0; padding-inline:8px; }
 }
+
+/* Immediate duplicate feedback for rows and columns. */
+.cell.conflict-line { background:#fae9e5; }
+.cell.conflict-number { background:#f4c9c0; color:#9f2f24; box-shadow:inset 0 0 0 3px #c34334; font-weight:800; }
+.cell.selected.conflict-number { background:#efb8ad; box-shadow:inset 0 0 0 4px #9f2f24; }
