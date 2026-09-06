@@ -16,17 +16,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
   <header class="site-header">
     <a class="brand" href="../index.html" aria-label="Back to The Family Archive"><span class="brand-mark">9</span><span>GRIDLINE</span></a>
-    <nav aria-label="Main navigation"><a href="../index.html">Archive</a><a href="#play" data-route-link="game">Play</a><a href="#high-scores" data-route-link="scores">High Scores</a></nav>
+    <nav aria-label="Main navigation"><a href="../index.html">Archive</a><a href="#play" data-route-link="game">Play</a><a href="#high-scores" data-route-link="scores">High Scores</a><button class="radio-button" id="radioToggle" type="button" aria-pressed="false" title="Nightwave Plaza — Japanese city-pop chill radio"><span id="radioIcon" aria-hidden="true">▶</span><span id="radioLabel">Far East radio</span></button></nav>
   </header>
 
   <main id="app" tabindex="-1"></main>
 
   <footer class="site-footer"><span>GRIDLINE / SUDOKU STUDIO</span><span>Think in patterns.</span></footer>
+  <audio id="radioPlayer" preload="none" src="https://radio.plaza.one/mp3"></audio>
+  <script type="module" src="radio.js?v=1"></script>
   <script type="module" src="browser-api.js?v=5"></script>
 </body>
 </html>
