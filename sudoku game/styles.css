@@ -79,7 +79,7 @@ dialog[data-print-preview] { width: min(760px, calc(100% - 24px)); max-width: 76
   dialog[data-print-preview]::backdrop, .print-toolbar, dialog[data-print-preview] > p { display:none !important; }
   .print-sheet { break-inside:avoid; }
 }
-@media(max-width:850px){ .game-layout { grid-template-columns: minmax(0,560px); } .side-panel { position: static; } }
+@media(max-width:850px){ .game-layout { width:min(100%,680px); margin-inline:auto; grid-template-columns:minmax(0,1fr); } .game-layout > section:first-child { width:100%; max-width:none; } .side-panel { position:static; width:100%; } }
 @media(prefers-reduced-motion:reduce){ * { transition: none !important; } }
 .help-card { border-top: 1px solid var(--line); margin-top: 30px; padding-top: 20px; }
 .help-card h3 { font-size: 13px; margin: 0 0 10px; }
@@ -134,3 +134,15 @@ kbd { font: 11px "DM Mono", monospace; background: var(--panel); padding: 3px 5p
 .radio-button:disabled { cursor:wait; opacity:.65; }
 .radio-button #radioIcon { width:11px; color:var(--accent); font-size:10px; text-align:center; }
 @media (max-width:530px) { .radio-button { padding:6px 8px; } .radio-button #radioLabel { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); } }
+
+/* Tablet portrait: use the screen instead of squeezing the game into a desktop-sized column. */
+@media screen and (min-width:531px) and (max-width:850px) {
+  main { width:calc(100% - 32px); margin-top:22px; }
+  .site-header,.site-footer { width:calc(100% - 32px); }
+  .site-header { height:72px; }
+  nav { gap:14px; font-size:12px; }
+  .game-top { margin-top:28px; }
+  .board-wrap { width:100%; padding:10px; }
+  .tool-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .tool-row .tool { min-width:0; padding-inline:8px; }
+}
