@@ -72,7 +72,7 @@ async function printSudoku(kind) {
   }catch(e){setMessage(e.message,'error-message');}finally{busy=false;}
 }
 function findDuplicateConflicts() {
-  const cells = new Set(), rows = new Set(), columns = new Set();
+  const cells = new Set(), rows = new Set(), columns = new Set(), boxes = new Set();
   for (let row = 0; row < SIZE; row++) {
     for (let number = 1; number <= SIZE; number++) {
       const matches = [];
@@ -87,7 +87,22 @@ function findDuplicateConflicts() {
       if (matches.length > 1) { columns.add(col); matches.forEach(index => cells.add(index)); }
     }
   }
-  return { cells, rows, columns };
+  for (let boxRow = 0; boxRow < 3; boxRow++) {
+    for (let boxCol = 0; boxCol < 3; boxCol++) {
+      const box = boxRow * 3 + boxCol;
+      for (let number = 1; number <= SIZE; number++) {
+        const matches = [];
+        for (let rowOffset = 0; rowOffset < 3; rowOffset++) {
+          for (let colOffset = 0; colOffset < 3; colOffset++) {
+            const row = boxRow * 3 + rowOffset, col = boxCol * 3 + colOffset;
+            if (state.values[row][col] === number) matches.push(flatIndex(row, col));
+          }
+        }
+        if (matches.length > 1) { boxes.add(box); matches.forEach(index => cells.add(index)); }
+      }
+    }
+  }
+  return { cells, rows, columns, boxes };
 }
 function renderBoard() {
   const board = document.querySelector('[data-board]'); if (!board) return; board.innerHTML = '';
@@ -103,7 +118,7 @@ function renderBoard() {
   const [selectedRow, selectedCol] = selectedCell(); const selectedValue = state.values[selectedRow][selectedCol]; const conflicts = findDuplicateConflicts();
   for (let index = 0; index < 81; index++) {
     const row = Math.floor(index / 9); const col = index % 9; const button = document.createElement('button'); button.className = 'cell'; button.dataset.cell = index; button.setAttribute('aria-label', `Row ${row + 1}, column ${col + 1}`); button.tabIndex = index === state.selected ? 0 : -1;
-    const given = Boolean(state.puzzle[row][col]); if (given) button.classList.add('given'); if (index === state.selected) button.classList.add('selected'); if (row === selectedRow || col === selectedCol) button.classList.add('related'); if (selectedValue && state.values[row][col] === selectedValue) button.classList.add('same-number'); if (conflicts.rows.has(row) || conflicts.columns.has(col)) button.classList.add('conflict-line'); if (conflicts.cells.has(index)) button.classList.add('conflict-number'); if (state.errors.has(index)) button.classList.add('error'); if (state.status === 'solution_revealed' && !given) button.classList.add('revealed');
+    const given = Boolean(state.puzzle[row][col]); if (given) button.classList.add('given'); if (index === state.selected) button.classList.add('selected'); if (row === selectedRow || col === selectedCol) button.classList.add('related'); if (selectedValue && state.values[row][col] === selectedValue) button.classList.add('same-number'); if (conflicts.rows.has(row) || conflicts.columns.has(col) || conflicts.boxes.has(Math.floor(row / 3) * 3 + Math.floor(col / 3))) button.classList.add('conflict-line'); if (conflicts.cells.has(index)) button.classList.add('conflict-number'); if (state.errors.has(index)) button.classList.add('error'); if (state.status === 'solution_revealed' && !given) button.classList.add('revealed');
     if (state.values[row][col]) button.append(String(state.values[row][col])); else if (state.notes[row][col].size) { const notes = document.createElement('span'); notes.className = 'notes'; [...state.notes[row][col]].sort((a,b) => a-b).forEach(number => { const note = document.createElement('span'); note.textContent = number; note.style.gridColumn = number % 3 || 3; note.style.gridRow = Math.ceil(number / 3); notes.append(note); }); button.append(notes); }
     button.setAttribute('aria-label',button.getAttribute('aria-label')+(state.values[row][col]?', '+state.values[row][col]:', empty')+(given?', fixed clue':'')); button.addEventListener('click', () => { state.selected = index; renderBoard(); document.querySelector('[data-cell="'+index+'"]').focus(); }); board.append(button);
   }
