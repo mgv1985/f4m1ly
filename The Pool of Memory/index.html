@@ -5,11 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#f2efe9">
   <title>The Pool of Memory</title>
-  <script>
-    if (sessionStorage.getItem("familyArchiveAccess") !== "granted") {
-      window.location.replace("../login.html");
-    }
-  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,7 +18,7 @@
         <span>The Pool of Memory</span>
       </button>
       <div class="topbar-actions">
-        <a class="archive-link" href="../index.html">Family archive</a>
+        <a class="archive-link" href="../archive.html">Family archive</a>
         <button class="icon-button" id="sound-toggle" type="button" aria-label="Toggle sound" title="Toggle sound"><span id="sound-icon">◖</span></button>
         <button class="text-button" data-screen="scores" type="button">High scores</button>
       </div>

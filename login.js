@@ -7,7 +7,7 @@ form.addEventListener("submit", (event) => {
   event.preventDefault();
   if (passwordInput.value === UNIVERSAL_PASSWORD) {
     sessionStorage.setItem("familyArchiveAccess", "granted");
-    window.location.replace("index.html");
+    window.location.replace("archive.html");
     return;
   }
   error.hidden = false;
