@@ -116,9 +116,9 @@ dialog::backdrop { background:rgba(25,24,21,.78); backdrop-filter:blur(5px); }
 
 /* Public home portal */
 .home-main { overflow:hidden; }
-.home-hero { min-height:calc(100vh - 82px); display:grid; grid-template-columns:minmax(0, .9fr) minmax(420px, 1.1fr); border-bottom:2px solid var(--ink); }
-.home-copy { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; padding:80px clamp(32px, 7vw, 112px); }
-.home-copy h1 { font-size:clamp(58px, 7vw, 104px); }
+.home-hero { min-height:calc(100vh - 82px); display:grid; grid-template-columns:minmax(0, 1.08fr) minmax(460px, .92fr); border-bottom:2px solid var(--ink); }
+.home-copy { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; padding:80px clamp(32px, 5vw, 92px); }
+.home-copy h1 { max-width:100%; font-size:clamp(56px, 5.4vw, 92px); line-height:.92; }
 .home-copy > p:not(.eyebrow) { max-width:470px; margin:34px 0; color:var(--muted); font-family:"Newsreader",serif; font-size:21px; line-height:1.5; }
 .home-primary { display:inline-flex; align-items:center; gap:28px; padding:14px 18px; border:2px solid var(--ink); background:var(--red); color:#fff; font-size:11px; font-weight:600; letter-spacing:.04em; text-decoration:none; }
 .home-primary:hover { background:var(--blue); }
