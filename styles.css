@@ -160,3 +160,13 @@ dialog::backdrop { background:rgba(25,24,21,.78); backdrop-filter:blur(5px); }
   .home-image { min-height:62vw; }
   .home-destinations { padding-top:72px; }
 }
+/* Shared header navigation */
+@media (max-width: 900px) {
+  .archive-page .site-header { height:auto; min-height:82px; padding-block:10px; gap:18px; }
+  .archive-page .header-actions { justify-content:flex-end; flex-wrap:wrap; gap:10px 16px; }
+}
+@media (max-width: 600px) {
+  .archive-page .site-header { align-items:flex-start; flex-direction:column; }
+  .archive-page .header-actions { width:100%; justify-content:flex-start; }
+  .archive-page .game-link { max-width:none; text-align:left; }
+}
