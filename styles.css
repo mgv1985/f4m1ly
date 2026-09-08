@@ -170,3 +170,12 @@ dialog::backdrop { background:rgba(25,24,21,.78); backdrop-filter:blur(5px); }
   .archive-page .header-actions { width:100%; justify-content:flex-start; }
   .archive-page .game-link { max-width:none; text-align:left; }
 }
+/* Timer navigation support */
+.home-page .header-actions { flex-wrap:wrap; justify-content:flex-end; }
+
+/* Login navigation */
+.login-page { display:flex; flex-direction:column; }
+.login-page .login-header { width:100%; flex:none; }
+.login-page .login-card { margin:auto; padding:60px 0; }
+.login-page .header-actions { flex-wrap:wrap; justify-content:flex-end; }
+@media(max-width:650px){.login-page .login-header{height:auto;min-height:68px;padding:10px 16px;gap:10px;flex-wrap:wrap}.login-page .login-header .header-actions{width:100%;justify-content:flex-start;gap:8px 14px}.login-page .login-header .game-link{max-width:none;text-align:left}}
