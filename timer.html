@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css?v=5" />
-  <link rel="stylesheet" href="timer.css?v=3" />
+  <link rel="stylesheet" href="timer.css?v=4" />
 </head>
 <body class="timer-page">
   <header class="site-header">
@@ -52,13 +52,11 @@
         <div class="time-actions"><button class="time-button primary" id="timerStart" type="button">Start</button><button class="time-button" id="timerReset" type="button">Reset</button></div>
       </article>
 
-      <article class="time-card remaining-card">
-        <div class="card-heading"><span>04</span><h2>Time remaining</h2></div>
-        <label for="targetTime">Count down to</label>
-        <input id="targetTime" type="datetime-local" />
-        <output class="remaining-display" id="remainingDisplay">—</output>
-        <p class="time-status" id="remainingStatus">Choose a future date and time.</p>
-        <div class="time-actions"><button class="time-button primary" id="setTarget" type="button">Set target</button><button class="time-button" id="clearTarget" type="button" disabled>Clear</button></div>
+      <article class="time-card stopwatch-card">
+        <div class="card-heading"><span>04</span><h2>Stopwatch</h2></div>
+        <output class="stopwatch-display" id="stopwatchDisplay">00:00:00.0</output>
+        <p class="time-status" id="stopwatchStatus" role="status">Ready to start.</p>
+        <div class="time-actions"><button class="time-button primary" id="stopwatchToggle" type="button">Start</button><button class="time-button" id="stopwatchReset" type="button">Reset</button></div>
       </article>
     </section>
   </main>
@@ -71,6 +69,6 @@
     <p id="ringMessage">Your alarm is ringing.</p>
     <button class="time-button primary" id="ringStop" type="button">Stop</button>
   </dialog>
-  <script src="timer.js?v=3"></script>
+  <script src="timer.js?v=4"></script>
 </body>
 </html>

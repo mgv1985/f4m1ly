@@ -112,29 +112,35 @@ byId('timerStart').addEventListener('click', () => {
 byId('timerReset').addEventListener('click', () => { timerRunning = false; timerFinished = false; timerEnd = 0; timerRemaining = 0; renderTimer(); });
 document.querySelectorAll('.duration-inputs input').forEach(input => input.addEventListener('input', () => { if (!timerRunning && !timerRemaining) renderTimer(); }));
 
-let targetAt = Number(localStorage.getItem('f4m1lyTargetAt')) || 0;
-function toInputDateTime(timestamp) {
-  const date = new Date(timestamp - new Date(timestamp).getTimezoneOffset() * 60000);
-  return date.toISOString().slice(0, 16);
+function formatStopwatch(milliseconds) {
+  const tenths = Math.floor(Math.max(0, milliseconds) / 100);
+  const hours = Math.floor(tenths / 36000);
+  const minutes = Math.floor((tenths % 36000) / 600);
+  const seconds = Math.floor((tenths % 600) / 10);
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${tenths % 10}`;
 }
-function renderTarget() {
-  const remaining = targetAt - Date.now();
-  const active = remaining > 0;
-  byId('clearTarget').disabled = !targetAt;
-  if (!targetAt) { byId('remainingDisplay').textContent = '—'; byId('remainingStatus').textContent = 'Choose a future date and time.'; return; }
-  if (!active) { byId('remainingDisplay').textContent = '00d 00:00:00'; byId('remainingStatus').textContent = 'The target time has arrived.'; return; }
-  const totalSeconds = Math.ceil(remaining / 1000), days = Math.floor(totalSeconds / 86400);
-  byId('remainingDisplay').textContent = `${pad(days)}d ${formatDuration(remaining % 86400000)}`;
-  byId('remainingStatus').textContent = `Until ${new Date(targetAt).toLocaleString()}.`;
+let stopwatchElapsed = 0, stopwatchStartedAt = 0, stopwatchRunning = false;
+function renderStopwatch() {
+  const elapsed = stopwatchElapsed + (stopwatchRunning ? Date.now() - stopwatchStartedAt : 0);
+  byId('stopwatchDisplay').textContent = formatStopwatch(elapsed);
+  byId('stopwatchToggle').textContent = stopwatchRunning ? 'Stop' : 'Start';
+  byId('stopwatchStatus').textContent = stopwatchRunning ? 'Running.' : stopwatchElapsed ? 'Stopped.' : 'Ready to start.';
 }
-byId('setTarget').addEventListener('click', () => {
-  const target = new Date(byId('targetTime').value).getTime();
-  if (!target || target <= Date.now()) { byId('remainingStatus').textContent = 'Choose a date and time in the future.'; return; }
-  prepareSound(); targetAt = target; localStorage.setItem('f4m1lyTargetAt', String(targetAt)); renderTarget();
+byId('stopwatchToggle').addEventListener('click', () => {
+  if (stopwatchRunning) {
+    stopwatchElapsed += Date.now() - stopwatchStartedAt;
+    stopwatchRunning = false;
+  } else {
+    stopwatchStartedAt = Date.now();
+    stopwatchRunning = true;
+  }
+  renderStopwatch();
 });
-byId('clearTarget').addEventListener('click', () => { targetAt = 0; localStorage.removeItem('f4m1lyTargetAt'); byId('targetTime').value = ''; renderTarget(); });
-
-let targetRang = false;
+byId('stopwatchReset').addEventListener('click', () => {
+  stopwatchElapsed = 0;
+  if (stopwatchRunning) stopwatchStartedAt = Date.now();
+  renderStopwatch();
+});
 function tick() {
   updateClock();
   if (alarmAt && Date.now() >= alarmAt) {
@@ -145,12 +151,9 @@ function tick() {
     if (Date.now() >= timerEnd) { timerRunning = false; timerFinished = true; timerRemaining = 0; renderTimer(); ring('Timer complete', 'Your countdown has finished.'); }
     else renderTimer();
   }
-  if (targetAt && Date.now() >= targetAt && !targetRang) { targetRang = true; ring('Target reached', 'The time you were waiting for has arrived.'); }
-  if (targetAt && Date.now() < targetAt) targetRang = false;
-  renderTarget();
+  if (stopwatchRunning) renderStopwatch();
 }
 
 if (alarmAt > Date.now()) byId('alarmTime').value = `${pad(new Date(alarmAt).getHours())}:${pad(new Date(alarmAt).getMinutes())}`;
 else { alarmAt = 0; localStorage.removeItem('f4m1lyAlarmAt'); }
-if (targetAt) byId('targetTime').value = toInputDateTime(targetAt);
-updateClock(); renderAlarm(); renderTimer(); renderTarget(); tick(); setInterval(tick, 250);
+updateClock(); renderAlarm(); renderTimer(); renderStopwatch(); tick(); setInterval(tick, 100);
