@@ -1,31 +1,65 @@
-.time-main { width:min(1180px,calc(100% - 48px)); margin:0 auto; padding:78px 0 110px; }
-.time-tagline { margin:0 0 48px; color:var(--blue); font-family:Magneto,"Brush Script MT","Segoe Script",cursive; font-size:clamp(25px,3vw,38px); font-weight:400; line-height:1; letter-spacing:.01em; }
-.time-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); border-top:2px solid var(--ink); border-left:1px solid var(--line); }
-.time-card { min-height:390px; padding:28px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:rgba(255,255,255,.1); }
-.card-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:48px; }
-.card-heading span { color:var(--red); font:500 11px "DM Mono",monospace; }
-.card-heading h2 { font-size:34px; }
-.time-card label { display:block; margin-bottom:9px; color:var(--muted); font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; }
-.time-card input { width:100%; min-width:0; padding:14px; border:1px solid var(--ink); border-radius:0; background:transparent; color:var(--ink); font:500 18px "DM Mono",monospace; }
+.timer-shell,.timer-page { height:100%; overflow:hidden; }
+.timer-page { height:100dvh; min-height:0; display:flex; flex-direction:column; }
+.timer-page .site-header { width:100%; height:clamp(56px,9vh,82px); min-height:0; flex:none; padding-inline:clamp(14px,4vw,60px); }
+.timer-page .header-actions { flex-wrap:nowrap; justify-content:flex-end; gap:clamp(10px,2vw,24px); }
+.time-main { width:min(1180px,calc(100% - 28px)); min-height:0; flex:1; display:grid; grid-template-rows:auto minmax(0,1fr); margin:0 auto; padding:clamp(8px,2vh,22px) 0; }
+.time-tagline { margin:0 0 clamp(8px,1.6vh,18px); color:var(--blue); font-family:Magneto,"Brush Script MT","Segoe Script",cursive; font-size:clamp(20px,2.4vw,32px); font-weight:400; line-height:1; }
+.time-grid { min-height:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:repeat(2,minmax(0,1fr)); border-top:2px solid var(--ink); border-left:1px solid var(--line); }
+.time-card { min-width:0; min-height:0; overflow:hidden; padding:clamp(9px,1.45vw,20px); border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:rgba(255,255,255,.1); }
+.card-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:clamp(7px,1.8vh,18px); }
+.card-heading span { color:var(--red); font:500 10px "DM Mono",monospace; }
+.card-heading h2 { font-size:clamp(22px,2.4vw,32px); }
+.time-card label { display:block; margin-bottom:5px; color:var(--muted); font-size:9px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; }
+.time-card input { width:100%; min-width:0; padding:clamp(7px,1.2vh,11px); border:1px solid var(--ink); border-radius:0; background:transparent; color:var(--ink); font:500 clamp(13px,1.4vw,17px) "DM Mono",monospace; }
 .clock-card { background:var(--mustard); }
-.clock-display,.countdown-display,.remaining-display { display:block; font:400 clamp(42px,6vw,78px) "DM Mono",monospace; letter-spacing:-.07em; line-height:1; }
-.clock-card > p { margin:18px 0 0; font-family:"Newsreader",serif; font-size:22px; }
-.time-actions { display:flex; gap:9px; margin-top:22px; }
-.time-button { min-height:44px; padding:11px 16px; border:1px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer; font-size:11px; font-weight:600; }
+.clock-display,.countdown-display,.remaining-display { display:block; font:400 clamp(27px,4.5vw,62px) "DM Mono",monospace; letter-spacing:-.07em; line-height:1; }
+.clock-card > p { margin:clamp(7px,1.5vh,15px) 0 0; font-family:"Newsreader",serif; font-size:clamp(14px,1.6vw,20px); }
+.time-actions { display:flex; gap:7px; margin-top:clamp(8px,1.5vh,16px); }
+.time-button { min-height:clamp(32px,5vh,42px); padding:6px 12px; border:1px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer; font-size:10px; font-weight:600; }
 .time-button.primary { background:var(--red); color:#fff; }
 .time-button:hover:not(:disabled) { background:var(--blue); color:#fff; }
 .time-button:disabled { cursor:default; opacity:.4; }
-.time-status { min-height:20px; margin:18px 0 0; color:var(--muted); font-size:12px; line-height:1.5; }
-.duration-inputs { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
-.duration-inputs label span { display:block; margin-bottom:8px; }
+.time-status { min-height:16px; margin:clamp(7px,1.3vh,14px) 0 0; color:var(--muted); font-size:10px; line-height:1.35; }
+.duration-inputs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+.duration-inputs label span { display:block; margin-bottom:4px; }
 .duration-inputs input { text-align:center; }
-.countdown-display { margin-top:30px; font-size:clamp(38px,5vw,64px); }
-.remaining-display { margin-top:32px; font-size:clamp(31px,4vw,55px); }
-.ring-dialog { width:min(480px,calc(100% - 32px)); padding:48px; border:2px solid var(--ink); background:var(--paper); color:var(--ink); text-align:center; }
+.countdown-display { margin-top:clamp(9px,1.8vh,19px); font-size:clamp(25px,3.8vw,52px); }
+.remaining-display { margin-top:clamp(10px,2vh,22px); font-size:clamp(21px,3.2vw,44px); }
+.timer-page footer { min-height:0; flex:none; padding:clamp(5px,1vh,12px) clamp(14px,4vw,60px); font-size:9px; }
+.ring-dialog { width:min(480px,calc(100% - 32px)); max-height:calc(100dvh - 24px); overflow:auto; padding:clamp(26px,5vw,48px); border:2px solid var(--ink); background:var(--paper); color:var(--ink); text-align:center; }
 .ring-dialog::backdrop { background:rgba(22,33,38,.66); backdrop-filter:blur(5px); }
-.ring-dialog h2 { font-size:56px; }
-.ring-dialog > p:not(.eyebrow) { color:var(--muted); font-family:"Newsreader",serif; font-size:20px; }
+.ring-dialog h2 { font-size:clamp(40px,8vw,56px); }
+.ring-dialog > p:not(.eyebrow) { color:var(--muted); font-family:"Newsreader",serif; font-size:18px; }
 .ring-close { position:absolute; top:14px; right:14px; width:36px; height:36px; border:1px solid var(--ink); border-radius:50%; background:transparent; cursor:pointer; font-size:24px; }
-.timer-page .header-actions { flex-wrap:wrap; justify-content:flex-end; }
-@media(max-width:820px){.timer-page .site-header{height:auto;min-height:72px;padding-block:10px;gap:10px 20px;flex-wrap:wrap}.timer-page .header-actions{width:100%}.time-intro{grid-template-columns:1fr;gap:25px}.time-intro .eyebrow{grid-column:auto;margin-bottom:0}.time-grid{grid-template-columns:1fr}.time-card{min-height:350px}}
-@media(max-width:540px){.timer-page .site-header{align-items:flex-start;flex-direction:column;padding-inline:16px}.timer-page .header-actions{justify-content:flex-start;gap:8px 14px}.timer-page .game-link{max-width:none;text-align:left}.time-main{width:calc(100% - 24px);padding-top:55px}.time-intro h1{font-size:58px}.time-card{min-height:330px;padding:22px 18px}.duration-inputs{gap:5px}.duration-inputs input{padding-inline:5px;font-size:16px}.ring-dialog{padding:44px 24px 30px}}
+@media(max-width:650px) {
+  .timer-page .site-header { height:auto; max-height:22vh; padding-block:7px; gap:5px 10px; flex-wrap:wrap; }
+  .timer-page .wordmark > span:last-child { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+  .timer-page .header-actions { width:calc(100% - 46px); flex-wrap:wrap; gap:4px 10px; }
+  .timer-page .game-link { max-width:none; padding:2px 0; border:0; font-size:8px; line-height:1.1; text-align:left; }
+  .time-main { width:calc(100% - 12px); padding:6px 0; }
+  .time-tagline { margin-bottom:5px; font-size:19px; }
+  .time-card { padding:7px; }
+  .card-heading { margin-bottom:5px; }
+  .card-heading h2 { font-size:18px; }
+  .card-heading span,.time-card label { font-size:7px; }
+  .time-card input { padding:5px 3px; font-size:12px; }
+  .time-actions { gap:4px; margin-top:6px; }
+  .time-button { min-height:29px; padding:4px 7px; font-size:8px; }
+  .time-status { margin-top:5px; font-size:8px; }
+  .clock-display { font-size:clamp(24px,8vw,36px); }
+  .countdown-display { margin-top:7px; font-size:clamp(22px,7vw,32px); }
+  .remaining-display { margin-top:7px; font-size:clamp(17px,5.5vw,27px); }
+  .clock-card > p { margin-top:6px; font-size:12px; }
+  .duration-inputs { gap:3px; }
+  .timer-page footer { display:none; }
+}
+@media(max-height:620px) {
+  .timer-page .site-header { height:52px; }
+  .time-main { padding:5px 0; }
+  .time-tagline { margin-bottom:4px; font-size:18px; }
+  .time-card { padding-block:6px; }
+  .card-heading { margin-bottom:4px; }
+  .time-actions { margin-top:5px; }
+  .time-status { margin-top:4px; }
+  .timer-page footer { display:none; }
+}
