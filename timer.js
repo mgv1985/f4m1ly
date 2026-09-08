@@ -62,7 +62,7 @@ function renderAlarm() {
   const active = alarmAt > Date.now();
   byId('cancelAlarm').disabled = !active;
   byId('alarmStatus').textContent = active
-    ? `Alarm set for ${new Date(alarmAt).toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' })}.`
+    ? `Alarm in ${formatDuration(alarmAt - Date.now())} · ${new Date(alarmAt).toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' })}`
     : 'No alarm set.';
 }
 byId('setAlarm').addEventListener('click', () => {
@@ -97,6 +97,7 @@ function renderTimer() {
 }
 byId('timerStart').addEventListener('click', () => {
   prepareSound();
+  renderAlarm();
   if (timerRunning) {
     timerRemaining = Math.max(0, timerEnd - Date.now());
     timerRunning = false;
@@ -137,8 +138,9 @@ let targetRang = false;
 function tick() {
   updateClock();
   if (alarmAt && Date.now() >= alarmAt) {
-    alarmAt = 0; localStorage.removeItem('f4m1lyAlarmAt'); renderAlarm(); ring('Alarm', 'Your alarm time has arrived.');
+    alarmAt = 0; localStorage.removeItem('f4m1lyAlarmAt'); ring('Alarm', 'Your alarm time has arrived.');
   }
+  renderAlarm();
   if (timerRunning) {
     if (Date.now() >= timerEnd) { timerRunning = false; timerFinished = true; timerRemaining = 0; renderTimer(); ring('Timer complete', 'Your countdown has finished.'); }
     else renderTimer();
