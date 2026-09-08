@@ -20,31 +20,42 @@ function prepareSound() {
   audioContext ||= new AudioContext();
   if (audioContext.state === 'suspended') audioContext.resume();
 }
-function beep() {
+let bellInterval = null;
+function playBell() {
   if (!audioContext || audioContext.state !== 'running') return;
-  [0, .32, .64].forEach(delay => {
+  const start = audioContext.currentTime;
+  [[660, .11], [990, .035]].forEach(([frequency, volume]) => {
     const oscillator = audioContext.createOscillator();
     const gain = audioContext.createGain();
-    oscillator.frequency.value = 720;
-    gain.gain.setValueAtTime(.0001, audioContext.currentTime + delay);
-    gain.gain.exponentialRampToValueAtTime(.18, audioContext.currentTime + delay + .02);
-    gain.gain.exponentialRampToValueAtTime(.0001, audioContext.currentTime + delay + .22);
+    oscillator.type = 'sine';
+    oscillator.frequency.value = frequency;
+    gain.gain.setValueAtTime(.0001, start);
+    gain.gain.exponentialRampToValueAtTime(volume, start + .025);
+    gain.gain.exponentialRampToValueAtTime(.0001, start + 1.45);
     oscillator.connect(gain).connect(audioContext.destination);
-    oscillator.start(audioContext.currentTime + delay);
-    oscillator.stop(audioContext.currentTime + delay + .24);
+    oscillator.start(start);
+    oscillator.stop(start + 1.5);
   });
 }
-function ring(title, message) {
-  prepareSound(); beep();
-  byId('ringTitle').textContent = title;
-  byId('ringMessage').textContent = message;
-  if (!byId('ringDialog').open) byId('ringDialog').showModal();
-  navigator.vibrate?.([200, 100, 200]);
+function startBell() {
+  clearInterval(bellInterval);
+  playBell();
+  bellInterval = setInterval(playBell, 2400);
 }
-function stopRing() { byId('ringDialog').close(); }
+function ring(title, message) {
+  prepareSound(); startBell();
+  byId('ringTitle').textContent = title;
+  byId('ringMessage').textContent = `${message} The bell will continue until you press Stop.`;
+  if (!byId('ringDialog').open) byId('ringDialog').showModal();
+  navigator.vibrate?.([160, 120, 160]);
+}
+function stopRing() {
+  clearInterval(bellInterval);
+  bellInterval = null;
+  byId('ringDialog').close();
+}
 byId('ringStop').addEventListener('click', stopRing);
-byId('ringClose').addEventListener('click', stopRing);
-byId('ringDialog').addEventListener('cancel', event => { event.preventDefault(); stopRing(); });
+byId('ringDialog').addEventListener('cancel', event => event.preventDefault());
 
 let alarmAt = Number(localStorage.getItem('f4m1lyAlarmAt')) || 0;
 function renderAlarm() {
