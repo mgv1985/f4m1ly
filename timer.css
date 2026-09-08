@@ -1,8 +1,5 @@
 .time-main { width:min(1180px,calc(100% - 48px)); margin:0 auto; padding:78px 0 110px; }
-.time-intro { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(260px,.7fr); align-items:end; gap:50px; margin-bottom:70px; }
-.time-intro .eyebrow { grid-column:1/-1; margin-bottom:-22px; }
-.time-intro h1 { font-size:clamp(62px,8vw,116px); }
-.time-intro > p:last-child { max-width:390px; margin:0 0 10px; color:var(--muted); font-family:"Newsreader",serif; font-size:20px; line-height:1.55; }
+.time-tagline { margin:0 0 48px; color:var(--blue); font-family:Magneto,"Brush Script MT","Segoe Script",cursive; font-size:clamp(25px,3vw,38px); font-weight:400; line-height:1; letter-spacing:.01em; }
 .time-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); border-top:2px solid var(--ink); border-left:1px solid var(--line); }
 .time-card { min-height:390px; padding:28px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:rgba(255,255,255,.1); }
 .card-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:48px; }
