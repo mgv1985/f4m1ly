@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#080a10" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>OP</title>
+  <script>if(sessionStorage.getItem('opAccess')!=='granted')location.replace('../op-gate.html');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=1" />
+</head>
+<body>
+  <header class="op-header">
+    <a class="op-mark" href="../index.html" aria-label="Return to main page">◇</a>
+    <div><p>THE HIDDEN COLLECTION</p><h1>OP</h1></div>
+    <button id="lockOp" type="button">Lock</button>
+  </header>
+  <main>
+    <div class="gallery-heading"><p>A quiet archive</p><span id="imageCount"></span></div>
+    <section class="gallery" id="opGallery" aria-label="OP image gallery"></section>
+  </main>
+  <dialog id="viewer" class="viewer">
+    <button id="closeViewer" type="button" aria-label="Close image">×</button>
+    <button class="viewer-arrow previous" id="previousImage" type="button" aria-label="Previous image">←</button>
+    <figure><img id="viewerImage" alt="" /><figcaption id="viewerCaption"></figcaption></figure>
+    <button class="viewer-arrow next" id="nextImage" type="button" aria-label="Next image">→</button>
+  </dialog>
+  <script src="images.js?v=1"></script>
+  <script src="gallery.js?v=1"></script>
+</body>
+</html>

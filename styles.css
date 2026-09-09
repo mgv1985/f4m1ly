@@ -179,3 +179,5 @@ dialog::backdrop { background:rgba(25,24,21,.78); backdrop-filter:blur(5px); }
 .login-page .login-card { margin:auto; padding:60px 0; }
 .login-page .header-actions { flex-wrap:wrap; justify-content:flex-end; }
 @media(max-width:650px){.login-page .login-header{height:auto;min-height:68px;padding:10px 16px;gap:10px;flex-wrap:wrap}.login-page .login-header .header-actions{width:100%;justify-content:flex-start;gap:8px 14px}.login-page .login-header .game-link{max-width:none;text-align:left}}
+/* Hidden OP entry */
+.secret-entry { display:inline-block; width:22px; height:22px; margin:-6px -6px -6px 5px; padding:0; vertical-align:middle; border:0; outline:0; background:transparent; opacity:0; cursor:default; }
