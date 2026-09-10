@@ -13,6 +13,8 @@ window.OP_IMAGES = [
   { file: "26 (2).jpg" },
   { file: "26 (3).jpg" },
   { file: "26 (4).jpg" },
+  { file: "26 (5).jpg" },
+  { file: "26 (6).jpg" },
   { file: "28 (1).jpg" },
   { file: "28 (2).jpg" },
   { file: "28 (3).jpg" },
