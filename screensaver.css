@@ -1,0 +1,21 @@
+:root{--cream:#f2e5c8;--gold:#c6923b;--wine:#71372b;--brown:#24170f;--line:rgba(242,229,200,.42)}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--brown)}
+body{font-family:"DM Sans",sans-serif}
+.screensaver{position:relative;width:100%;height:100%;overflow:hidden;background:#17100b}
+.screensaver iframe{position:absolute;left:50%;top:50%;width:max(100vw,177.78vh);height:max(56.25vw,100vh);border:0;transform:translate(-50%,-50%)}
+.warmth{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 42%,transparent 30%,rgba(22,10,4,.35) 100%),linear-gradient(180deg,rgba(36,17,8,.22),transparent 28%,transparent 68%,rgba(36,17,8,.42));box-shadow:inset 0 0 140px rgba(26,10,3,.55)}
+.screensaver-header{position:absolute;z-index:2;top:0;left:0;right:0;display:flex;align-items:center;gap:28px;padding:14px clamp(16px,4vw,62px);border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(28,17,10,.94),rgba(28,17,10,.76));color:var(--cream);box-shadow:0 8px 30px rgba(0,0,0,.24)}
+.screensaver-home{display:flex;align-items:center;gap:10px;margin-right:auto;color:inherit;text-decoration:none;font-family:"Cormorant Garamond",serif;font-size:20px;letter-spacing:.08em}
+.screensaver-home span{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--gold);background:rgba(198,146,59,.18);color:var(--gold)}
+.screensaver-header nav{display:flex;align-items:center;gap:clamp(13px,2.2vw,32px)}
+.screensaver-header nav a{padding:7px 0;border-bottom:1px solid transparent;color:var(--cream);font-size:11px;font-weight:600;text-decoration:none;white-space:nowrap}
+.screensaver-header nav a:hover{border-color:var(--gold);color:#fff}
+.screensaver-header .archive-link{padding:10px 14px;border:1px solid var(--gold);background:var(--wine)}
+.screensaver-copy{position:absolute;z-index:2;left:50%;bottom:clamp(30px,6vh,70px);width:min(680px,calc(100% - 40px));padding:18px 28px;border:1px solid var(--line);background:rgba(30,18,11,.78);color:var(--cream);text-align:center;transform:translateX(-50%);box-shadow:0 12px 38px rgba(0,0,0,.3);backdrop-filter:blur(7px)}
+.screensaver-copy::before,.screensaver-copy::after{content:"";position:absolute;top:8px;bottom:8px;width:1px;background:var(--gold);opacity:.55}
+.screensaver-copy::before{left:9px}
+.screensaver-copy::after{right:9px}
+.screensaver-copy p{margin:0;font:italic 500 clamp(22px,3vw,34px) "Cormorant Garamond",serif;letter-spacing:.025em}
+@media(max-width:800px){.screensaver-header{align-items:flex-start;gap:12px;padding:10px 12px}.screensaver-home strong{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}.screensaver-header nav{width:100%;justify-content:flex-end;gap:10px;flex-wrap:wrap}.screensaver-header nav a{font-size:9px}.screensaver-header nav a:first-child{display:none}.screensaver-header .archive-link{padding:8px}.screensaver-copy{bottom:22px;padding:14px 22px}.screensaver-copy p{font-size:22px}}
+@media(max-width:520px){.screensaver-home span{width:30px;height:30px}.screensaver-header nav{gap:7px 11px}.screensaver-header nav a{font-size:8px}.screensaver-copy{width:calc(100% - 24px);bottom:12px}}

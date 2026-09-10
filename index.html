@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=7" />
+    <link rel="stylesheet" href="styles.css?v=8" />
   </head>
   <body class="home-page">
     <header class="site-header">
@@ -23,6 +23,7 @@
         <a class="game-link" href="sudoku game/index.html?v=13">Gridline</a>
         <a class="game-link" href="timer.html?v=6">Timer</a>
         <a class="about-button" href="archive.html?v=3">Family archive <span aria-hidden="true">↗</span></a>
+        <button class="screensaver-entry" id="screensaverEntry" type="button" tabindex="-1" aria-hidden="true"></button>
       </div>
     </header>
 
@@ -78,6 +79,7 @@
     <script>
       document.querySelector('#currentYear').textContent = new Date().getFullYear();
       document.querySelector('#secretEntry').addEventListener('click', () => { window.location.href = 'op-gate.html'; });
+      document.querySelector('#screensaverEntry').addEventListener('click', () => { window.location.href = 'screensaver.html'; });
     </script>
   <!-- Cloudflare Web Analytics -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
