@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#111715" />
+  <meta name="description" content="A simple browser-based reader for Greek and English text." />
+  <title>Text to Speech | f4m1ly</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&amp;family=DM+Sans:wght@500;600&amp;family=Newsreader:opsz,wght@6..72,500&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tts.css?v=1" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="index.html"><span aria-hidden="true">✦</span><strong>Text to Speech</strong></a>
+    <nav aria-label="Main navigation">
+      <a href="index.html">Main page</a>
+      <a href="archive.html?v=3">Family archive</a>
+      <a href="The Pool of Memory/index.html?v=3">Pool of Memory</a>
+      <a href="sudoku game/index.html?v=13">Gridline</a>
+      <a href="counting/index.html">Couning</a>
+      <a href="timer.html?v=6">Timer</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="pageTitle">
+      <p class="eyebrow">ACCESSIBLE READING</p>
+      <h1 id="pageTitle">Read at your<br /><em>own pace.</em></h1>
+      <p>Paste Greek or English text. Your browser reads it using a voice already available on your device.</p>
+    </section>
+
+    <section class="reader" aria-label="Text reader">
+      <div class="editor-column">
+        <label class="field-label" for="textInput">Text to read</label>
+        <textarea id="textInput" spellcheck="true" placeholder="Paste or write Greek or English text here…"></textarea>
+        <div class="text-meta"><span id="wordCount">0 words</span><button id="clearButton" type="button">Clear text</button></div>
+      </div>
+
+      <div class="controls-column">
+        <div class="control-grid">
+          <label><span>Language</span><select id="language">
+            <option value="auto">Automatic · Ελληνικά / English</option>
+            <option value="el-GR">Ελληνικά</option>
+            <option value="en-GB">English · UK</option>
+            <option value="en-US">English · US</option>
+          </select></label>
+          <label><span>Voice on this device</span><select id="voice"><option value="auto">Automatic voice</option></select></label>
+        </div>
+
+        <label class="speed-control" for="speed"><span>Reading speed</span><output id="speedValue">1.0×</output><input id="speed" type="range" min="0.5" max="1.5" step="0.1" value="1" /></label>
+
+        <div class="transport" aria-label="Reading controls">
+          <button class="primary" id="playButton" type="button">▶ <span>Read</span></button>
+          <button id="pauseButton" type="button">Ⅱ <span>Pause</span></button>
+          <button id="resumeButton" type="button">▶ <span>Resume</span></button>
+          <button id="stopButton" type="button">■ <span>Stop</span></button>
+        </div>
+
+        <div class="display-controls">
+          <div><span>Text size</span><button id="smallerText" type="button" aria-label="Decrease text size">A−</button><button id="largerText" type="button" aria-label="Increase text size">A+</button></div>
+          <button id="themeButton" type="button" aria-pressed="false"><span aria-hidden="true">☀</span> Light mode</button>
+        </div>
+
+        <p class="reader-status" id="readerStatus" role="status" aria-live="polite">Ready to read.</p>
+      </div>
+    </section>
+
+    <section class="reading-view" aria-labelledby="readingTitle">
+      <div class="reading-heading"><div><p class="eyebrow">FOLLOW ALONG</p><h2 id="readingTitle">Reading view</h2></div><span id="progress">0 / 0</span></div>
+      <div class="spoken-text" id="spokenText"><p>Your text will appear here while it is being read.</p></div>
+    </section>
+  </main>
+
+  <script src="tts.js?v=1"></script>
+  <!-- Cloudflare Web Analytics -->
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
+  <!-- End Cloudflare Web Analytics -->
+</body>
+</html>
