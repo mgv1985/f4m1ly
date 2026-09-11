@@ -6,6 +6,7 @@ const scoreEl = document.querySelector('#score');
 const bestEl = document.querySelector('#best');
 const ballsEl = document.querySelector('#balls');
 const statusEl = document.querySelector('#status');
+const launchMeter = document.querySelector('#launchMeter');
 const startButton = document.querySelector('#startButton');
 const loading = document.querySelector('#loading');
 const W = canvas.width;
@@ -25,6 +26,9 @@ let running = false;
 let readyToLaunch = false;
 let leftPressed = false;
 let rightPressed = false;
+let charging = false;
+let chargeStarted = 0;
+let launchPower = 0;
 let lastTime = 0;
 let accumulator = 0;
 let resetTimer = 0;
@@ -50,11 +54,11 @@ function fixedSegment(x1, y1, x2, y2, thickness = 12, restitution = .58) {
 function buildTable() {
   const walls = [
     [112, 92, 75, 1260, 18], [75, 1260, 255, 1450, 18],
-    [788, 88, 836, 1410, 18], [836, 1410, 650, 1465, 18],
+    [788, 88, 882, 1410, 18], [882, 1410, 650, 1465, 18],
     [112, 92, 300, 52, 15], [300, 52, 610, 54, 15], [610, 54, 788, 88, 15],
     [108, 1110, 278, 1240, 13], [792, 1120, 620, 1240, 13],
     [113, 1040, 225, 1165, 10], [784, 1040, 672, 1165, 10],
-    [744, 235, 744, 1290, 11], [822, 180, 822, 1370, 11],
+    [812, 235, 812, 1290, 11], [882, 180, 882, 1370, 11],
     [125, 630, 195, 715, 10], [680, 570, 742, 675, 10],
     [155, 420, 210, 515, 10], [650, 405, 710, 515, 10]
   ];
@@ -82,23 +86,51 @@ function createFlipper(x, y, angle) {
 function createBall() {
   if (ball) world.removeRigidBody(ball);
   ball = world.createRigidBody(
-    RAPIER.RigidBodyDesc.dynamic().setTranslation(785, 1305).setLinearDamping(.08).setAngularDamping(.15).setCcdEnabled(true)
+    RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(848, 1305)
   );
   ballCollider = world.createCollider(
     RAPIER.ColliderDesc.ball(15).setDensity(.002).setRestitution(.62).setFriction(.08).setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS),
     ball
   );
   readyToLaunch = true;
-  statusEl.textContent = 'Press Space or Launch to begin.';
+  charging = false;
+  launchPower = 0;
+  updateLaunchMeter();
+  statusEl.textContent = 'Hold Space or Launch. Release to fire.';
 }
 
-function launch() {
+function beginCharge() {
+  if (!running || !readyToLaunch || !ball || charging) return;
+  charging = true;
+  chargeStarted = performance.now();
+  launchPower = 0;
+  statusEl.textContent = 'Charging the spring…';
+  tone(105, .04, 'triangle', .018);
+}
+
+function releaseCharge() {
+  if (!charging) return;
+  charging = false;
+  launchPower = Math.max(.12, Math.min(1, (performance.now() - chargeStarted) / 1400));
+  launch(launchPower);
+}
+
+function launch(power) {
   if (!running || !readyToLaunch || !ball) return;
   readyToLaunch = false;
-  ball.wakeUp();
-  ball.setLinvel({ x: -38, y: -1260 }, true);
-  statusEl.textContent = 'Explore the temple.';
-  tone(170, .05, 'triangle', .025);
+  const speed = 690 + power * 760;
+  ball.setBodyType(RAPIER.RigidBodyType.Dynamic, true);
+  ball.setLinearDamping(.08);
+  ball.setAngularDamping(.15);
+  ball.enableCcd(true);
+  ball.setLinvel({ x: -22 - power * 25, y: -speed }, true);
+  statusEl.textContent = `Launch power · ${Math.round(power * 100)}%`;
+  tone(150 + power * 120, .07, 'triangle', .028);
+  window.setTimeout(() => { launchPower = 0; updateLaunchMeter(); }, 350);
+}
+
+function updateLaunchMeter() {
+  launchMeter.style.width = `${Math.round(launchPower * 100)}%`;
 }
 
 function startGame() {
@@ -115,6 +147,9 @@ function loseBall() {
   if (!running || resetTimer) return;
   balls -= 1;
   readyToLaunch = false;
+  charging = false;
+  launchPower = 0;
+  updateLaunchMeter();
   updateHud();
   tone(95, .2, 'sine', .035);
   if (balls <= 0) {
@@ -187,9 +222,32 @@ function draw() {
     ctx.fill();
   });
 
+  drawPlunger();
   drawFlipper(leftFlipper, false);
   drawFlipper(rightFlipper, true);
   if (ball) drawBall(ball.translation());
+}
+
+function drawPlunger() {
+  const x = 848;
+  const handleY = 1378 + launchPower * 62;
+  ctx.save();
+  ctx.strokeStyle = '#e5a62a';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(x, 1332);
+  for (let i = 0; i <= 10; i += 1) {
+    const y = 1340 + (handleY - 1340) * (i / 10);
+    ctx.lineTo(x + (i % 2 ? 9 : -9), y);
+  }
+  ctx.stroke();
+  ctx.fillStyle = '#b9341e';
+  ctx.strokeStyle = '#f1c35a';
+  ctx.lineWidth = 3;
+  roundRect(ctx, x - 25, handleY, 50, 17, 7);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
 }
 
 function drawFlipper(flipper, mirrored) {
@@ -235,6 +293,11 @@ function drawBall(pos) {
 function frame(time) {
   const elapsed = Math.min((time - lastTime) / 1000 || 0, .05);
   lastTime = time;
+  if (charging) {
+    launchPower = Math.min(1, (time - chargeStarted) / 1400);
+    updateLaunchMeter();
+    statusEl.textContent = `Spring loaded · ${Math.round(launchPower * 100)}%`;
+  }
   accumulator += elapsed;
   while (accumulator >= 1 / 60) {
     updateFlippers(1 / 60);
@@ -275,15 +338,17 @@ window.addEventListener('keydown', event => {
   if (['ArrowLeft', 'ArrowRight', 'Space'].includes(event.code)) event.preventDefault();
   if (event.code === 'ArrowLeft' || event.code === 'KeyA') setControl('left', true);
   if (event.code === 'ArrowRight' || event.code === 'KeyD') setControl('right', true);
-  if (event.code === 'Space' && !event.repeat) launch();
+  if (event.code === 'Space' && !event.repeat) beginCharge();
 });
 window.addEventListener('keyup', event => {
   if (event.code === 'ArrowLeft' || event.code === 'KeyA') setControl('left', false);
   if (event.code === 'ArrowRight' || event.code === 'KeyD') setControl('right', false);
+  if (event.code === 'Space') releaseCharge();
 });
 window.addEventListener('blur', () => {
   leftPressed = false;
   rightPressed = false;
+  releaseCharge();
 });
 
 function bindHold(id, control) {
@@ -294,7 +359,13 @@ function bindHold(id, control) {
 
 bindHold('#leftControl', 'left');
 bindHold('#rightControl', 'right');
-document.querySelector('#launchControl').addEventListener('pointerdown', event => { event.preventDefault(); launch(); });
+const launchControl = document.querySelector('#launchControl');
+launchControl.addEventListener('pointerdown', event => {
+  event.preventDefault();
+  launchControl.setPointerCapture(event.pointerId);
+  beginCharge();
+});
+['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => launchControl.addEventListener(type, releaseCharge));
 startButton.addEventListener('click', startGame);
 
 await RAPIER.init();
