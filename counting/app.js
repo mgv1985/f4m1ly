@@ -35,7 +35,7 @@ function revealWord(word) {
 function bricks(count, interactive = false) {
   const concept = concepts[count];
   const images = count === 1000
-    ? Array.from({ length: 10 }, (_, index) => `<span class="hundred-layer" style="--layer:${index}" aria-hidden="true"></span>`).join('')
+    ? Array.from({ length: 10 }, () => '<span class="hundred-set" aria-hidden="true"></span>').join('')
     : Array.from({ length: count }, () => '<img src="brick.png" alt="" draggable="false" />').join('');
   const content = `<span class="brick-group ${concept.className}" aria-hidden="true">${images}</span>`;
   return interactive ? `<button class="brick-target" type="button" data-word="${concept.lesson}" aria-label="${concept.lesson}">${content}</button>` : content;
@@ -56,7 +56,7 @@ function showIntro() {
 
 function showLesson(index) {
   const count = lessonOrder[index];
-  game.innerHTML = `<section class="screen lesson-screen single-lesson"><div class="lesson-title"><p class="eyebrow">${index + 1} / ${lessonOrder.length}</p><h1>${concepts[count].lesson}</h1></div><div class="single-brick-stage">${bricks(count, true)}</div><button class="next-action" id="lessonNext" type="button">${index === lessonOrder.length - 1 ? 'Πάμε στο τεστ' : 'Επόμενο'} →</button></section>`;
+  game.innerHTML = `<section class="screen lesson-screen single-lesson"><div class="lesson-title"><p class="eyebrow">${index + 1} / ${lessonOrder.length}</p><h1>${concepts[count].option}</h1></div><div class="single-brick-stage">${bricks(count, true)}</div><button class="next-action" id="lessonNext" type="button">${index === lessonOrder.length - 1 ? 'Πάμε στο τεστ' : 'Επόμενο'} →</button></section>`;
   bindSpokenTargets();
   document.querySelector('#lessonNext').addEventListener('click', () => index < lessonOrder.length - 1 ? showLesson(index + 1) : startQuiz());
 }
