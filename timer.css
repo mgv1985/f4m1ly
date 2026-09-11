@@ -13,7 +13,20 @@
 .time-card input { width:100%; min-width:0; padding:clamp(7px,1.2vh,11px); border:1px solid var(--ink); border-radius:0; background:transparent; color:var(--ink); font:500 clamp(13px,1.4vw,17px) "DM Mono",monospace; }
 .clock-card { background:var(--mustard); }
 .clock-display,.countdown-display,.stopwatch-display { display:block; font:400 clamp(27px,4.5vw,62px) "DM Mono",monospace; letter-spacing:-.07em; line-height:1; }
+.local-clock-line { display:flex; align-items:baseline; gap:clamp(8px,1.5vw,18px); }
+.local-clock-line > span { font:500 clamp(8px,1vw,11px) "DM Mono",monospace; letter-spacing:.04em; white-space:nowrap; }
 .clock-card > p { margin:clamp(7px,1.5vh,15px) 0 0; font-family:"Newsreader",serif; font-size:clamp(14px,1.6vw,20px); }
+.world-clock-compose { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px; margin-top:clamp(7px,1.3vh,13px); }
+.world-clock-compose input { min-height:32px; padding:5px 8px; font-family:"DM Sans",sans-serif; font-size:10px; }
+.world-clock-compose .time-button { min-height:32px; }
+.clock-card #clockStatus { min-height:0; margin-top:4px; color:rgba(22,33,38,.68); font-family:"DM Sans",sans-serif; font-size:8px; }
+.world-clock-list { max-height:calc(100% - 174px); overflow:auto; scrollbar-width:thin; }
+.world-clock-item { min-height:35px; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:9px; border-top:1px solid rgba(22,33,38,.2); }
+.world-clock-item time { font:500 11px "DM Mono",monospace; white-space:nowrap; }
+.world-clock-item > span { min-width:0; display:flex; align-items:baseline; gap:5px; overflow:hidden; }
+.world-clock-item strong { overflow:hidden; font-size:9px; text-overflow:ellipsis; white-space:nowrap; }
+.world-clock-item small { flex:none; font:500 8px "DM Mono",monospace; }
+.world-clock-item button { width:22px;height:22px;padding:0;border:1px solid rgba(22,33,38,.28);background:transparent;cursor:pointer;font-size:12px; }
 .time-actions { display:flex; gap:7px; margin-top:clamp(8px,1.5vh,16px); }
 .time-button { min-height:clamp(32px,5vh,42px); padding:6px 12px; border:1px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer; font-size:10px; font-weight:600; }
 .time-button.primary { background:var(--red); color:#fff; }
@@ -60,9 +73,19 @@
   .time-button { min-height:29px; padding:4px 7px; font-size:8px; }
   .time-status { margin-top:5px; font-size:8px; }
   .clock-display { font-size:clamp(24px,8vw,36px); }
+  .local-clock-line { gap:5px; }
+  .local-clock-line > span { font-size:7px; }
   .countdown-display { margin-top:7px; font-size:clamp(22px,7vw,32px); }
   .stopwatch-display { margin-top:12px; font-size:clamp(18px,5.8vw,28px); }
   .clock-card > p { margin-top:6px; font-size:12px; }
+  .world-clock-compose { gap:3px; margin-top:5px; }
+  .world-clock-compose input,.world-clock-compose .time-button { min-height:27px; font-size:7px; }
+  .clock-card #clockStatus { margin-top:2px; font-size:7px; }
+  .world-clock-list { max-height:calc(100% - 125px); }
+  .world-clock-item { min-height:27px; gap:4px; }
+  .world-clock-item time { font-size:8px; }
+  .world-clock-item strong,.world-clock-item small { font-size:7px; }
+  .world-clock-item button { width:18px;height:18px;font-size:9px; }
   .duration-inputs { gap:3px; }
   .alarm-compose,.timer-compose { grid-template-columns:minmax(82px,.75fr) minmax(62px,.65fr) auto; gap:3px; }
   .time-list { max-height:calc(100% - 90px); margin-top:4px; }

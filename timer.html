@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css?v=5" />
-  <link rel="stylesheet" href="timer.css?v=5" />
+  <link rel="stylesheet" href="timer.css?v=6" />
 </head>
 <body class="timer-page">
   <header class="site-header">
@@ -29,8 +29,14 @@
     <section class="time-grid" aria-label="Time tools">
       <article class="time-card clock-card">
         <div class="card-heading"><span>01</span><h2>Clock</h2></div>
-        <output class="clock-display" id="clockTime">--:--:--</output>
+        <div class="local-clock-line"><output class="clock-display" id="clockTime">--:--:--</output><span id="localClockInfo"></span></div>
         <p id="clockDate">Loading date…</p>
+        <div class="world-clock-compose">
+          <input id="clockLocation" type="search" maxlength="60" aria-label="City, town, or country" placeholder="City, town, or country" />
+          <button class="time-button" id="addClock" type="button">Add time</button>
+        </div>
+        <p class="time-status" id="clockStatus" role="status"></p>
+        <div class="world-clock-list" id="worldClockList" aria-label="Saved world clocks"></div>
       </article>
 
       <article class="time-card">
@@ -76,7 +82,7 @@
     <p id="ringMessage">Your alarm is ringing.</p>
     <button class="time-button primary" id="ringStop" type="button">Stop</button>
   </dialog>
-  <script src="timer.js?v=5"></script>
+  <script src="timer.js?v=6"></script>
   <!-- Cloudflare Web Analytics -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
   <!-- End Cloudflare Web Analytics -->

@@ -11,10 +11,26 @@ const formatDuration = milliseconds => {
   return `${pad(hours)}:${pad(minutes)}:${pad(total % 60)}`;
 };
 
+function offsetLabel(timeZone, date = new Date()) {
+  try {
+    const offset = new Intl.DateTimeFormat('en', { timeZone, timeZoneName: 'longOffset' }).formatToParts(date).find(part => part.type === 'timeZoneName')?.value || 'GMT';
+    const match = offset.match(/^GMT([+-])(\d{1,2})(?::(\d{2}))?$/);
+    if (!match) return '+0';
+    return `${match[1]}${Number(match[2])}${match[3] && match[3] !== '00' ? `:${match[3]}` : ''}`;
+  } catch { return ''; }
+}
+
+function placeFromTimeZone(timeZone) {
+  return (timeZone.split('/').pop() || 'Local').replaceAll('_', ' ');
+}
+
 function updateClock() {
   const now = new Date();
+  const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
   byId('clockTime').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  byId('localClockInfo').textContent = `${offsetLabel(localZone, now)} ${placeFromTimeZone(localZone)}`;
   byId('clockDate').textContent = now.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  renderWorldClocks(now);
 }
 
 function makeBellAudio() {
@@ -82,8 +98,54 @@ function readList(key) {
 }
 let alarms = readList('f4m1lyAlarms');
 let timers = readList('f4m1lyTimers');
+let worldClocks = readList('f4m1lyWorldClocks');
 const saveAlarms = () => localStorage.setItem('f4m1lyAlarms', JSON.stringify(alarms));
 const saveTimers = () => localStorage.setItem('f4m1lyTimers', JSON.stringify(timers));
+const saveWorldClocks = () => localStorage.setItem('f4m1lyWorldClocks', JSON.stringify(worldClocks));
+
+function worldClockMarkup(clock, now) {
+  const time = new Intl.DateTimeFormat([], { timeZone: clock.timezone, hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(now);
+  const place = escapeHTML(clock.name);
+  const country = clock.country ? `, ${escapeHTML(clock.country)}` : '';
+  return `<div class="world-clock-item" data-clock-id="${clock.id}"><time>${time}</time><span><strong>${place}${country}</strong><small>${offsetLabel(clock.timezone, now)}</small></span><button type="button" aria-label="Remove ${place}">×</button></div>`;
+}
+function renderWorldClocks(now = new Date()) {
+  const list = byId('worldClockList');
+  const scrollTop = list.scrollTop;
+  list.innerHTML = worldClocks.length ? worldClocks.map(clock => worldClockMarkup(clock, now)).join('') : '';
+  list.scrollTop = scrollTop;
+}
+async function addWorldClock() {
+  const input = byId('clockLocation');
+  const query = input.value.trim();
+  if (query.length < 2) { byId('clockStatus').textContent = 'Write a place first.'; return; }
+  const button = byId('addClock');
+  button.disabled = true;
+  byId('clockStatus').textContent = 'Finding place…';
+  try {
+    const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=en&format=json`);
+    if (!response.ok) throw new Error('Location search is unavailable.');
+    const result = (await response.json()).results?.[0];
+    if (!result?.timezone) throw new Error('Place not found. Try adding its country.');
+    if (!worldClocks.some(clock => clock.timezone === result.timezone && clock.name === result.name)) {
+      worldClocks.push({ id: makeId(), name: result.name, country: result.country || '', timezone: result.timezone });
+      saveWorldClocks();
+    }
+    input.value = '';
+    byId('clockStatus').textContent = `${result.name} added.`;
+    renderWorldClocks();
+  } catch (error) {
+    byId('clockStatus').textContent = error.message || 'Could not find that place.';
+  } finally { button.disabled = false; }
+}
+byId('addClock').addEventListener('click', addWorldClock);
+byId('clockLocation').addEventListener('keydown', event => { if (event.key === 'Enter') addWorldClock(); });
+byId('worldClockList').addEventListener('click', event => {
+  const item = event.target.closest('[data-clock-id]');
+  if (!item || event.target.tagName !== 'BUTTON') return;
+  worldClocks = worldClocks.filter(clock => clock.id !== item.dataset.clockId);
+  saveWorldClocks(); renderWorldClocks();
+});
 
 const legacyAlarm = Number(localStorage.getItem('f4m1lyAlarmAt')) || 0;
 if (legacyAlarm > Date.now() && !alarms.some(alarm => alarm.at === legacyAlarm)) {
