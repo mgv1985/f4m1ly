@@ -101,7 +101,7 @@ function resultText() {
 
 function showResults() {
   const result = resultText();
-  game.innerHTML = `<section class="screen result-screen"><div class="result-card"><p class="eyebrow">Αποτέλεσμα</p><h1>${result.title}</h1>${result.copy ? `<p>${result.copy}</p>` : '<p>Τα κατάφερες υπέροχα!</p>'}<button class="primary-action" id="playAgain" type="button">Παίξε ξανά</button></div></section>`;
+  game.innerHTML = `<section class="screen result-screen"><div class="result-art"><img src="all-good-hero.png" alt="Χαρούμενος ήρωας φτιαγμένος από κόκκινα τουβλάκια" /></div><div class="result-card"><p class="eyebrow">Αποτέλεσμα</p><h1>${result.title}</h1>${result.copy ? `<p>${result.copy}</p>` : '<p>Τα κατάφερες υπέροχα!</p>'}<button class="primary-action" id="playAgain" type="button">Παίξε ξανά</button></div></section>`;
   document.querySelector('#playAgain').addEventListener('click', startQuiz);
 }
 
