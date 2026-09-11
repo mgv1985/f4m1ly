@@ -23,6 +23,19 @@
 .duration-inputs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
 .duration-inputs label span { display:block; margin-bottom:4px; }
 .duration-inputs input { text-align:center; }
+.alarm-compose,.timer-compose { display:grid; grid-template-columns:minmax(112px,.8fr) minmax(86px,.65fr) auto; align-items:end; gap:7px; }
+.timer-compose .duration-inputs { min-width:0; }
+.note-field { min-width:0; }
+.note-field input { padding-inline:8px; }
+.add-time { margin:0; }
+.time-list { max-height:calc(100% - 112px); margin-top:8px; overflow:auto; border-top:1px solid var(--line); scrollbar-width:thin; }
+.time-list-item { min-height:43px; display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid var(--line); }
+.time-list-item > div { min-width:0; display:grid; grid-template-columns:auto minmax(0,1fr); align-items:baseline; gap:8px; margin-right:auto; }
+.time-list-item strong,.time-list-item output { font:500 12px "DM Mono",monospace; white-space:nowrap; }
+.time-list-item span { overflow:hidden; color:var(--muted); font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+.time-list-item button { padding:4px 6px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; font-size:8px; }
+.time-list-item button:hover { border-color:var(--ink); color:var(--ink); }
+.empty-time-list { margin:10px 0 0; color:var(--muted); font-size:9px; }
 .countdown-display { margin-top:clamp(9px,1.8vh,19px); font-size:clamp(25px,3.8vw,52px); }
 .stopwatch-display { margin-top:clamp(18px,4vh,44px); font-size:clamp(23px,3.5vw,48px); }
 .timer-page footer { min-height:0; flex:none; padding:clamp(5px,1vh,12px) clamp(14px,4vw,60px); font-size:9px; }
@@ -51,6 +64,13 @@
   .stopwatch-display { margin-top:12px; font-size:clamp(18px,5.8vw,28px); }
   .clock-card > p { margin-top:6px; font-size:12px; }
   .duration-inputs { gap:3px; }
+  .alarm-compose,.timer-compose { grid-template-columns:minmax(82px,.75fr) minmax(62px,.65fr) auto; gap:3px; }
+  .time-list { max-height:calc(100% - 90px); margin-top:4px; }
+  .time-list-item { min-height:31px; gap:4px; padding:3px 0; }
+  .time-list-item > div { display:flex; gap:5px; }
+  .time-list-item strong,.time-list-item output { font-size:9px; }
+  .time-list-item span { max-width:64px; font-size:8px; }
+  .time-list-item button { padding:3px 4px; font-size:7px; }
   .timer-page footer { display:none; }
 }
 @media(max-height:620px) {

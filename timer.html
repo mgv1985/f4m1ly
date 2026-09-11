@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css?v=5" />
-  <link rel="stylesheet" href="timer.css?v=4" />
+  <link rel="stylesheet" href="timer.css?v=5" />
 </head>
 <body class="timer-page">
   <header class="site-header">
@@ -35,21 +35,28 @@
 
       <article class="time-card">
         <div class="card-heading"><span>02</span><h2>Alarm</h2></div>
-        <label for="alarmTime">Alarm time</label>
-        <input id="alarmTime" type="time" step="60" />
-        <div class="time-actions"><button class="time-button primary" id="setAlarm" type="button">Set alarm</button><button class="time-button" id="cancelAlarm" type="button" disabled>Cancel</button></div>
-        <p class="time-status" id="alarmStatus" role="status">No alarm set.</p>
+        <div class="alarm-compose">
+          <label><span>Time</span><input id="alarmTime" type="time" step="60" /></label>
+          <label class="note-field"><span>Note</span><input id="alarmNote" type="text" maxlength="24" placeholder="Oven" /></label>
+          <button class="time-button primary add-time" id="setAlarm" type="button">Add</button>
+        </div>
+        <p class="time-status" id="alarmStatus" role="status"></p>
+        <div class="time-list" id="alarmList" aria-label="Active alarms"></div>
       </article>
 
       <article class="time-card">
         <div class="card-heading"><span>03</span><h2>Timer</h2></div>
-        <div class="duration-inputs">
-          <label><span>Hours</span><input id="timerHours" type="number" min="0" max="99" value="0" inputmode="numeric" /></label>
-          <label><span>Minutes</span><input id="timerMinutes" type="number" min="0" max="59" value="5" inputmode="numeric" /></label>
-          <label><span>Seconds</span><input id="timerSeconds" type="number" min="0" max="59" value="0" inputmode="numeric" /></label>
+        <div class="timer-compose">
+          <div class="duration-inputs">
+            <label><span>Hr</span><input id="timerHours" type="number" min="0" max="99" value="0" inputmode="numeric" /></label>
+            <label><span>Min</span><input id="timerMinutes" type="number" min="0" max="59" value="5" inputmode="numeric" /></label>
+            <label><span>Sec</span><input id="timerSeconds" type="number" min="0" max="59" value="0" inputmode="numeric" /></label>
+          </div>
+          <label class="note-field"><span>Note</span><input id="timerNote" type="text" maxlength="24" placeholder="Oven" /></label>
+          <button class="time-button primary add-time" id="timerStart" type="button">Start</button>
         </div>
-        <output class="countdown-display" id="timerDisplay">00:05:00</output>
-        <div class="time-actions"><button class="time-button primary" id="timerStart" type="button">Start</button><button class="time-button" id="timerReset" type="button">Reset</button></div>
+        <p class="time-status" id="timerStatus" role="status"></p>
+        <div class="time-list" id="timerList" aria-label="Active timers"></div>
       </article>
 
       <article class="time-card stopwatch-card">
@@ -69,7 +76,7 @@
     <p id="ringMessage">Your alarm is ringing.</p>
     <button class="time-button primary" id="ringStop" type="button">Stop</button>
   </dialog>
-  <script src="timer.js?v=4"></script>
+  <script src="timer.js?v=5"></script>
   <!-- Cloudflare Web Analytics -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
   <!-- End Cloudflare Web Analytics -->
