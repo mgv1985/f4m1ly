@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css?v=5" />
-  <link rel="stylesheet" href="timer.css?v=6" />
+  <link rel="stylesheet" href="timer.css?v=7" />
 </head>
 <body class="timer-page">
   <header class="site-header">
@@ -28,7 +28,7 @@
 
     <section class="time-grid" aria-label="Time tools">
       <article class="time-card clock-card">
-        <div class="card-heading"><span>01</span><h2>Clock</h2></div>
+        <div class="card-heading"><h2>Clock</h2></div>
         <div class="local-clock-line"><output class="clock-display" id="clockTime">--:--:--</output><span id="localClockInfo"></span></div>
         <p id="clockDate">Loading date…</p>
         <div class="world-clock-compose">
@@ -40,7 +40,7 @@
       </article>
 
       <article class="time-card">
-        <div class="card-heading"><span>02</span><h2>Alarm</h2></div>
+        <div class="card-heading"><h2>Alarm</h2></div>
         <div class="alarm-compose">
           <label><span>Time</span><input id="alarmTime" type="time" step="60" /></label>
           <label class="note-field"><span>Note</span><input id="alarmNote" type="text" maxlength="24" /></label>
@@ -51,7 +51,7 @@
       </article>
 
       <article class="time-card">
-        <div class="card-heading"><span>03</span><h2>Timer</h2></div>
+        <div class="card-heading"><h2>Timer</h2></div>
         <div class="timer-compose">
           <div class="duration-inputs">
             <label><span>Hr</span><input id="timerHours" type="number" min="0" max="99" value="0" inputmode="numeric" /></label>
@@ -66,7 +66,7 @@
       </article>
 
       <article class="time-card stopwatch-card">
-        <div class="card-heading"><span>04</span><h2>Stopwatch</h2></div>
+        <div class="card-heading"><h2>Stopwatch</h2></div>
         <output class="stopwatch-display" id="stopwatchDisplay">00:00:00.0</output>
         <p class="time-status" id="stopwatchStatus" role="status">Ready to start.</p>
         <div class="time-actions"><button class="time-button primary" id="stopwatchToggle" type="button">Start</button><button class="time-button" id="stopwatchReset" type="button">Reset</button></div>

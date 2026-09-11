@@ -7,20 +7,20 @@
 .time-grid { min-height:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:repeat(2,minmax(0,1fr)); border-top:2px solid var(--ink); border-left:1px solid var(--line); }
 .time-card { min-width:0; min-height:0; overflow:hidden; padding:clamp(9px,1.45vw,20px); border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:rgba(255,255,255,.1); }
 .card-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:clamp(7px,1.8vh,18px); }
-.card-heading span { color:var(--red); font:500 10px "DM Mono",monospace; }
 .card-heading h2 { font-size:clamp(22px,2.4vw,32px); }
 .time-card label { display:block; margin-bottom:5px; color:var(--muted); font-size:9px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; }
 .time-card input { width:100%; min-width:0; padding:clamp(7px,1.2vh,11px); border:1px solid var(--ink); border-radius:0; background:transparent; color:var(--ink); font:500 clamp(13px,1.4vw,17px) "DM Mono",monospace; }
 .clock-card { background:var(--mustard); }
+.clock-card .card-heading { margin-bottom:3px; }
 .clock-display,.countdown-display,.stopwatch-display { display:block; font:400 clamp(27px,4.5vw,62px) "DM Mono",monospace; letter-spacing:-.07em; line-height:1; }
 .local-clock-line { display:flex; align-items:baseline; gap:clamp(8px,1.5vw,18px); }
 .local-clock-line > span { font:500 clamp(8px,1vw,11px) "DM Mono",monospace; letter-spacing:.04em; white-space:nowrap; }
-.clock-card > p { margin:clamp(7px,1.5vh,15px) 0 0; font-family:"Newsreader",serif; font-size:clamp(14px,1.6vw,20px); }
-.world-clock-compose { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px; margin-top:clamp(7px,1.3vh,13px); }
+.clock-card > p { margin:clamp(4px,.8vh,8px) 0 0; font-family:"Newsreader",serif; font-size:clamp(14px,1.6vw,20px); }
+.world-clock-compose { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px; margin-top:clamp(5px,.9vh,9px); }
 .world-clock-compose input { min-height:32px; padding:5px 8px; font-family:"DM Sans",sans-serif; font-size:10px; }
 .world-clock-compose .time-button { min-height:32px; }
 .clock-card #clockStatus { min-height:0; margin-top:4px; color:rgba(22,33,38,.68); font-family:"DM Sans",sans-serif; font-size:8px; }
-.world-clock-list { max-height:calc(100% - 174px); overflow:auto; scrollbar-width:thin; }
+.world-clock-list { max-height:calc(100% - 146px); overflow:auto; scrollbar-width:thin; }
 .world-clock-item { min-height:35px; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:9px; border-top:1px solid rgba(22,33,38,.2); }
 .world-clock-item time { font:500 11px "DM Mono",monospace; white-space:nowrap; }
 .world-clock-item > span { min-width:0; display:flex; align-items:baseline; gap:5px; overflow:hidden; }
@@ -67,7 +67,7 @@
   .time-card { padding:7px; }
   .card-heading { margin-bottom:5px; }
   .card-heading h2 { font-size:18px; }
-  .card-heading span,.time-card label { font-size:7px; }
+  .time-card label { font-size:7px; }
   .time-card input { padding:5px 3px; font-size:12px; }
   .time-actions { gap:4px; margin-top:6px; }
   .time-button { min-height:29px; padding:4px 7px; font-size:8px; }
@@ -81,7 +81,7 @@
   .world-clock-compose { gap:3px; margin-top:5px; }
   .world-clock-compose input,.world-clock-compose .time-button { min-height:27px; font-size:7px; }
   .clock-card #clockStatus { margin-top:2px; font-size:7px; }
-  .world-clock-list { max-height:calc(100% - 125px); }
+  .world-clock-list { max-height:calc(100% - 106px); }
   .world-clock-item { min-height:27px; gap:4px; }
   .world-clock-item time { font-size:8px; }
   .world-clock-item strong,.world-clock-item small { font-size:7px; }
