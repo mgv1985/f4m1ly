@@ -3,8 +3,8 @@ const toast = document.querySelector('#wordToast');
 const concepts = {
   1: { word: 'μονάδα', lesson: 'μονάδα', option: 'Μονάδα', className: 'one' },
   10: { word: 'δεκάδα', lesson: 'δεκάδα', option: 'Δεκάδα', className: 'ten' },
-  100: { word: 'εκατοντάδα', lesson: 'εκατοντάδες', option: 'Εκατοντάδα', className: 'hundred' },
-  1000: { word: 'χιλιάδα', lesson: 'χιλιάδες', option: 'Χιλιάδα', className: 'thousand' }
+  100: { word: 'εκατοντάδα', lesson: 'εκατοντάδα', option: 'Εκατοντάδα', className: 'hundred' },
+  1000: { word: 'χιλιάδα', lesson: 'χιλιάδα', option: 'Χιλιάδα', className: 'thousand' }
 };
 const lessonOrder = [1, 10, 100, 1000];
 let toastTimer;
@@ -50,14 +50,16 @@ function bindSpokenTargets(selector = '[data-word]') {
 }
 
 function showIntro() {
-  game.innerHTML = `<section class="screen intro-screen"><div><p class="eyebrow">Μαθαίνω παίζοντας</p><h1>Μονάδες, δεκάδες, εκατοντάδες και χιλιάδες.</h1><p class="screen-copy">Μαθαίνω τις μονάδες, δεκάδες, εκατοντάδες και χιλιάδες.</p><div class="intro-actions"><button class="primary-action" id="beginLesson" type="button">Ξεκινάμε</button></div></div><div class="intro-art"><img src="castle.png" alt="Κόκκινο κάστρο φτιαγμένο από τουβλάκια" /></div></section>`;
+  game.innerHTML = `<section class="screen intro-screen"><div class="intro-art"><img src="castle.png" alt="Κόκκινο κάστρο φτιαγμένο από τουβλάκια" /></div><div class="intro-copy"><p class="eyebrow">Μαθαίνω παίζοντας</p><h1>Μονάδες, δεκάδες, εκατοντάδες και χιλιάδες.</h1><p class="screen-copy">Μαθαίνω τις μονάδες, δεκάδες, εκατοντάδες και χιλιάδες.</p><div class="intro-actions"><button class="primary-action" id="beginLesson" type="button">Ξεκινάμε</button></div></div></section>`;
   document.querySelector('#beginLesson').addEventListener('click', () => showLesson(0));
 }
 
 function showLesson(index) {
   const count = lessonOrder[index];
-  game.innerHTML = `<section class="screen lesson-screen single-lesson"><div class="lesson-title"><p class="eyebrow">${index + 1} / ${lessonOrder.length}</p><h1>${concepts[count].option}</h1></div><div class="single-brick-stage">${bricks(count, true)}</div><button class="next-action" id="lessonNext" type="button">${index === lessonOrder.length - 1 ? 'Πάμε στο τεστ' : 'Επόμενο'} →</button></section>`;
+  game.innerHTML = `<section class="screen lesson-screen single-lesson"><div class="lesson-title"><p class="eyebrow">${index + 1} / ${lessonOrder.length}</p><h1>${concepts[count].option}</h1></div><div class="single-brick-stage">${bricks(count, true)}</div><div class="lesson-actions"><button class="previous-action" id="lessonPrevious" type="button">← Πίσω</button><button class="next-action" id="lessonNext" type="button">${index === lessonOrder.length - 1 ? 'Πάμε στο τεστ' : 'Επόμενο'} →</button></div></section>`;
   bindSpokenTargets();
+  setTimeout(() => speak(concepts[count].word), 250);
+  document.querySelector('#lessonPrevious').addEventListener('click', () => index === 0 ? showIntro() : showLesson(index - 1));
   document.querySelector('#lessonNext').addEventListener('click', () => index < lessonOrder.length - 1 ? showLesson(index + 1) : startQuiz());
 }
 
