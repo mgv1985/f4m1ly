@@ -71,9 +71,11 @@ function renderReadingText(text) {
     sentence.dataset.sentence = sentenceIndex;
     const words = [...section.text.matchAll(/\S+/g)];
     words.forEach((match, index) => {
-      const word = document.createElement('span');
+      const word = document.createElement('button');
+      word.type = 'button';
       word.className = 'word';
       word.textContent = match[0];
+      word.dataset.sentence = sentenceIndex;
       word.dataset.start = section.start + match.index;
       word.dataset.end = section.start + match.index + match[0].length;
       sentence.append(word);
@@ -140,13 +142,22 @@ function startReading() {
     readerStatus.textContent = 'Speech synthesis is not available in this browser.';
     return;
   }
+  sections = splitIntoSections(text);
+  renderReadingText(text);
+  beginReadingAt(0);
+}
+
+function beginReadingAt(startIndex) {
+  if (!synth || !sections.length) {
+    readerStatus.textContent = 'There is no readable text available.';
+    return;
+  }
   sessionId += 1;
   synth.cancel();
-  sections = splitIntoSections(text);
-  sectionIndex = 0;
+  sectionIndex = Math.max(0, Math.min(startIndex, sections.length - 1));
   reading = true;
   paused = false;
-  renderReadingText(text);
+  readerStatus.textContent = `Starting from section ${sectionIndex + 1}.`;
   speakSection(sessionId);
 }
 
@@ -181,6 +192,7 @@ function finishReading() {
 }
 
 function updateTextMeta() {
+  if (reading) stopReading('Text changed. Choose Read or select a word to continue.');
   const count = (textInput.value.trim().match(/\S+/g) || []).length;
   wordCount.textContent = `${count.toLocaleString()} ${count === 1 ? 'word' : 'words'}`;
   if (!reading) {
@@ -200,6 +212,11 @@ document.querySelector('#clearButton').addEventListener('click', () => {
   textInput.focus();
 });
 textInput.addEventListener('input', updateTextMeta);
+spokenText.addEventListener('click', event => {
+  const word = event.target.closest('.word[data-sentence]');
+  if (!word || !spokenText.contains(word) || !textInput.value.trim()) return;
+  beginReadingAt(Number(word.dataset.sentence));
+});
 speedInput.addEventListener('input', () => { speedValue.textContent = `${Number(speedInput.value).toFixed(1)}×`; });
 document.querySelector('#smallerText').addEventListener('click', () => {
   readingSize = Math.max(18, readingSize - 2);

@@ -44,7 +44,8 @@ select{width:100%;padding:12px;border:1px solid var(--line);background:var(--bg)
 .reading-heading>span{color:var(--muted);font-size:11px}
 .spoken-text{max-height:48vh;margin-top:20px;padding:clamp(20px,4vw,50px);overflow:auto;border:1px solid var(--line);background:var(--panel);font-size:var(--reading-size);line-height:1.85;letter-spacing:.045em}
 .spoken-text p{margin:0;color:var(--muted)}
-.spoken-text .word{border-radius:3px}
+.spoken-text .word{display:inline;margin:0;padding:0;border:0;border-radius:3px;background:transparent;color:inherit;cursor:pointer;font:inherit;letter-spacing:inherit;text-align:inherit}
+.spoken-text .word:hover{background:rgba(239,181,27,.2);box-shadow:0 0 0 2px rgba(239,181,27,.2)}
 .spoken-text .word.active{background:var(--yellow);color:#111715;box-shadow:0 0 0 3px var(--yellow)}
 .spoken-text .sentence.active-sentence{background:rgba(111,193,194,.11)}
 @media(max-width:800px){.site-header{min-height:58px;padding:8px 12px}
