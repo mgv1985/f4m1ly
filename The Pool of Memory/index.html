@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
   <main class="app-shell">
@@ -66,7 +66,7 @@
 
     <section class="screen centered-screen" id="submitted-screen" aria-labelledby="submitted-title">
       <p class="eyebrow">Score recorded</p><h1 id="submitted-title">You made the board.</h1>
-      <div class="percentile-card"><div class="percentile-top"><span>Age group</span><strong id="result-group">26–40</strong></div><div class="percentile-score"><span>Your score</span><strong id="result-score">0</strong></div><div class="percentile-main"><span>Your standing</span><strong id="result-percentile">Better than 0%</strong></div><p id="result-copy">You performed better than 0% of other players in your age group.</p><small id="result-count"></small></div>
+      <div class="percentile-card"><div class="percentile-top"><span>Age group</span><strong id="result-group">26–40</strong></div><div class="percentile-score"><span>Your score</span><strong id="result-score">0</strong></div><div class="standing-grid"><div class="percentile-main"><span>Among all players</span><strong id="result-overall-percentile">Better than 0%</strong><p id="result-overall-copy">You performed better than 0% of all other players.</p></div><div class="percentile-main"><span>Within your age group</span><strong id="result-age-percentile">Better than 0%</strong><p id="result-age-copy">You performed better than 0% of other players in your age group.</p></div></div><small id="result-count"></small></div>
       <div class="button-row"><button class="secondary-button" id="leaderboard-button" type="button">View age-group leaderboard</button><button class="primary-button" id="play-again-button" type="button">Play again <span>→</span></button></div>
     </section>
 
@@ -79,7 +79,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <footer><span>RM-01 / TRAIN YOUR RECALL</span><span>© 2026</span></footer>
   </main>
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
   <!-- Cloudflare Web Analytics -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
   <!-- End Cloudflare Web Analytics -->

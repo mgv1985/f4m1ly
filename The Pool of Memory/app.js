@@ -65,7 +65,12 @@ async function getScores() {
   try {
     const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` };
     let response = await fetch(`${SCORE_ENDPOINT}?select=nickname,score,age,age_group,level,created_at&order=score.desc&limit=500`, { headers });
-    if (!response.ok && response.status === 400) response = await fetch(`${SCORE_ENDPOINT}?select=score,age,age_group,level,created_at&order=score.desc&limit=500`, { headers });
+    if (!response.ok && response.status === 400) {
+      response = await fetch(`${SCORE_ENDPOINT}?select=score,age,age_group,level,created_at&order=score.desc&limit=500`, { headers });
+      if (!response.ok) throw new Error(`Leaderboard request failed: ${response.status}`);
+      const legacyScores = (await response.json()).map(item => ({ name: 'Player', score: item.score, age: item.age, group: item.age_group, level: item.level, date: item.created_at }));
+      return [...legacyScores, ...localScores()];
+    }
     if (!response.ok) throw new Error(`Leaderboard request failed: ${response.status}`);
     return (await response.json()).map(item => ({ name: item.nickname || 'Player', score: item.score, age: item.age, group: item.age_group, level: item.level, date: item.created_at }));
   } catch (error) {
@@ -111,10 +116,19 @@ async function submitScore(event) {
   if (!name || name.length > 20) { $('#form-error').textContent = 'Enter a name between 1 and 20 characters.'; return; }
   if (!Number.isInteger(age) || age < 1 || age > 120) { $('#form-error').textContent = 'Enter a whole number between 1 and 120.'; return; }
   const group = ageGroup(age);
-  const prior = (await getScores()).filter(item => item.group === group);
-  const percentile = scorePercentile(state.score, prior);
+  const allPrior = await getScores();
+  const prior = allPrior.filter(item => item.group === group);
+  const overallPercentile = scorePercentile(state.score, allPrior);
+  const agePercentile = scorePercentile(state.score, prior);
   await saveScore({ name, score: state.score, age, group, level: state.highestLevel, date: new Date().toISOString() });
-  $('#result-group').textContent = group; $('#result-score').textContent = state.score.toLocaleString('en-US'); $('#result-percentile').textContent = percentile === null ? 'First score' : `Better than ${percentile}%`; $('#result-copy').textContent = prior.length ? `${name}, you performed better than ${percentile}% of other players in the ${group} age group.` : `${name}, you are the first player in the ${group} age group. Your standing will update as more people play.`; $('#result-count').textContent = `Compared with ${prior.length} other submitted score${prior.length === 1 ? '' : 's'} in your age group.`; state.selectedGroup = group; showScreen('submitted');
+  $('#result-group').textContent = group;
+  $('#result-score').textContent = state.score.toLocaleString('en-US');
+  $('#result-overall-percentile').textContent = overallPercentile === null ? 'First score' : `Better than ${overallPercentile}%`;
+  $('#result-age-percentile').textContent = agePercentile === null ? 'First in group' : `Better than ${agePercentile}%`;
+  $('#result-overall-copy').textContent = allPrior.length ? `${name}, you performed better than ${overallPercentile}% of all other players.` : `${name}, yours is the first submitted score.`;
+  $('#result-age-copy').textContent = prior.length ? `You also performed better than ${agePercentile}% of other players in the ${group} age group.` : `You are the first player in the ${group} age group.`;
+  $('#result-count').textContent = `Compared with ${allPrior.length} score${allPrior.length === 1 ? '' : 's'} overall and ${prior.length} in your age group.`;
+  state.selectedGroup = group; showScreen('submitted');
 }
 function showToast(message) { const toast = $('#toast'); toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1000); }
 function startGame() { state.level = 1; state.score = 0; state.lives = 3; state.highestLevel = 1; startRound(); }

@@ -97,3 +97,10 @@ td:nth-child(3){color:var(--coral);font-weight:500}
   #scores-screen th:nth-child(4),#scores-screen td:nth-child(4){width:13%}
   #scores-screen th:nth-child(6),#scores-screen td:nth-child(6){width:31%}
 }
+
+/* Two-part percentile explanation */
+.standing-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0 14px}
+.standing-grid .percentile-main{margin:0;padding:18px;border:1px solid var(--line);background:rgba(17,8,47,.38)}
+.standing-grid .percentile-main strong{font-size:clamp(20px,3.1vw,34px)}
+.standing-grid .percentile-main p{margin-top:12px;color:#d7afd0}
+@media(max-width:680px){.standing-grid{grid-template-columns:1fr;gap:8px}.standing-grid .percentile-main{padding:12px}.standing-grid .percentile-main p{margin-top:7px;font-size:12px}}
