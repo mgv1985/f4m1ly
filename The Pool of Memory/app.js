@@ -41,7 +41,7 @@ function renderBoard(numbers) {
   });
 }
 function startRound() {
-  clearInterval(state.timer); state.phase = 'memorizing'; state.expectedIndex = 0; updateHud(); const numbers = uniqueNumbers(state.level + 4, state.level + 14); renderBoard(numbers); showScreen('game');
+  clearInterval(state.timer); state.phase = 'memorizing'; state.expectedIndex = 0; updateHud(); const numbers = uniqueNumbers(state.level + 2, state.level + 12); renderBoard(numbers); showScreen('game');
   const duration = state.level + 4; const end = Date.now() + duration * 1000;
   setPhase('MEMORIZE', `${duration}.0s`); $('#game-hint').textContent = 'Keep the order in your head.';
   state.timer = setInterval(() => { const remaining = Math.max(0, end - Date.now()) / 1000; $('#phase-time').textContent = `${remaining.toFixed(1)}s`; if (remaining <= 0) { clearInterval(state.timer); hideTiles(); } }, 80);
@@ -57,15 +57,17 @@ function selectTile(tile, button) {
 }
 function completeRound() { state.phase = 'levelComplete'; playTone('success'); showToast(`LEVEL ${state.level} COMPLETE`); setPhase('COMPLETE'); $('#game-hint').textContent = 'Nice recall. Preparing the next round…'; setTimeout(() => { state.level += 1; state.highestLevel = Math.max(state.highestLevel, state.level); startRound(); }, 900); }
 function failRound(button) { state.phase = 'levelFailed'; button.classList.add('is-wrong'); playTone('failure'); state.lives -= 1; updateHud(); document.querySelectorAll('.tile').forEach(tile => tile.classList.add('is-revealed')); showToast('WRONG ORDER'); setPhase('ROUND FAILED'); $('#game-hint').textContent = state.lives ? 'The sequence is revealed. Resetting your level…' : 'No lives left.'; setTimeout(() => { if (!state.lives) endGame(); else { state.level = Math.max(1, state.level - 1); startRound(); } }, 1300); }
-function endGame() { clearInterval(state.timer); state.phase = 'gameOver'; $('#final-score').textContent = state.score.toLocaleString('en-US'); $('#final-level').textContent = state.highestLevel; $('#age-input').value = ''; $('#form-error').textContent = ''; showScreen('gameover'); }
+function endGame() { clearInterval(state.timer); state.phase = 'gameOver'; $('#final-score').textContent = state.score.toLocaleString('en-US'); $('#final-level').textContent = state.highestLevel; $('#nickname-input').value = ''; $('#age-input').value = ''; $('#form-error').textContent = ''; showScreen('gameover'); }
 function ageGroup(age) { if (age < 18) return 'Under 18'; if (age <= 25) return '18–25'; if (age <= 40) return '26–40'; if (age <= 60) return '41–60'; return 'Over 60'; }
 function localScores() { try { return JSON.parse(localStorage.getItem('recallArcadeScores')) || []; } catch { return []; } }
 function cacheLocalScore(record) { const scores = localScores(); scores.push(record); localStorage.setItem('recallArcadeScores', JSON.stringify(scores)); }
 async function getScores() {
   try {
-    const response = await fetch(`${SCORE_ENDPOINT}?select=score,age,age_group,level,created_at&order=score.desc&limit=500`, { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } });
+    const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` };
+    let response = await fetch(`${SCORE_ENDPOINT}?select=nickname,score,age,age_group,level,created_at&order=score.desc&limit=500`, { headers });
+    if (!response.ok && response.status === 400) response = await fetch(`${SCORE_ENDPOINT}?select=score,age,age_group,level,created_at&order=score.desc&limit=500`, { headers });
     if (!response.ok) throw new Error(`Leaderboard request failed: ${response.status}`);
-    return (await response.json()).map(item => ({ score: item.score, age: item.age, group: item.age_group, level: item.level, date: item.created_at }));
+    return (await response.json()).map(item => ({ name: item.nickname || 'Player', score: item.score, age: item.age, group: item.age_group, level: item.level, date: item.created_at }));
   } catch (error) {
     console.warn('Using this device’s saved scores.', error);
     return localScores();
@@ -73,7 +75,7 @@ async function getScores() {
 }
 async function saveScore(record) {
   try {
-    const response = await fetch(SCORE_ENDPOINT, { method: 'POST', headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ score: record.score, age: record.age, age_group: record.group, level: record.level }) });
+    const response = await fetch(SCORE_ENDPOINT, { method: 'POST', headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ nickname: record.name, score: record.score, age: record.age, age_group: record.group, level: record.level }) });
     if (!response.ok) throw new Error(`Score submission failed: ${response.status}`);
     return true;
   } catch (error) {
@@ -92,18 +94,27 @@ async function renderScores(group = state.selectedGroup) {
   const scores = (await getScores()).filter(item => item.group === group).sort((a, b) => b.score - a.score);
   $('#empty-state').textContent = 'No scores here yet. Be the first.';
   $('#empty-state').style.display = scores.length ? 'none' : 'block';
-  scores.slice(0, 50).forEach((item, index) => { const row = document.createElement('tr'); row.innerHTML = `<td>${String(index + 1).padStart(2, '0')}</td><td>${item.score.toLocaleString('en-US')}</td><td>${item.level}</td><td>${item.age}</td><td>${new Date(item.date).toLocaleDateString()}</td>`; $('#scores-body').appendChild(row); });
+  scores.slice(0, 50).forEach((item, index) => {
+    const percentile = scorePercentile(item.score, scores.filter(candidate => candidate !== item));
+    const row = document.createElement('tr');
+    [String(index + 1).padStart(2, '0'), item.name || 'Player', item.score.toLocaleString('en-US'), item.level, item.age, percentile === null ? 'No comparison yet' : `Better than ${percentile}%`, new Date(item.date).toLocaleDateString()].forEach(value => {
+      const cell = document.createElement('td'); cell.textContent = value; row.appendChild(cell);
+    });
+    $('#scores-body').appendChild(row);
+  });
 }
+function scorePercentile(score, otherScores) { if (!otherScores.length) return null; return Math.round((otherScores.filter(item => item.score < score).length / otherScores.length) * 100); }
 async function submitScore(event) {
   event.preventDefault();
+  const name = $('#nickname-input').value.trim();
   const age = Number($('#age-input').value);
+  if (!name || name.length > 20) { $('#form-error').textContent = 'Enter a name between 1 and 20 characters.'; return; }
   if (!Number.isInteger(age) || age < 1 || age > 120) { $('#form-error').textContent = 'Enter a whole number between 1 and 120.'; return; }
   const group = ageGroup(age);
   const prior = (await getScores()).filter(item => item.group === group);
-  const lower = prior.filter(item => item.score < state.score).length;
-  const percentile = prior.length ? Math.round((lower / prior.length) * 100) : 0;
-  await saveScore({ score: state.score, age, group, level: state.highestLevel, date: new Date().toISOString() });
-  $('#result-group').textContent = group; $('#result-score').textContent = state.score.toLocaleString('en-US'); $('#result-percentile').textContent = `${percentile}th`; $('#result-copy').textContent = `You scored higher than ${percentile}% of players in your age group.`; $('#result-count').textContent = `Based on ${prior.length + 1} submitted score${prior.length === 0 ? '' : 's'} in your age group.`; state.selectedGroup = group; showScreen('submitted');
+  const percentile = scorePercentile(state.score, prior);
+  await saveScore({ name, score: state.score, age, group, level: state.highestLevel, date: new Date().toISOString() });
+  $('#result-group').textContent = group; $('#result-score').textContent = state.score.toLocaleString('en-US'); $('#result-percentile').textContent = percentile === null ? 'First score' : `Better than ${percentile}%`; $('#result-copy').textContent = prior.length ? `${name}, you performed better than ${percentile}% of other players in the ${group} age group.` : `${name}, you are the first player in the ${group} age group. Your standing will update as more people play.`; $('#result-count').textContent = `Compared with ${prior.length} other submitted score${prior.length === 1 ? '' : 's'} in your age group.`; state.selectedGroup = group; showScreen('submitted');
 }
 function showToast(message) { const toast = $('#toast'); toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1000); }
 function startGame() { state.level = 1; state.score = 0; state.lives = 3; state.highestLevel = 1; startRound(); }

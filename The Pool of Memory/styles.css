@@ -74,3 +74,26 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
   .topbar-actions { justify-content:flex-start; }
   .archive-link { font-size:10px; }
 }
+
+/* Named leaderboard and explained percentile */
+.score-fields{display:grid;grid-template-columns:minmax(180px,1fr) 120px auto;gap:10px;align-items:end}
+.score-fields label{display:flex;flex-direction:column;gap:8px;margin:0}
+.score-fields input{width:100%;min-width:0;height:48px;border:2px solid var(--line);border-radius:0;background:#160b3b;color:#f8d9ae;padding:12px 14px;font:500 14px "DM Mono",monospace}
+.score-fields input:focus{outline:2px solid var(--coral);outline-offset:2px}
+.score-fields .primary-button{height:48px;white-space:nowrap}
+.percentile-main{display:block}
+.percentile-main span{display:block;margin-bottom:8px}
+.percentile-main strong{display:block;font-size:clamp(25px,5vw,42px);letter-spacing:-.045em;line-height:1.08}
+td:nth-child(2){color:#f8d9ae}
+td:nth-child(3){color:var(--coral);font-weight:500}
+
+@media (max-width:680px){
+  .score-fields{grid-template-columns:minmax(0,1fr) 90px}
+  .score-fields .primary-button{grid-column:1/-1}
+  #scores-screen th:nth-child(5),#scores-screen td:nth-child(5),#scores-screen th:nth-child(7),#scores-screen td:nth-child(7){display:none}
+  #scores-screen th:nth-child(1),#scores-screen td:nth-child(1){width:12%}
+  #scores-screen th:nth-child(2),#scores-screen td:nth-child(2){width:25%}
+  #scores-screen th:nth-child(3),#scores-screen td:nth-child(3){width:19%}
+  #scores-screen th:nth-child(4),#scores-screen td:nth-child(4){width:13%}
+  #scores-screen th:nth-child(6),#scores-screen td:nth-child(6){width:31%}
+}
