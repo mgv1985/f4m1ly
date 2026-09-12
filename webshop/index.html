@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1ea">
+  <title>Shoes Cabinet · F4M1LY</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="F4M1LY main page">
+      <span class="brand-mark" aria-hidden="true">◆</span>
+      <span>Shoes Cabinet</span>
+    </a>
+    <nav aria-label="Main navigation">
+      <a href="../index.html">Main page</a>
+      <a href="../The Pool of Memory/index.html?v=3">Pool of Memory</a>
+      <a href="../sudoku game/index.html?v=13">Gridline</a>
+      <a href="../counting/index.html">Counting</a>
+      <a href="../timer.html?v=6">Timer</a>
+      <a href="../tts.html">Text to Speech</a>
+      <a class="archive-link" href="../archive.html?v=3">Family archive ↗</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="catalogue-heading">
+      <div>
+        <p class="eyebrow">THE FAMILY WARDROBE</p>
+        <h1>Shoes Cabinet</h1>
+        <p class="intro">Find a pair, then select it to see exactly where it is stored.</p>
+      </div>
+      <p class="item-count" id="itemCount" aria-live="polite"></p>
+    </section>
+
+    <section class="catalogue-tools" aria-label="Catalogue filters">
+      <div class="filters" id="filters">
+        <button class="filter active" type="button" data-filter="All" aria-pressed="true">All</button>
+        <button class="filter" type="button" data-filter="Gabriel" aria-pressed="false">Gabriel</button>
+        <button class="filter" type="button" data-filter="Anastasia" aria-pressed="false">Anastasia</button>
+        <button class="filter" type="button" data-filter="Kids" aria-pressed="false">Kids</button>
+      </div>
+      <label class="search">
+        <span class="visually-hidden">Search shoes</span>
+        <input id="searchInput" type="search" placeholder="Search shoes" autocomplete="off">
+      </label>
+    </section>
+
+    <section class="product-grid" id="productGrid" aria-label="Shoes"></section>
+    <p class="empty-state" id="emptyState" hidden>No shoes match this search.</p>
+  </main>
+
+  <dialog class="location-dialog" id="locationDialog">
+    <div class="dialog-panel">
+      <button class="dialog-close" id="dialogClose" type="button" aria-label="Close">×</button>
+      <div class="location-image-wrap">
+        <img id="locationImage" alt="" decoding="async">
+      </div>
+      <div class="dialog-copy">
+        <p class="eyebrow">STORAGE LOCATION</p>
+        <h2 id="dialogTitle"></h2>
+        <p>The box or cabinet location shown above is where this pair can be found.</p>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="catalogue.js?v=1"></script>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
+</body>
+</html>
