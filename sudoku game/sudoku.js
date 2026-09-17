@@ -1,4 +1,4 @@
-export const levels = { Easy: 1, Medium: 1.5, Hard: 2 };
+export const levels = { Easy: 1, Medium: 1.5, Hard: 2, 'Ultra Hard': 3 };
 export function calculateScore(seconds, difficulty) { return Math.max(0, Math.round((10000-seconds)*levels[difficulty])); }
 const digits = [1,2,3,4,5,6,7,8,9];
 const units = [...digits.map((_,r)=>digits.map((_,c)=>r*9+c)),...digits.map((_,c)=>digits.map((_,r)=>r*9+c)),...digits.map((_,b)=>digits.map((_,i)=>Math.floor(b/3)*27+b%3*3+Math.floor(i/3)*9+i%3))];
@@ -23,9 +23,29 @@ export function rate(board) {
  } return {difficulty:hidden?'Medium':'Easy',steps,hidden};
 }
 export function generate(difficulty) {
+ if(difficulty==='Ultra Hard')return generateUltraHard();
  for(let attempt=0;attempt<500;attempt++){
   const solution=solve(Array(81).fill(0),1,true).solution, puzzle=solution.slice();
   const target={Easy:40,Medium:30,Hard:24}[difficulty]; let clues=81;
   for(const i of shuffle(Array.from({length:81},(_,i)=>i))){const old=puzzle[i];puzzle[i]=0;if(solve(puzzle).count!==1){puzzle[i]=old;continue;}clues--;const rating=rate(puzzle);if(clues<=target&&rating.difficulty===difficulty)return {puzzle,solution,rating};}
  } throw Error('Could not generate this difficulty. Please try again.');
+}
+
+// A famously difficult, uniquely solvable pattern. Row, column, digit and
+// transpose transformations preserve both its single solution and difficulty.
+const ultraHardTemplate='100007090030020008009600500005300900010080002600004000300000010040000007007000300'.split('').map(Number);
+function generateUltraHard(){
+ const bands=shuffle([0,1,2]),stacks=shuffle([0,1,2]);
+ const rows=bands.flatMap(b=>shuffle([0,1,2]).map(r=>b*3+r));
+ const columns=stacks.flatMap(s=>shuffle([0,1,2]).map(c=>s*3+c));
+ const replacements=shuffle([...digits]),transpose=Math.random()<.5;
+ const puzzle=Array.from({length:81},(_,index)=>{
+  const row=Math.floor(index/9),column=index%9;
+  const source=transpose?columns[column]*9+rows[row]:rows[row]*9+columns[column];
+  const value=ultraHardTemplate[source];
+  return value?replacements[value-1]:0;
+ });
+ const result=solve(puzzle,2);
+ if(result.count!==1)throw Error('Could not create a uniquely solvable Ultra Hard puzzle. Please try again.');
+ return {puzzle,solution:result.solution,rating:{difficulty:'Ultra Hard',clues:puzzle.filter(Boolean).length}};
 }

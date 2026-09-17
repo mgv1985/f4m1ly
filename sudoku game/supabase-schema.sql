@@ -3,7 +3,7 @@ create table if not exists public.sudoku_scores (
  nickname varchar(20) not null check (char_length(trim(nickname)) between 1 and 20),
  score integer not null check (score >= 0),
  solve_time integer not null check (solve_time >= 0),
- difficulty text not null check (difficulty in ('Easy','Medium','Hard')),
+  difficulty text not null check (difficulty in ('Easy','Medium','Hard','Ultra Hard')),
  created_at timestamptz not null default now()
 );
 alter table public.sudoku_scores enable row level security;
@@ -12,4 +12,4 @@ grant select, insert on table public.sudoku_scores to anon, authenticated;
 drop policy if exists "Anyone can read Sudoku scores" on public.sudoku_scores;
 drop policy if exists "Anyone can submit a valid Sudoku score" on public.sudoku_scores;
 create policy "Anyone can read Sudoku scores" on public.sudoku_scores for select to anon, authenticated using (true);
-create policy "Anyone can submit a valid Sudoku score" on public.sudoku_scores for insert to anon, authenticated with check (char_length(trim(nickname)) between 1 and 20 and score >= 0 and solve_time >= 0 and difficulty in ('Easy','Medium','Hard'));
+create policy "Anyone can submit a valid Sudoku score" on public.sudoku_scores for insert to anon, authenticated with check (char_length(trim(nickname)) between 1 and 20 and score >= 0 and solve_time >= 0 and difficulty in ('Easy','Medium','Hard','Ultra Hard'));
