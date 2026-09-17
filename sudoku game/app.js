@@ -71,14 +71,20 @@ async function printSudoku(kind) {
   if(busy)return;
   busy=true;
   try {
-    if(state.status!=='printed'&&!await confirmAction('Printing stops the timer and permanently removes this game from high-score eligibility, including any submitted score. This applies even if you cancel the print dialog.','Continue to print'))return;
-    const g=await api('games/'+state.gameId+'/print',{kind});
-    clearInterval(state.timerId);applyGame(g);renderGame();
+    let printValues;
+    if(kind==='solution'){
+      if(state.status!=='printed'&&!await confirmAction('Printing the solution stops the timer and permanently removes this game from high-score eligibility, including any submitted score. This applies even if you cancel the print dialog.','Continue to print'))return;
+      const g=await api('games/'+state.gameId+'/print',{kind});
+      clearInterval(state.timerId);applyGame(g);renderGame();
+      printValues=g.printValues;
+    }else{
+      printValues=state.puzzle.flat();
+    }
     document.querySelector('[data-print-preview]')?.remove();
     const preview=document.createElement('dialog');preview.dataset.printPreview='';
     preview.innerHTML='<div class="print-toolbar"><strong>Ready to print</strong><button class="button" data-close-print>Close</button><button class="button primary" data-open-print>Print</button></div><p>Choose portrait A4 or Letter. Turn off headers and footers if your browser adds them.</p><div class="print-sheet"></div>';
     const sheet=preview.querySelector('.print-sheet');
-    sheet.innerHTML=printDocument(g.printValues).match(/<svg[\s\S]*<\/svg>/)[0];
+    sheet.innerHTML=printDocument(printValues).match(/<svg[\s\S]*<\/svg>/)[0];
     preview.querySelector('[data-close-print]').onclick=()=>{preview.close();preview.remove();};
     preview.querySelector('[data-open-print]').onclick=()=>window.print();
     document.body.append(preview);preview.showModal();
