@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11130f">
   <title>RPG · F4M1LY</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
   <header class="site-header">
@@ -66,7 +66,7 @@
         </aside>
 
         <section class="map-panel">
-          <div class="map-toolbar"><strong>Placement map</strong><span id="mapStatus">Waiting for a map</span></div>
+          <div class="map-toolbar"><strong>Placement map</strong><div><span id="mapStatus">Waiting for a map</span><button id="resetTableButton" type="button">Reset table</button></div></div>
           <div class="canvas-wrap setup-canvas-wrap" id="setupCanvasWrap">
             <canvas id="setupCanvas" width="1200" height="760" aria-label="Token placement map"></canvas>
             <div class="canvas-placeholder" id="canvasPlaceholder"><span>＋</span><strong>Your map will appear here</strong></div>
@@ -89,7 +89,7 @@
     </section>
   </main>
 
-  <script src="app.js?v=2"></script>
+  <script src="app.js?v=3"></script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
 </body>
 </html>

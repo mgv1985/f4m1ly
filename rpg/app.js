@@ -8,15 +8,14 @@ const fogCanvas=document.createElement('canvas');
 const fogContext=fogCanvas.getContext('2d');
 const mapImage=new Image();
 const tokens=[];
-let mapReady=false,selectedToken=null,draggingToken=null,mode='setup';
+let mapReady=false,selectedToken=null,draggingToken=null,panning=null,mode='setup';
 const colors={hero:'#e5bf49',monster:'#c74b3e','monster-xl':'#77281f',npc:'#5a9b7b'};
 
 function readFile(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});}
 function loadImage(source){return new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=source;});}
 function resizeForMap(){
- const scale=Math.min(1,2200/mapImage.naturalWidth,1600/mapImage.naturalHeight);
- const width=Math.max(1,Math.round(mapImage.naturalWidth*scale));
- const height=Math.max(1,Math.round(mapImage.naturalHeight*scale));
+ const width=Math.max(1,mapImage.naturalWidth);
+ const height=Math.max(1,mapImage.naturalHeight);
  for(const canvas of [setupCanvas,playCanvas,fogCanvas]){canvas.width=width;canvas.height=height;}
  fogContext.fillStyle='#000';fogContext.fillRect(0,0,width,height);
 }
@@ -84,15 +83,17 @@ document.querySelectorAll('[data-token-input]').forEach(input=>input.addEventLis
 function pointerDown(canvas,event){
  if(!mapReady)return;event.preventDefault();const point=pointFromEvent(canvas,event),hit=hitToken(point);
  if(hit){draggingToken=hit;canvas.setPointerCapture(event.pointerId);return;}
- if(mode==='setup'&&selectedToken){const token=tokens.find(item=>item.id===selectedToken);if(token){token.x=point.x;token.y=point.y;token.placed=true;selectedToken=null;drawSetup();renderLibrary();updateReady();}}
+ if(mode==='setup'&&selectedToken){const token=tokens.find(item=>item.id===selectedToken);if(token){token.x=point.x;token.y=point.y;token.placed=true;selectedToken=null;drawSetup();renderLibrary();updateReady();return;}}
+ const wrapper=canvas.parentElement;panning={x:event.clientX,y:event.clientY,left:wrapper.scrollLeft,top:wrapper.scrollTop,wrapper};canvas.setPointerCapture(event.pointerId);
 }
 function pointerMove(canvas,event){
+ if(panning){event.preventDefault();panning.wrapper.scrollLeft=panning.left-(event.clientX-panning.x);panning.wrapper.scrollTop=panning.top-(event.clientY-panning.y);return;}
  if(!draggingToken)return;event.preventDefault();const point=pointFromEvent(canvas,event),radius=tokenRadius(draggingToken);
  draggingToken.x=Math.max(radius,Math.min(canvas.width-radius,point.x));draggingToken.y=Math.max(radius,Math.min(canvas.height-radius,point.y));
  if(mode==='play'){revealAt(draggingToken);drawPlay();}else drawSetup();
 }
-function pointerUp(canvas,event){if(!draggingToken)return;pointerMove(canvas,event);draggingToken=null;try{canvas.releasePointerCapture(event.pointerId);}catch{}updateReady();}
-for(const canvas of [setupCanvas,playCanvas]){canvas.addEventListener('pointerdown',event=>pointerDown(canvas,event));canvas.addEventListener('pointermove',event=>pointerMove(canvas,event));canvas.addEventListener('pointerup',event=>pointerUp(canvas,event));canvas.addEventListener('pointercancel',()=>draggingToken=null);}
+function pointerUp(canvas,event){if(draggingToken)pointerMove(canvas,event);draggingToken=null;panning=null;try{canvas.releasePointerCapture(event.pointerId);}catch{}updateReady();}
+for(const canvas of [setupCanvas,playCanvas]){canvas.addEventListener('pointerdown',event=>pointerDown(canvas,event));canvas.addEventListener('pointermove',event=>pointerMove(canvas,event));canvas.addEventListener('pointerup',event=>pointerUp(canvas,event));canvas.addEventListener('pointercancel',()=>{draggingToken=null;panning=null;});}
 document.querySelector('#visionRadius').addEventListener('input',event=>{document.querySelector('#visionValue').textContent=`${event.target.value}%`;});
 document.querySelector('#tokenSize').addEventListener('input',event=>{document.querySelector('#tokenSizeValue').textContent=`${event.target.value}%`;if(mode==='play')drawPlay();else drawSetup();});
 document.querySelector('#readyButton').addEventListener('click',()=>{
@@ -104,4 +105,12 @@ document.querySelector('#readyButton').addEventListener('click',()=>{
 document.querySelector('#resetFogButton').addEventListener('click',()=>{fogContext.globalCompositeOperation='source-over';fogContext.fillStyle='#000';fogContext.fillRect(0,0,fogCanvas.width,fogCanvas.height);tokens.filter(token=>token.placed&&token.type==='hero').forEach(revealAt);drawPlay();});
 document.querySelector('#returnButton').addEventListener('click',()=>{mode='setup';playView.hidden=true;setupView.hidden=false;document.body.classList.remove('playing');drawSetup();window.scrollTo(0,0);});
 document.querySelector('#fullscreenButton').addEventListener('click',async()=>{try{if(!document.fullscreenElement)await document.querySelector('#playCanvasWrap').requestFullscreen();else await document.exitFullscreen();}catch{}});
+document.querySelector('#resetTableButton').addEventListener('click',()=>{
+ if(!mapReady&&!tokens.length)return;
+ if(!confirm('Clear the map and every token from this table?'))return;
+ mapReady=false;selectedToken=null;draggingToken=null;panning=null;tokens.length=0;mapImage.removeAttribute('src');
+ setupCanvas.width=1200;setupCanvas.height=760;setupContext.clearRect(0,0,setupCanvas.width,setupCanvas.height);
+ document.querySelector('#mapInput').value='';document.querySelector('#mapStatus').textContent='Waiting for a map';document.querySelector('#canvasPlaceholder').hidden=false;
+ document.querySelector('#setupCanvasWrap').scrollTo(0,0);renderLibrary();updateReady();
+});
 document.documentElement.dataset.rpgReady='true';
