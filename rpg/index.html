@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11130f">
   <title>RPG · F4M1LY</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=1">
+  <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
   <header class="site-header">
@@ -45,14 +45,19 @@
             <h2>Add tokens</h2>
             <label class="token-upload hero-upload">Heroes<input data-token-input="hero" type="file" accept="image/*" multiple></label>
             <label class="token-upload monster-upload">Monsters<input data-token-input="monster" type="file" accept="image/*" multiple></label>
+            <label class="token-upload monster-xl-upload">XL Monsters<input data-token-input="monster-xl" type="file" accept="image/*" multiple></label>
             <label class="token-upload npc-upload">NPCs<input data-token-input="npc" type="file" accept="image/*" multiple></label>
             <div class="token-library" id="tokenLibrary"><p class="empty-library">Your tokens will appear here.</p></div>
           </section>
 
           <section class="tool-section">
             <span class="step">03</span>
-            <h2>Set hero vision</h2>
-            <div class="vision-control"><input id="visionRadius" type="range" min="5" max="30" value="14"><output id="visionValue">14%</output></div>
+            <h2>Set token size</h2>
+            <div class="range-label"><span>All tokens</span><output id="tokenSizeValue">7%</output></div>
+            <div class="vision-control"><input id="tokenSize" type="range" min="3" max="14" value="7" aria-label="Size of all tokens"></div>
+            <h2 class="vision-heading">Set hero vision</h2>
+            <div class="range-label"><span>Visible radius</span><output id="visionValue">14%</output></div>
+            <div class="vision-control"><input id="visionRadius" type="range" min="5" max="30" value="14" aria-label="Hero vision radius"></div>
             <p class="hint">Select a token below, then tap the map to place it. Drag placed tokens to adjust them.</p>
           </section>
 
@@ -80,11 +85,11 @@
         </div>
       </div>
       <div class="play-canvas-wrap" id="playCanvasWrap"><canvas id="playCanvas" width="1200" height="760" aria-label="RPG map with fog of war"></canvas></div>
-      <div class="legend"><span class="hero-dot">Heroes reveal the map</span><span class="monster-dot">Monsters</span><span class="npc-dot">NPCs</span></div>
+      <div class="legend"><span class="hero-dot">Heroes reveal the map</span><span class="monster-dot">Monsters</span><span class="monster-xl-dot">XL Monsters</span><span class="npc-dot">NPCs</span></div>
     </section>
   </main>
 
-  <script src="app.js?v=1"></script>
+  <script src="app.js?v=2"></script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
 </body>
 </html>

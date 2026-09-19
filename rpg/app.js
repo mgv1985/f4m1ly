@@ -9,7 +9,7 @@ const fogContext=fogCanvas.getContext('2d');
 const mapImage=new Image();
 const tokens=[];
 let mapReady=false,selectedToken=null,draggingToken=null,mode='setup';
-const colors={hero:'#e5bf49',monster:'#c74b3e',npc:'#5a9b7b'};
+const colors={hero:'#e5bf49',monster:'#c74b3e','monster-xl':'#77281f',npc:'#5a9b7b'};
 
 function readFile(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});}
 function loadImage(source){return new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=source;});}
@@ -21,10 +21,13 @@ function resizeForMap(){
  fogContext.fillStyle='#000';fogContext.fillRect(0,0,width,height);
 }
 function pointFromEvent(canvas,event){const rect=canvas.getBoundingClientRect();return{x:(event.clientX-rect.left)*canvas.width/rect.width,y:(event.clientY-rect.top)*canvas.height/rect.height};}
-function tokenRadius(){return Math.max(18,Math.min(setupCanvas.width,setupCanvas.height)*.035);}
+function tokenRadius(token){
+ const base=Math.max(10,Math.min(setupCanvas.width,setupCanvas.height)*(Number(document.querySelector('#tokenSize').value)/200));
+ return token?.type==='monster-xl'?base*2:base;
+}
 function visionRadius(){return Math.min(playCanvas.width,playCanvas.height)*(Number(document.querySelector('#visionRadius').value)/100);}
 function drawToken(context,token,dim=false){
- const radius=tokenRadius();context.save();context.globalAlpha=dim ? .55 : 1;
+ const radius=tokenRadius(token);context.save();context.globalAlpha=dim ? .55 : 1;
  context.beginPath();context.arc(token.x,token.y,radius,0,Math.PI*2);context.clip();
  context.drawImage(token.image,token.x-radius,token.y-radius,radius*2,radius*2);context.restore();
  context.beginPath();context.arc(token.x,token.y,radius+2,0,Math.PI*2);context.strokeStyle=colors[token.type];context.lineWidth=Math.max(3,radius*.13);context.stroke();
@@ -53,7 +56,7 @@ function drawPlay(){
  playContext.drawImage(fogCanvas,0,0);
  for(const token of tokens.filter(item=>item.placed&&tokenIsRevealed(item)))drawToken(playContext,token);
 }
-function hitToken(point){const radius=tokenRadius()*1.25;return [...tokens].reverse().find(token=>token.placed&&Math.hypot(token.x-point.x,token.y-point.y)<=radius);}
+function hitToken(point){return [...tokens].reverse().find(token=>token.placed&&Math.hypot(token.x-point.x,token.y-point.y)<=tokenRadius(token)*1.25);}
 function renderLibrary(){
  const library=document.querySelector('#tokenLibrary');library.replaceChildren();
  if(!tokens.length){library.innerHTML='<p class="empty-library">Your tokens will appear here.</p>';return;}
@@ -84,13 +87,14 @@ function pointerDown(canvas,event){
  if(mode==='setup'&&selectedToken){const token=tokens.find(item=>item.id===selectedToken);if(token){token.x=point.x;token.y=point.y;token.placed=true;selectedToken=null;drawSetup();renderLibrary();updateReady();}}
 }
 function pointerMove(canvas,event){
- if(!draggingToken)return;event.preventDefault();const point=pointFromEvent(canvas,event),radius=tokenRadius();
+ if(!draggingToken)return;event.preventDefault();const point=pointFromEvent(canvas,event),radius=tokenRadius(draggingToken);
  draggingToken.x=Math.max(radius,Math.min(canvas.width-radius,point.x));draggingToken.y=Math.max(radius,Math.min(canvas.height-radius,point.y));
  if(mode==='play'){revealAt(draggingToken);drawPlay();}else drawSetup();
 }
 function pointerUp(canvas,event){if(!draggingToken)return;pointerMove(canvas,event);draggingToken=null;try{canvas.releasePointerCapture(event.pointerId);}catch{}updateReady();}
 for(const canvas of [setupCanvas,playCanvas]){canvas.addEventListener('pointerdown',event=>pointerDown(canvas,event));canvas.addEventListener('pointermove',event=>pointerMove(canvas,event));canvas.addEventListener('pointerup',event=>pointerUp(canvas,event));canvas.addEventListener('pointercancel',()=>draggingToken=null);}
 document.querySelector('#visionRadius').addEventListener('input',event=>{document.querySelector('#visionValue').textContent=`${event.target.value}%`;});
+document.querySelector('#tokenSize').addEventListener('input',event=>{document.querySelector('#tokenSizeValue').textContent=`${event.target.value}%`;if(mode==='play')drawPlay();else drawSetup();});
 document.querySelector('#readyButton').addEventListener('click',()=>{
  if(!mapReady||!tokens.some(token=>token.type==='hero'&&token.placed))return;
  mode='play';setupView.hidden=true;playView.hidden=false;document.body.classList.add('playing');
