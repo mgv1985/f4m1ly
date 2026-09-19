@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11130f">
   <title>RPG · F4M1LY</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
   <header class="site-header">
@@ -24,7 +24,13 @@
   </header>
 
   <main>
-    <section class="setup" id="setupView">
+    <section class="campaign-home" id="campaignHome">
+      <div class="page-heading campaign-heading"><p class="eyebrow">YOUR ADVENTURES</p><h1>Return to the<br><em>table.</em></h1><p>Begin a new campaign or continue an adventure exactly where the party left it.</p></div>
+      <div class="new-campaign"><label for="campaignName">Adventure name <span>optional</span></label><div><input id="campaignName" maxlength="60" placeholder="The name of your adventure"><button id="newCampaignButton" type="button">Create adventure <span aria-hidden="true">→</span></button></div></div>
+      <section class="saved-campaigns"><div class="saved-heading"><h2>Saved campaigns</h2><span id="campaignCount"></span></div><div class="campaign-list" id="campaignList"></div></section>
+    </section>
+
+    <section class="setup" id="setupView" hidden>
       <div class="page-heading">
         <p class="eyebrow">A TABLE FOR THE DUNGEON MASTER</p>
         <h1>Prepare the<br><em>adventure.</em></h1>
@@ -62,6 +68,7 @@
           </section>
 
           <button class="ready-button" id="readyButton" type="button" disabled>I am ready <span aria-hidden="true">→</span></button>
+          <button class="campaign-back" id="setupCampaignsButton" type="button">Back to campaigns</button>
           <p class="ready-message" id="readyMessage" role="status">Add a map and place at least one hero.</p>
         </aside>
 
@@ -82,6 +89,7 @@
           <label class="play-vision" data-dm-only>Vision <input id="playVisionRadius" type="range" min="5" max="30" value="14"><output id="playVisionValue">14%</output></label>
           <button id="fogPreviewButton" type="button" data-dm-only>Preview player view</button>
           <button id="shareButton" type="button" data-dm-only>Share with players</button>
+          <button id="campaignsButton" type="button" data-dm-only>Campaigns</button>
           <button id="fullscreenButton" type="button">Full screen</button>
           <button id="resetFogButton" type="button" data-dm-only>Reset fog</button>
           <button id="returnButton" type="button" data-dm-only>Edit table</button>
@@ -93,7 +101,7 @@
     </section>
   </main>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
 </body>
 </html>

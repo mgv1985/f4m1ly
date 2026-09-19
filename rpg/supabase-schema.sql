@@ -67,6 +67,18 @@ $$;
 
 grant execute on function public.move_rpg_hero(uuid, text, numeric, numeric, jsonb) to anon, authenticated;
 
+create or replace function public.delete_rpg_session(session_id uuid, session_key uuid)
+returns boolean
+language plpgsql security definer set search_path = public, pg_temp
+as $$
+begin
+  delete from public.rpg_sessions where id = session_id and dm_key = session_key;
+  return found;
+end;
+$$;
+
+grant execute on function public.delete_rpg_session(uuid, uuid) to anon, authenticated;
+
 insert into storage.buckets (id, name, public)
 values ('rpg-assets', 'rpg-assets', true)
 on conflict (id) do update set public = true;
@@ -81,4 +93,16 @@ for insert to anon, authenticated
 with check (
   bucket_id = 'rpg-assets'
   and storage.extension(name) in ('png','jpg','jpeg','webp','gif')
+);
+
+drop policy if exists "DM can delete RPG assets" on storage.objects;
+create policy "DM can delete RPG assets" on storage.objects
+for delete to anon, authenticated
+using (
+  bucket_id = 'rpg-assets'
+  and exists (
+    select 1 from public.rpg_sessions session
+    where session.id::text = (storage.foldername(name))[1]
+      and session.dm_key::text = (select current_setting('request.headers', true)::json ->> 'x-rpg-key')
+  )
 );
