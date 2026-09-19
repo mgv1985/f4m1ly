@@ -1,117 +1,55 @@
-const setupView=document.querySelector('#setupView');
-const playView=document.querySelector('#playView');
-const setupCanvas=document.querySelector('#setupCanvas');
-const playCanvas=document.querySelector('#playCanvas');
-const setupContext=setupCanvas.getContext('2d');
-const playContext=playCanvas.getContext('2d');
-const fogCanvas=document.createElement('canvas');
-const fogContext=fogCanvas.getContext('2d');
-const mapImage=new Image();
-const tokens=[];
-let mapReady=false,selectedToken=null,draggingToken=null,dragOffset=null,panning=null,mode='setup';
+const SUPABASE_URL='https://owceeowarwqjsxpylnoo.supabase.co';
+const SUPABASE_KEY='sb_publishable_DxH30XOgchm8PifrXNKn-w_9fRNFoQg';
+const headers={apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json'};
+const params=new URLSearchParams(location.search),playerSession=params.get('game');
+let sessionId=playerSession||'',dmKey='',role=playerSession?'player':'dm',syncTimer=null,lastRemoteUpdate='',movedHeroId='';
+const setupView=document.querySelector('#setupView'),playView=document.querySelector('#playView');
+const setupCanvas=document.querySelector('#setupCanvas'),playCanvas=document.querySelector('#playCanvas');
+const setupContext=setupCanvas.getContext('2d'),playContext=playCanvas.getContext('2d');
+const fogCanvas=document.createElement('canvas'),fogContext=fogCanvas.getContext('2d');
+const mapImage=new Image(),tokens=[];let mapFile=null,mapSource='',mapReady=false,selectedToken=null,draggingToken=null,dragOffset=null,panning=null,mode='setup',dmFogPreview=false,reveals=[];
 const colors={hero:'#e5bf49',monster:'#c74b3e','monster-xl':'#77281f',npc:'#5a9b7b'};
-
 function readFile(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});}
-function loadImage(source){return new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=source;});}
-function resizeForMap(){
- const width=Math.max(1,mapImage.naturalWidth);
- const height=Math.max(1,mapImage.naturalHeight);
- for(const canvas of [setupCanvas,playCanvas,fogCanvas]){canvas.width=width;canvas.height=height;}
- fogContext.fillStyle='#000';fogContext.fillRect(0,0,width,height);
-}
+function loadImage(source){return new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.crossOrigin='anonymous';image.src=source;});}
+function setMapSource(source){return new Promise((resolve,reject)=>{mapImage.onload=()=>{mapReady=true;resizeForMap();resolve();};mapImage.onerror=reject;mapImage.crossOrigin='anonymous';mapImage.src=source;});}
+function resizeForMap(){const width=Math.max(1,mapImage.naturalWidth),height=Math.max(1,mapImage.naturalHeight);for(const canvas of[setupCanvas,playCanvas,fogCanvas]){canvas.width=width;canvas.height=height;}resetFog(false);}
 function pointFromEvent(canvas,event){const rect=canvas.getBoundingClientRect();return{x:(event.clientX-rect.left)*canvas.width/rect.width,y:(event.clientY-rect.top)*canvas.height/rect.height};}
-function tokenRadius(token){
- const base=Math.max(10,Math.min(setupCanvas.width,setupCanvas.height)*(Number(document.querySelector('#tokenSize').value)/200));
- return token?.type==='monster-xl'?base*2:base;
-}
-function visionRadius(){return Math.min(playCanvas.width,playCanvas.height)*(Number(document.querySelector('#visionRadius').value)/100);}
-function drawToken(context,token,dim=false){
- const radius=tokenRadius(token);context.save();context.globalAlpha=dim ? .55 : 1;
- context.beginPath();context.arc(token.x,token.y,radius,0,Math.PI*2);context.clip();
- context.drawImage(token.image,token.x-radius,token.y-radius,radius*2,radius*2);context.restore();
- context.beginPath();context.arc(token.x,token.y,radius+2,0,Math.PI*2);context.strokeStyle=colors[token.type];context.lineWidth=Math.max(3,radius*.13);context.stroke();
-}
-function drawSetup(){
- setupContext.clearRect(0,0,setupCanvas.width,setupCanvas.height);
- if(!mapReady)return;
- setupContext.drawImage(mapImage,0,0,setupCanvas.width,setupCanvas.height);
- for(const token of tokens.filter(item=>item.placed))drawToken(setupContext,token);
-}
-function revealAt(token){
- if(token.type!=='hero')return;
- fogContext.save();fogContext.globalCompositeOperation='destination-out';
- const gradient=fogContext.createRadialGradient(token.x,token.y,visionRadius()*.68,token.x,token.y,visionRadius());
- gradient.addColorStop(0,'rgba(0,0,0,1)');gradient.addColorStop(1,'rgba(0,0,0,0)');
- fogContext.fillStyle=gradient;fogContext.beginPath();fogContext.arc(token.x,token.y,visionRadius(),0,Math.PI*2);fogContext.fill();fogContext.restore();
-}
-function tokenIsRevealed(token){
- if(token.type==='hero')return true;
- const x=Math.max(0,Math.min(fogCanvas.width-1,Math.round(token.x))),y=Math.max(0,Math.min(fogCanvas.height-1,Math.round(token.y)));
- return fogContext.getImageData(x,y,1,1).data[3]<110;
-}
-function drawPlay(){
- playContext.clearRect(0,0,playCanvas.width,playCanvas.height);
- playContext.drawImage(mapImage,0,0,playCanvas.width,playCanvas.height);
- playContext.drawImage(fogCanvas,0,0);
- for(const token of tokens.filter(item=>item.placed&&tokenIsRevealed(item)))drawToken(playContext,token);
-}
-function hitToken(point){return [...tokens].reverse().find(token=>token.placed&&Math.hypot(token.x-point.x,token.y-point.y)<=tokenRadius(token)*1.25);}
-function renderLibrary(){
- const library=document.querySelector('#tokenLibrary');library.replaceChildren();
- if(!tokens.length){library.innerHTML='<p class="empty-library">Your tokens will appear here.</p>';return;}
- for(const token of tokens){
-  const button=document.createElement('button');button.type='button';button.className=`token-entry${selectedToken===token.id?' active':''}${token.placed?' placed':''}`;
-  button.innerHTML='<img alt=""><span></span><small></small>';button.querySelector('img').src=token.source;button.querySelector('img').alt='';button.querySelector('span').textContent=token.name;button.querySelector('small').textContent=token.placed?'Placed':token.type;
-  button.onclick=()=>{selectedToken=token.id;renderLibrary();};library.append(button);
- }
-}
-function updateReady(){
- const ready=mapReady&&tokens.some(token=>token.type==='hero'&&token.placed);
- document.querySelector('#readyButton').disabled=!ready;
- document.querySelector('#readyMessage').textContent=ready?'Your table is ready.':'Add a map and place at least one hero.';
-}
-document.querySelector('#mapInput').addEventListener('change',async event=>{
- const file=event.target.files[0];if(!file)return;
- try{mapImage.src=await readFile(file);await mapImage.decode();mapReady=true;tokens.forEach(token=>token.placed=false);resizeForMap();drawSetup();document.querySelector('#canvasPlaceholder').hidden=true;document.querySelector('#mapStatus').textContent=file.name;renderLibrary();updateReady();}catch{document.querySelector('#mapStatus').textContent='This image could not be opened';}
-});
-document.querySelectorAll('[data-token-input]').forEach(input=>input.addEventListener('change',async event=>{
- for(const file of event.target.files){
-  try{const source=await readFile(file),image=await loadImage(source);tokens.push({id:crypto.randomUUID(),type:input.dataset.tokenInput,name:file.name.replace(/\.[^.]+$/,''),source,image,x:0,y:0,placed:false});}catch{}
- }
- event.target.value='';renderLibrary();updateReady();
-}));
-function pointerDown(canvas,event){
- if(!mapReady)return;event.preventDefault();const point=pointFromEvent(canvas,event),hit=hitToken(point);
- if(hit){draggingToken=hit;dragOffset={x:point.x-hit.x,y:point.y-hit.y};canvas.setPointerCapture(event.pointerId);return;}
- if(mode==='setup'&&selectedToken){const token=tokens.find(item=>item.id===selectedToken);if(token){token.x=point.x;token.y=point.y;token.placed=true;selectedToken=null;drawSetup();renderLibrary();updateReady();return;}}
- const wrapper=canvas.parentElement;panning={x:event.clientX,y:event.clientY,left:wrapper.scrollLeft,top:wrapper.scrollTop,wrapper};canvas.setPointerCapture(event.pointerId);
-}
-function pointerMove(canvas,event){
- if(panning){event.preventDefault();panning.wrapper.scrollLeft=panning.left-(event.clientX-panning.x);panning.wrapper.scrollTop=panning.top-(event.clientY-panning.y);return;}
- if(!draggingToken)return;event.preventDefault();const point=pointFromEvent(canvas,event),radius=tokenRadius(draggingToken);
- const nextX=point.x-(dragOffset?.x||0),nextY=point.y-(dragOffset?.y||0);
- draggingToken.x=Math.max(radius,Math.min(canvas.width-radius,nextX));draggingToken.y=Math.max(radius,Math.min(canvas.height-radius,nextY));
- if(mode==='play'){revealAt(draggingToken);drawPlay();}else drawSetup();
-}
-function pointerUp(canvas,event){if(draggingToken)pointerMove(canvas,event);draggingToken=null;dragOffset=null;panning=null;try{canvas.releasePointerCapture(event.pointerId);}catch{}updateReady();}
-for(const canvas of [setupCanvas,playCanvas]){canvas.addEventListener('pointerdown',event=>pointerDown(canvas,event));canvas.addEventListener('pointermove',event=>pointerMove(canvas,event));canvas.addEventListener('pointerup',event=>pointerUp(canvas,event));canvas.addEventListener('pointercancel',()=>{draggingToken=null;dragOffset=null;panning=null;});}
-document.querySelector('#visionRadius').addEventListener('input',event=>{document.querySelector('#visionValue').textContent=`${event.target.value}%`;});
-document.querySelector('#tokenSize').addEventListener('input',event=>{document.querySelector('#tokenSizeValue').textContent=`${event.target.value}%`;if(mode==='play')drawPlay();else drawSetup();});
-document.querySelector('#readyButton').addEventListener('click',()=>{
- if(!mapReady||!tokens.some(token=>token.type==='hero'&&token.placed))return;
- mode='play';setupView.hidden=true;playView.hidden=false;document.body.classList.add('playing');
- fogContext.globalCompositeOperation='source-over';fogContext.fillStyle='#000';fogContext.fillRect(0,0,fogCanvas.width,fogCanvas.height);
- tokens.filter(token=>token.placed&&token.type==='hero').forEach(revealAt);drawPlay();window.scrollTo(0,0);
-});
-document.querySelector('#resetFogButton').addEventListener('click',()=>{fogContext.globalCompositeOperation='source-over';fogContext.fillStyle='#000';fogContext.fillRect(0,0,fogCanvas.width,fogCanvas.height);tokens.filter(token=>token.placed&&token.type==='hero').forEach(revealAt);drawPlay();});
-document.querySelector('#returnButton').addEventListener('click',()=>{mode='setup';playView.hidden=true;setupView.hidden=false;document.body.classList.remove('playing');drawSetup();window.scrollTo(0,0);});
+function sizePercent(){return Number(document.querySelector('#tokenSize').value);}
+function sightPercent(){return Number(document.querySelector('#visionRadius').value);}
+function tokenRadius(token){const base=Math.max(10,Math.min(setupCanvas.width,setupCanvas.height)*(sizePercent()/200));return token?.type==='monster-xl'?base*2:base;}
+function visionRadius(){return Math.min(playCanvas.width,playCanvas.height)*(sightPercent()/100);}
+function drawToken(context,token){const radius=tokenRadius(token);context.save();context.beginPath();context.arc(token.x,token.y,radius,0,Math.PI*2);context.clip();context.drawImage(token.image,token.x-radius,token.y-radius,radius*2,radius*2);context.restore();context.beginPath();context.arc(token.x,token.y,radius+2,0,Math.PI*2);context.strokeStyle=colors[token.type];context.lineWidth=Math.max(3,radius*.13);context.stroke();}
+function drawSetup(){setupContext.clearRect(0,0,setupCanvas.width,setupCanvas.height);if(!mapReady)return;setupContext.drawImage(mapImage,0,0,setupCanvas.width,setupCanvas.height);tokens.filter(item=>item.placed).forEach(token=>drawToken(setupContext,token));}
+function carve(x,y,record=false){fogContext.save();fogContext.globalCompositeOperation='destination-out';const radius=visionRadius(),gradient=fogContext.createRadialGradient(x,y,radius*.68,x,y,radius);gradient.addColorStop(0,'rgba(0,0,0,1)');gradient.addColorStop(1,'rgba(0,0,0,0)');fogContext.fillStyle=gradient;fogContext.beginPath();fogContext.arc(x,y,radius,0,Math.PI*2);fogContext.fill();fogContext.restore();if(record){const last=reveals.at(-1);if(!last||Math.hypot(last.x-x,last.y-y)>radius*.12)reveals.push({x:Math.round(x),y:Math.round(y)});}}
+function revealAt(token,record=false){if(token.type==='hero')carve(token.x,token.y,record);}
+function resetFog(sync=true){fogContext.globalCompositeOperation='source-over';fogContext.fillStyle='#000';fogContext.fillRect(0,0,fogCanvas.width,fogCanvas.height);reveals=[];tokens.filter(token=>token.placed&&token.type==='hero').forEach(token=>revealAt(token,true));if(mode==='play')drawPlay();if(sync)scheduleSync();}
+function rebuildFog(){fogContext.globalCompositeOperation='source-over';fogContext.fillStyle='#000';fogContext.fillRect(0,0,fogCanvas.width,fogCanvas.height);reveals.forEach(point=>carve(point.x,point.y));}
+function tokenIsRevealed(token){if(token.type==='hero')return true;const x=Math.max(0,Math.min(fogCanvas.width-1,Math.round(token.x))),y=Math.max(0,Math.min(fogCanvas.height-1,Math.round(token.y)));return fogContext.getImageData(x,y,1,1).data[3]<110;}
+function drawPlay(){playContext.clearRect(0,0,playCanvas.width,playCanvas.height);if(!mapReady)return;playContext.drawImage(mapImage,0,0,playCanvas.width,playCanvas.height);const preview=role==='player'||dmFogPreview;if(preview)playContext.drawImage(fogCanvas,0,0);tokens.filter(item=>item.placed&&(!preview||tokenIsRevealed(item))).forEach(token=>drawToken(playContext,token));}
+function hitToken(point){return [...tokens].reverse().find(token=>token.placed&&(role==='dm'||token.type==='hero')&&Math.hypot(token.x-point.x,token.y-point.y)<=tokenRadius(token)*1.25);}
+function renderLibrary(){const library=document.querySelector('#tokenLibrary');library.replaceChildren();if(!tokens.length){library.innerHTML='<p class="empty-library">Your tokens will appear here.</p>';return;}for(const token of tokens){const button=document.createElement('button');button.type='button';button.className=`token-entry${selectedToken===token.id?' active':''}${token.placed?' placed':''}`;button.innerHTML='<img alt=""><span></span><small></small>';button.querySelector('img').src=token.source;button.querySelector('span').textContent=token.name;button.querySelector('small').textContent=token.placed?'Placed':token.type;button.onclick=()=>{selectedToken=token.id;renderLibrary();};library.append(button);}}
+function updateReady(){const ready=mapReady&&tokens.some(token=>token.type==='hero'&&token.placed);document.querySelector('#readyButton').disabled=!ready;document.querySelector('#readyMessage').textContent=ready?'Your table is ready.':'Add a map and place at least one hero.';}
+function publicUrl(path){return `${SUPABASE_URL}/storage/v1/object/public/rpg-assets/${path.split('/').map(encodeURIComponent).join('/')}`;}
+async function uploadAsset(file,prefix){const extension=(file.name.split('.').pop()||'png').toLowerCase().replace(/[^a-z0-9]/g,'')||'png',path=`${sessionId}/${prefix}-${crypto.randomUUID()}.${extension}`;const response=await fetch(`${SUPABASE_URL}/storage/v1/object/rpg-assets/${path}`,{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,'Content-Type':file.type||'image/png'},body:file});if(!response.ok)throw Error('An image could not be uploaded. Run the RPG Supabase setup first.');return publicUrl(path);}
+function serialState(){return{mapUrl:mapSource,width:playCanvas.width,height:playCanvas.height,tokenSize:sizePercent(),vision:sightPercent(),reveals,tokens:tokens.filter(token=>token.placed).map(({id,type,name,source,cloudSource,x,y,placed})=>({id,type,name,url:cloudSource||source,x,y,placed}))};}
+async function createSession(){const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/create_rpg_session`,{method:'POST',headers,body:JSON.stringify({initial_state:{}})});if(!response.ok)throw Error('Online RPG sessions are not ready. Run rpg/supabase-schema.sql in Supabase first.');const result=await response.json(),row=Array.isArray(result)?result[0]:result;sessionId=row.id;dmKey=row.dm_key;location.hash=`dm=${sessionId}.${dmKey}`;}
+async function pushState(){if(role!=='dm'||!sessionId||!dmKey)return;const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/update_rpg_session`,{method:'POST',headers,body:JSON.stringify({session_id:sessionId,session_key:dmKey,new_state:serialState()})});document.querySelector('#playStatus').textContent=response.ok?(dmFogPreview?'Player-view preview':'DM view · live'):'Connection interrupted — retrying';}
+async function pushPlayerMove(){if(role!=='player'||!movedHeroId)return;const hero=tokens.find(token=>token.id===movedHeroId&&token.type==='hero');if(!hero)return;await fetch(`${SUPABASE_URL}/rest/v1/rpc/move_rpg_hero`,{method:'POST',headers,body:JSON.stringify({session_id:sessionId,hero_id:hero.id,hero_x:hero.x,hero_y:hero.y,explored:reveals})});}
+function scheduleSync(){if(!sessionId)return;clearTimeout(syncTimer);syncTimer=setTimeout(role==='dm'?pushState:pushPlayerMove,160);}
+async function fetchSession(){if(draggingToken)return;const response=await fetch(`${SUPABASE_URL}/rest/v1/rpg_public_sessions?id=eq.${encodeURIComponent(sessionId)}&select=state,updated_at`,{headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}});if(!response.ok)throw Error('This RPG session is unavailable.');const rows=await response.json();if(!rows.length)throw Error('This RPG session does not exist.');if(rows[0].updated_at===lastRemoteUpdate)return;lastRemoteUpdate=rows[0].updated_at;await applyRemoteState(rows[0].state);}
+async function applyRemoteState(state){if(!state?.mapUrl)return;if(mapSource!==state.mapUrl){mapSource=state.mapUrl;await setMapSource(mapSource);}document.querySelector('#tokenSize').value=state.tokenSize||7;document.querySelector('#visionRadius').value=state.vision||14;document.querySelector('#playVisionRadius').value=state.vision||14;document.querySelector('#playVisionValue').textContent=`${state.vision||14}%`;const existing=new Map(tokens.map(token=>[token.id,token]));for(const item of state.tokens||[]){let token=existing.get(item.id);if(!token){try{token={...item,source:item.url,cloudSource:item.url,image:await loadImage(item.url)};tokens.push(token);}catch{continue;}}Object.assign(token,item,{source:item.url,cloudSource:item.url});}for(let index=tokens.length-1;index>=0;index--)if(!(state.tokens||[]).some(item=>item.id===tokens[index].id))tokens.splice(index,1);reveals=state.reveals||[];rebuildFog();drawPlay();}
+document.querySelector('#mapInput').addEventListener('change',async event=>{const file=event.target.files[0];if(!file)return;try{mapFile=file;mapSource=await readFile(file);await setMapSource(mapSource);if(sessionId){mapSource=await uploadAsset(file,'map');mapFile=null;}tokens.forEach(token=>token.placed=false);drawSetup();document.querySelector('#canvasPlaceholder').hidden=true;document.querySelector('#mapStatus').textContent=file.name;renderLibrary();updateReady();scheduleSync();}catch{document.querySelector('#mapStatus').textContent='This image could not be opened';}});
+document.querySelectorAll('[data-token-input]').forEach(input=>input.addEventListener('change',async event=>{for(const file of event.target.files){try{const source=await readFile(file),image=await loadImage(source),token={id:crypto.randomUUID(),type:input.dataset.tokenInput,name:file.name.replace(/\.[^.]+$/,''),source,image,file,x:0,y:0,placed:false};if(sessionId){token.cloudSource=await uploadAsset(file,token.type);token.file=null;}tokens.push(token);}catch{}}event.target.value='';renderLibrary();updateReady();}));
+function pointerDown(canvas,event){if(!mapReady)return;event.preventDefault();const point=pointFromEvent(canvas,event),hit=hitToken(point);if(hit){draggingToken=hit;dragOffset={x:point.x-hit.x,y:point.y-hit.y};canvas.setPointerCapture(event.pointerId);return;}if(mode==='setup'&&selectedToken){const token=tokens.find(item=>item.id===selectedToken);if(token){token.x=point.x;token.y=point.y;token.placed=true;selectedToken=null;drawSetup();renderLibrary();updateReady();return;}}const wrapper=canvas.parentElement;panning={x:event.clientX,y:event.clientY,left:wrapper.scrollLeft,top:wrapper.scrollTop,wrapper};canvas.setPointerCapture(event.pointerId);}
+function pointerMove(canvas,event){if(panning){event.preventDefault();panning.wrapper.scrollLeft=panning.left-(event.clientX-panning.x);panning.wrapper.scrollTop=panning.top-(event.clientY-panning.y);return;}if(!draggingToken)return;event.preventDefault();const point=pointFromEvent(canvas,event),radius=tokenRadius(draggingToken),nextX=point.x-(dragOffset?.x||0),nextY=point.y-(dragOffset?.y||0);draggingToken.x=Math.max(radius,Math.min(canvas.width-radius,nextX));draggingToken.y=Math.max(radius,Math.min(canvas.height-radius,nextY));if(role==='player')movedHeroId=draggingToken.id;if(mode==='play'){revealAt(draggingToken,true);drawPlay();scheduleSync();}else drawSetup();}
+function pointerUp(canvas,event){if(draggingToken)pointerMove(canvas,event);draggingToken=null;dragOffset=null;panning=null;try{canvas.releasePointerCapture(event.pointerId);}catch{}updateReady();scheduleSync();}
+for(const canvas of[setupCanvas,playCanvas]){canvas.addEventListener('pointerdown',event=>pointerDown(canvas,event));canvas.addEventListener('pointermove',event=>pointerMove(canvas,event));canvas.addEventListener('pointerup',event=>pointerUp(canvas,event));canvas.addEventListener('pointercancel',()=>{draggingToken=null;dragOffset=null;panning=null;});}
+function setVision(value){document.querySelector('#visionRadius').value=value;document.querySelector('#visionValue').textContent=`${value}%`;document.querySelector('#playVisionRadius').value=value;document.querySelector('#playVisionValue').textContent=`${value}%`;rebuildFog();drawPlay();scheduleSync();}
+document.querySelector('#visionRadius').addEventListener('input',event=>setVision(event.target.value));document.querySelector('#playVisionRadius').addEventListener('input',event=>setVision(event.target.value));document.querySelector('#tokenSize').addEventListener('input',event=>{document.querySelector('#tokenSizeValue').textContent=`${event.target.value}%`;mode==='play'?drawPlay():drawSetup();scheduleSync();});
+document.querySelector('#readyButton').addEventListener('click',async()=>{if(!mapReady||!tokens.some(token=>token.type==='hero'&&token.placed))return;const button=document.querySelector('#readyButton');button.disabled=true;button.firstChild.textContent='Preparing the table… ';try{if(!sessionId)await createSession();if(mapFile)mapSource=await uploadAsset(mapFile,'map');for(const token of tokens.filter(item=>item.placed))if(token.file&&!token.cloudSource)token.cloudSource=await uploadAsset(token.file,token.type);mode='play';setupView.hidden=true;playView.hidden=false;document.body.classList.add('playing');resetFog(false);await pushState();lastRemoteUpdate='';setInterval(()=>fetchSession().catch(()=>{}),700);drawPlay();window.scrollTo(0,0);}catch(error){document.querySelector('#readyMessage').textContent=error.message;button.disabled=false;button.firstChild.textContent='I am ready ';}});
+document.querySelector('#fogPreviewButton').addEventListener('click',event=>{dmFogPreview=!dmFogPreview;event.currentTarget.textContent=dmFogPreview?'Return to DM view':'Preview player view';drawPlay();document.querySelector('#playStatus').textContent=dmFogPreview?'Player-view preview':'DM view · live';});document.querySelector('#resetFogButton').addEventListener('click',()=>resetFog());document.querySelector('#returnButton').addEventListener('click',()=>{mode='setup';playView.hidden=true;setupView.hidden=false;document.body.classList.remove('playing');drawSetup();window.scrollTo(0,0);});
 document.querySelector('#fullscreenButton').addEventListener('click',async()=>{try{if(!document.fullscreenElement)await document.querySelector('#playCanvasWrap').requestFullscreen();else await document.exitFullscreen();}catch{}});
-document.querySelector('#resetTableButton').addEventListener('click',()=>{
- if(!mapReady&&!tokens.length)return;
- if(!confirm('Clear the map and every token from this table?'))return;
- mapReady=false;selectedToken=null;draggingToken=null;dragOffset=null;panning=null;tokens.length=0;mapImage.removeAttribute('src');
- setupCanvas.width=1200;setupCanvas.height=760;setupContext.clearRect(0,0,setupCanvas.width,setupCanvas.height);
- document.querySelector('#mapInput').value='';document.querySelector('#mapStatus').textContent='Waiting for a map';document.querySelector('#canvasPlaceholder').hidden=false;
- document.querySelector('#setupCanvasWrap').scrollTo(0,0);renderLibrary();updateReady();
-});
-document.documentElement.dataset.rpgReady='true';
+document.querySelector('#shareButton').addEventListener('click',()=>{document.querySelector('#playerLink').value=`${location.origin}${location.pathname}?game=${sessionId}`;document.querySelector('#shareDialog').showModal();});document.querySelector('#closeShareButton').onclick=()=>document.querySelector('#shareDialog').close();document.querySelector('#copyLinkButton').onclick=async()=>{try{await navigator.clipboard.writeText(document.querySelector('#playerLink').value);document.querySelector('#copyStatus').textContent='Player link copied.';}catch{document.querySelector('#playerLink').select();document.querySelector('#copyStatus').textContent='Select and copy the link above.';}};
+document.querySelector('#resetTableButton').addEventListener('click',()=>{if(!mapReady&&!tokens.length)return;if(!confirm('Clear the map and every token from this table?'))return;mapReady=false;mapFile=null;mapSource='';selectedToken=null;tokens.length=0;setupCanvas.width=1200;setupCanvas.height=760;setupContext.clearRect(0,0,1200,760);document.querySelector('#mapInput').value='';document.querySelector('#mapStatus').textContent='Waiting for a map';document.querySelector('#canvasPlaceholder').hidden=false;renderLibrary();updateReady();});
+async function init(){const hash=location.hash.match(/^#dm=([^.]+)\.(.+)$/);if(hash){sessionId=hash[1];dmKey=hash[2];}if(role==='player'){setupView.hidden=true;playView.hidden=false;mode='play';document.body.classList.add('playing','player-role');document.querySelectorAll('[data-dm-only]').forEach(item=>item.hidden=true);document.querySelector('#playStatus').textContent='Connecting to the table…';try{await fetchSession();document.querySelector('#playStatus').textContent='Player view · live';setInterval(()=>fetchSession().catch(()=>document.querySelector('#playStatus').textContent='Connection interrupted — retrying'),700);}catch(error){document.querySelector('#playStatus').textContent=error.message;}}}
+init();document.documentElement.dataset.rpgReady='true';

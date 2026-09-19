@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11130f">
   <title>RPG · F4M1LY</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
   <header class="site-header">
@@ -79,17 +79,21 @@
       <div class="play-toolbar">
         <div><span class="play-kicker">THE ADVENTURE HAS BEGUN</span><strong id="playStatus">Move a hero to explore</strong></div>
         <div class="play-actions">
+          <label class="play-vision" data-dm-only>Vision <input id="playVisionRadius" type="range" min="5" max="30" value="14"><output id="playVisionValue">14%</output></label>
+          <button id="fogPreviewButton" type="button" data-dm-only>Preview player view</button>
+          <button id="shareButton" type="button" data-dm-only>Share with players</button>
           <button id="fullscreenButton" type="button">Full screen</button>
-          <button id="resetFogButton" type="button">Reset fog</button>
-          <button id="returnButton" type="button">Edit table</button>
+          <button id="resetFogButton" type="button" data-dm-only>Reset fog</button>
+          <button id="returnButton" type="button" data-dm-only>Edit table</button>
         </div>
       </div>
       <div class="play-canvas-wrap" id="playCanvasWrap"><canvas id="playCanvas" width="1200" height="760" aria-label="RPG map with fog of war"></canvas></div>
       <div class="legend"><span class="hero-dot">Heroes reveal the map</span><span class="monster-dot">Monsters</span><span class="monster-xl-dot">XL Monsters</span><span class="npc-dot">NPCs</span></div>
+      <dialog id="shareDialog" class="share-dialog"><button id="closeShareButton" class="share-close" type="button" aria-label="Close">×</button><p class="eyebrow">INVITE THE PARTY</p><h2>Player link</h2><p>Players opening this link see only explored areas and can move heroes only.</p><div class="share-row"><input id="playerLink" readonly aria-label="Player link"><button id="copyLinkButton" type="button">Copy link</button></div><p id="copyStatus" role="status"></p></dialog>
     </section>
   </main>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
 </body>
 </html>
