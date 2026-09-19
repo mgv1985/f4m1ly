@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11130f">
+  <title>RPG · F4M1LY</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true">◆</span><span>RPG TABLE</span></a>
+    <nav aria-label="Main navigation">
+      <a href="../index.html">Main page</a>
+      <a href="../The Pool of Memory/index.html?v=3">Pool of Memory</a>
+      <a href="../sudoku game/index.html?v=14">Gridline</a>
+      <a href="../counting/index.html">Counting</a>
+      <a href="../timer.html?v=6">Timer</a>
+      <a href="../tts.html">Text to Speech</a>
+      <a href="../webshop/index.html">Shoes Cabinet</a>
+      <a class="archive-link" href="../archive.html?v=3">Family archive ↗</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="setup" id="setupView">
+      <div class="page-heading">
+        <p class="eyebrow">A TABLE FOR THE DUNGEON MASTER</p>
+        <h1>Prepare the<br><em>adventure.</em></h1>
+        <p>Upload a map and character tokens, place them on the table, then begin with the world hidden in darkness.</p>
+      </div>
+
+      <div class="setup-grid">
+        <aside class="toolbox">
+          <section class="tool-section">
+            <span class="step">01</span>
+            <h2>Choose the map</h2>
+            <label class="upload-button">Upload image-map<input id="mapInput" type="file" accept="image/*"></label>
+            <p class="hint">The image stays in this browser and is not uploaded anywhere.</p>
+          </section>
+
+          <section class="tool-section">
+            <span class="step">02</span>
+            <h2>Add tokens</h2>
+            <label class="token-upload hero-upload">Heroes<input data-token-input="hero" type="file" accept="image/*" multiple></label>
+            <label class="token-upload monster-upload">Monsters<input data-token-input="monster" type="file" accept="image/*" multiple></label>
+            <label class="token-upload npc-upload">NPCs<input data-token-input="npc" type="file" accept="image/*" multiple></label>
+            <div class="token-library" id="tokenLibrary"><p class="empty-library">Your tokens will appear here.</p></div>
+          </section>
+
+          <section class="tool-section">
+            <span class="step">03</span>
+            <h2>Set hero vision</h2>
+            <div class="vision-control"><input id="visionRadius" type="range" min="5" max="30" value="14"><output id="visionValue">14%</output></div>
+            <p class="hint">Select a token below, then tap the map to place it. Drag placed tokens to adjust them.</p>
+          </section>
+
+          <button class="ready-button" id="readyButton" type="button" disabled>I am ready <span aria-hidden="true">→</span></button>
+          <p class="ready-message" id="readyMessage" role="status">Add a map and place at least one hero.</p>
+        </aside>
+
+        <section class="map-panel">
+          <div class="map-toolbar"><strong>Placement map</strong><span id="mapStatus">Waiting for a map</span></div>
+          <div class="canvas-wrap setup-canvas-wrap" id="setupCanvasWrap">
+            <canvas id="setupCanvas" width="1200" height="760" aria-label="Token placement map"></canvas>
+            <div class="canvas-placeholder" id="canvasPlaceholder"><span>＋</span><strong>Your map will appear here</strong></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="play-view" id="playView" hidden>
+      <div class="play-toolbar">
+        <div><span class="play-kicker">THE ADVENTURE HAS BEGUN</span><strong id="playStatus">Move a hero to explore</strong></div>
+        <div class="play-actions">
+          <button id="fullscreenButton" type="button">Full screen</button>
+          <button id="resetFogButton" type="button">Reset fog</button>
+          <button id="returnButton" type="button">Edit table</button>
+        </div>
+      </div>
+      <div class="play-canvas-wrap" id="playCanvasWrap"><canvas id="playCanvas" width="1200" height="760" aria-label="RPG map with fog of war"></canvas></div>
+      <div class="legend"><span class="hero-dot">Heroes reveal the map</span><span class="monster-dot">Monsters</span><span class="npc-dot">NPCs</span></div>
+    </section>
+  </main>
+
+  <script src="app.js?v=1"></script>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
+</body>
+</html>
