@@ -40,7 +40,9 @@ $$;
 grant execute on function public.create_rpg_session(jsonb) to anon, authenticated;
 grant execute on function public.update_rpg_session(uuid, uuid, jsonb) to anon, authenticated;
 
-create or replace function public.move_rpg_hero(session_id uuid, hero_id text, hero_x numeric, hero_y numeric, explored jsonb)
+drop function if exists public.move_rpg_hero(uuid, text, numeric, numeric, jsonb);
+
+create or replace function public.move_rpg_hero(session_id uuid, hero_id text, hero_x numeric, hero_y numeric, explored jsonb, visibility text)
 returns boolean
 language plpgsql security definer set search_path = public, pg_temp
 as $$
@@ -61,11 +63,21 @@ begin
   ), updated_at = now()
   where s.id = session_id
     and exists (select 1 from jsonb_array_elements(s.state->'tokens') token where token->>'id' = hero_id and token->>'type' = 'hero');
+  if found then
+    update public.rpg_sessions
+    set state = jsonb_set(
+      state,
+      '{fogMode}',
+      to_jsonb(case when visibility in ('normal','revealed','black') then visibility else 'normal' end),
+      true
+    )
+    where id = session_id;
+  end if;
   return found;
 end;
 $$;
 
-grant execute on function public.move_rpg_hero(uuid, text, numeric, numeric, jsonb) to anon, authenticated;
+grant execute on function public.move_rpg_hero(uuid, text, numeric, numeric, jsonb, text) to anon, authenticated;
 
 create or replace function public.delete_rpg_session(session_id uuid, session_key uuid)
 returns boolean
