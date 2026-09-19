@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11130f">
   <title>RPG · F4M1LY</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
   <header class="site-header">
@@ -88,8 +88,7 @@
         <div class="play-actions">
           <label class="play-vision" data-dm-only>Vision <input id="playVisionRadius" type="range" min="5" max="30" value="14"><output id="playVisionValue">14%</output></label>
           <button id="fogPreviewButton" type="button" data-dm-only>Preview player view</button>
-          <button id="revealMapButton" type="button" data-dm-only>Reveal whole map</button>
-          <button id="blackMapButton" type="button" data-dm-only>Black out map</button>
+          <div class="fog-brush" data-dm-only><span>Fog brush</span><button id="revealBrushButton" type="button">Reveal</button><button id="hideBrushButton" type="button">Hide</button><button id="stopBrushButton" type="button" hidden>Done</button><input id="fogBrushSize" type="range" min="2" max="20" value="8" aria-label="Fog brush size"><output id="fogBrushValue">8%</output></div>
           <button id="shareButton" type="button" data-dm-only>Share with players</button>
           <button id="campaignsButton" type="button" data-dm-only>Campaigns</button>
           <button id="fullscreenButton" type="button">Full screen</button>
@@ -103,7 +102,7 @@
     </section>
   </main>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
 </body>
 </html>
