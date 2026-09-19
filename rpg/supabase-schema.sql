@@ -1,4 +1,4 @@
-create extension if not exists pgcrypto;
+create extension if not exists pgcrypto with schema extensions;
 
 create table if not exists public.rpg_sessions (
   id uuid primary key default gen_random_uuid(),
@@ -36,7 +36,7 @@ begin
   end if;
   return query
     insert into public.rpg_sessions(state, password_hash)
-    values (coalesce(initial_state, '{}'::jsonb), crypt(campaign_password, gen_salt('bf', 10)))
+    values (coalesce(initial_state, '{}'::jsonb), extensions.crypt(campaign_password, extensions.gen_salt('bf', 10)))
     returning rpg_sessions.id, rpg_sessions.dm_key;
 end;
 $$;
@@ -48,7 +48,7 @@ as $$
   select dm_key from public.rpg_sessions
   where id = session_id
     and password_hash is not null
-    and password_hash = crypt(campaign_password, password_hash);
+    and password_hash = extensions.crypt(campaign_password, password_hash);
 $$;
 
 create or replace function public.set_rpg_password(session_id uuid, session_key uuid, new_password text)
@@ -58,7 +58,7 @@ as $$
 begin
   if length(trim(coalesce(new_password, ''))) < 1 then return false; end if;
   update public.rpg_sessions
-  set password_hash = crypt(new_password, gen_salt('bf', 10)), updated_at = now()
+  set password_hash = extensions.crypt(new_password, extensions.gen_salt('bf', 10)), updated_at = now()
   where id = session_id and dm_key = session_key;
   return found;
 end;
