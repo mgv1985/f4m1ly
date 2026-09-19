@@ -8,7 +8,7 @@ const fogCanvas=document.createElement('canvas');
 const fogContext=fogCanvas.getContext('2d');
 const mapImage=new Image();
 const tokens=[];
-let mapReady=false,selectedToken=null,draggingToken=null,panning=null,mode='setup';
+let mapReady=false,selectedToken=null,draggingToken=null,dragOffset=null,panning=null,mode='setup';
 const colors={hero:'#e5bf49',monster:'#c74b3e','monster-xl':'#77281f',npc:'#5a9b7b'};
 
 function readFile(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});}
@@ -82,18 +82,19 @@ document.querySelectorAll('[data-token-input]').forEach(input=>input.addEventLis
 }));
 function pointerDown(canvas,event){
  if(!mapReady)return;event.preventDefault();const point=pointFromEvent(canvas,event),hit=hitToken(point);
- if(hit){draggingToken=hit;canvas.setPointerCapture(event.pointerId);return;}
+ if(hit){draggingToken=hit;dragOffset={x:point.x-hit.x,y:point.y-hit.y};canvas.setPointerCapture(event.pointerId);return;}
  if(mode==='setup'&&selectedToken){const token=tokens.find(item=>item.id===selectedToken);if(token){token.x=point.x;token.y=point.y;token.placed=true;selectedToken=null;drawSetup();renderLibrary();updateReady();return;}}
  const wrapper=canvas.parentElement;panning={x:event.clientX,y:event.clientY,left:wrapper.scrollLeft,top:wrapper.scrollTop,wrapper};canvas.setPointerCapture(event.pointerId);
 }
 function pointerMove(canvas,event){
  if(panning){event.preventDefault();panning.wrapper.scrollLeft=panning.left-(event.clientX-panning.x);panning.wrapper.scrollTop=panning.top-(event.clientY-panning.y);return;}
  if(!draggingToken)return;event.preventDefault();const point=pointFromEvent(canvas,event),radius=tokenRadius(draggingToken);
- draggingToken.x=Math.max(radius,Math.min(canvas.width-radius,point.x));draggingToken.y=Math.max(radius,Math.min(canvas.height-radius,point.y));
+ const nextX=point.x-(dragOffset?.x||0),nextY=point.y-(dragOffset?.y||0);
+ draggingToken.x=Math.max(radius,Math.min(canvas.width-radius,nextX));draggingToken.y=Math.max(radius,Math.min(canvas.height-radius,nextY));
  if(mode==='play'){revealAt(draggingToken);drawPlay();}else drawSetup();
 }
-function pointerUp(canvas,event){if(draggingToken)pointerMove(canvas,event);draggingToken=null;panning=null;try{canvas.releasePointerCapture(event.pointerId);}catch{}updateReady();}
-for(const canvas of [setupCanvas,playCanvas]){canvas.addEventListener('pointerdown',event=>pointerDown(canvas,event));canvas.addEventListener('pointermove',event=>pointerMove(canvas,event));canvas.addEventListener('pointerup',event=>pointerUp(canvas,event));canvas.addEventListener('pointercancel',()=>{draggingToken=null;panning=null;});}
+function pointerUp(canvas,event){if(draggingToken)pointerMove(canvas,event);draggingToken=null;dragOffset=null;panning=null;try{canvas.releasePointerCapture(event.pointerId);}catch{}updateReady();}
+for(const canvas of [setupCanvas,playCanvas]){canvas.addEventListener('pointerdown',event=>pointerDown(canvas,event));canvas.addEventListener('pointermove',event=>pointerMove(canvas,event));canvas.addEventListener('pointerup',event=>pointerUp(canvas,event));canvas.addEventListener('pointercancel',()=>{draggingToken=null;dragOffset=null;panning=null;});}
 document.querySelector('#visionRadius').addEventListener('input',event=>{document.querySelector('#visionValue').textContent=`${event.target.value}%`;});
 document.querySelector('#tokenSize').addEventListener('input',event=>{document.querySelector('#tokenSizeValue').textContent=`${event.target.value}%`;if(mode==='play')drawPlay();else drawSetup();});
 document.querySelector('#readyButton').addEventListener('click',()=>{
@@ -108,7 +109,7 @@ document.querySelector('#fullscreenButton').addEventListener('click',async()=>{t
 document.querySelector('#resetTableButton').addEventListener('click',()=>{
  if(!mapReady&&!tokens.length)return;
  if(!confirm('Clear the map and every token from this table?'))return;
- mapReady=false;selectedToken=null;draggingToken=null;panning=null;tokens.length=0;mapImage.removeAttribute('src');
+ mapReady=false;selectedToken=null;draggingToken=null;dragOffset=null;panning=null;tokens.length=0;mapImage.removeAttribute('src');
  setupCanvas.width=1200;setupCanvas.height=760;setupContext.clearRect(0,0,setupCanvas.width,setupCanvas.height);
  document.querySelector('#mapInput').value='';document.querySelector('#mapStatus').textContent='Waiting for a map';document.querySelector('#canvasPlaceholder').hidden=false;
  document.querySelector('#setupCanvasWrap').scrollTo(0,0);renderLibrary();updateReady();
