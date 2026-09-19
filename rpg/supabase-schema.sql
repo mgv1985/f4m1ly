@@ -8,21 +8,60 @@ create table if not exists public.rpg_sessions (
   updated_at timestamptz not null default now()
 );
 
+alter table public.rpg_sessions add column if not exists password_hash text;
+
 alter table public.rpg_sessions enable row level security;
 revoke all on public.rpg_sessions from anon, authenticated;
 
 create or replace view public.rpg_public_sessions as
 select id, state, updated_at from public.rpg_sessions;
 
-grant select on public.rpg_public_sessions to anon, authenticated;
+create or replace view public.rpg_campaign_catalog as
+select id, coalesce(nullif(state->>'campaignName', ''), 'Untitled adventure') as name,
+  updated_at, password_hash is not null as password_protected
+from public.rpg_sessions;
 
-create or replace function public.create_rpg_session(initial_state jsonb default '{}'::jsonb)
+grant select on public.rpg_public_sessions to anon, authenticated;
+grant select on public.rpg_campaign_catalog to anon, authenticated;
+
+drop function if exists public.create_rpg_session(jsonb);
+
+create or replace function public.create_rpg_session(initial_state jsonb, campaign_password text)
 returns table(id uuid, dm_key uuid)
+language plpgsql security definer set search_path = public, pg_temp
+as $$
+begin
+  if length(trim(coalesce(campaign_password, ''))) < 1 then
+    raise exception 'A campaign password is required';
+  end if;
+  return query
+    insert into public.rpg_sessions(state, password_hash)
+    values (coalesce(initial_state, '{}'::jsonb), crypt(campaign_password, gen_salt('bf', 10)))
+    returning rpg_sessions.id, rpg_sessions.dm_key;
+end;
+$$;
+
+create or replace function public.unlock_rpg_session(session_id uuid, campaign_password text)
+returns uuid
 language sql security definer set search_path = public, pg_temp
 as $$
-  insert into public.rpg_sessions(state)
-  values (coalesce(initial_state, '{}'::jsonb))
-  returning rpg_sessions.id, rpg_sessions.dm_key;
+  select dm_key from public.rpg_sessions
+  where id = session_id
+    and password_hash is not null
+    and password_hash = crypt(campaign_password, password_hash);
+$$;
+
+create or replace function public.set_rpg_password(session_id uuid, session_key uuid, new_password text)
+returns boolean
+language plpgsql security definer set search_path = public, pg_temp
+as $$
+begin
+  if length(trim(coalesce(new_password, ''))) < 1 then return false; end if;
+  update public.rpg_sessions
+  set password_hash = crypt(new_password, gen_salt('bf', 10)), updated_at = now()
+  where id = session_id and dm_key = session_key;
+  return found;
+end;
 $$;
 
 create or replace function public.update_rpg_session(session_id uuid, session_key uuid, new_state jsonb)
@@ -37,7 +76,9 @@ begin
 end;
 $$;
 
-grant execute on function public.create_rpg_session(jsonb) to anon, authenticated;
+grant execute on function public.create_rpg_session(jsonb, text) to anon, authenticated;
+grant execute on function public.unlock_rpg_session(uuid, text) to anon, authenticated;
+grant execute on function public.set_rpg_password(uuid, uuid, text) to anon, authenticated;
 grant execute on function public.update_rpg_session(uuid, uuid, jsonb) to anon, authenticated;
 
 drop function if exists public.move_rpg_hero(uuid, text, numeric, numeric, jsonb);

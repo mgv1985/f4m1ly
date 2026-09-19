@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11130f">
   <title>RPG · F4M1LY</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
   <header class="site-header">
@@ -26,7 +26,7 @@
   <main>
     <section class="campaign-home" id="campaignHome">
       <div class="page-heading campaign-heading"><p class="eyebrow">YOUR ADVENTURES</p><h1>Return to the<br><em>table.</em></h1><p>Begin a new campaign or continue an adventure exactly where the party left it.</p></div>
-      <div class="new-campaign"><label for="campaignName">Adventure name <span>optional</span></label><div><input id="campaignName" maxlength="60" placeholder="The name of your adventure"><button id="newCampaignButton" type="button">Create adventure <span aria-hidden="true">→</span></button></div></div>
+      <div class="new-campaign"><label for="campaignName">New adventure <span>Name and password</span></label><div><input id="campaignName" maxlength="60" autocomplete="off" placeholder="Adventure name"><input id="campaignPassword" type="password" maxlength="128" autocomplete="new-password" placeholder="Campaign password"><button id="newCampaignButton" type="button">Create adventure <span aria-hidden="true">→</span></button></div><p id="campaignFormStatus" class="campaign-form-status" role="status"></p></div>
       <section class="saved-campaigns"><div class="saved-heading"><h2>Saved campaigns</h2><span id="campaignCount"></span></div><div class="campaign-list" id="campaignList"></div></section>
     </section>
 
@@ -102,7 +102,7 @@
     </section>
   </main>
 
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
 </body>
 </html>
