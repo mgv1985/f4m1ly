@@ -159,3 +159,5 @@ using (
       and session.dm_key::text = (select current_setting('request.headers', true)::json ->> 'x-rpg-key')
   )
 );
+
+notify pgrst, 'reload schema';
