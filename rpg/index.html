@@ -62,8 +62,8 @@
             <div class="range-label"><span>Token diameter</span><output id="tokenSizeValue">24 px</output></div>
             <div class="vision-control"><input id="tokenSize" type="range" min="8" max="120" step="2" value="24" aria-label="Diameter of all tokens in pixels"></div>
             <h2 class="vision-heading">Set hero vision</h2>
-            <div class="range-label"><span>Visible radius</span><output id="visionValue">14%</output></div>
-            <div class="vision-control"><input id="visionRadius" type="range" min="5" max="30" value="14" aria-label="Hero vision radius"></div>
+            <div class="range-label"><span>Visible radius</span><output id="visionValue">120 px</output></div>
+            <div class="vision-control"><input id="visionRadius" type="range" min="20" max="600" step="10" value="120" aria-label="Hero vision radius in pixels"></div>
             <p class="hint">Select a token below, then tap the map to place it. Drag placed tokens to adjust them.</p>
           </section>
 
@@ -86,7 +86,7 @@
       <div class="play-toolbar">
         <div><span class="play-kicker">THE ADVENTURE HAS BEGUN</span><strong id="playStatus">Move a hero to explore</strong></div>
         <div class="play-actions">
-          <label class="play-vision" data-dm-only>Vision <input id="playVisionRadius" type="range" min="5" max="30" value="14"><output id="playVisionValue">14%</output></label>
+          <label class="play-vision" data-dm-only>Vision <input id="playVisionRadius" type="range" min="20" max="600" step="10" value="120"><output id="playVisionValue">120 px</output></label>
           <button id="fogPreviewButton" type="button" data-dm-only>Preview player view</button>
           <div class="fog-brush" data-dm-only><span>Fog brush</span><button id="revealBrushButton" type="button">Reveal</button><button id="hideBrushButton" type="button">Hide</button><button id="stopBrushButton" type="button" hidden>Done</button><input id="fogBrushSize" type="range" min="2" max="20" value="8" aria-label="Fog brush size"><output id="fogBrushValue">8%</output></div>
           <button id="shareButton" type="button" data-dm-only>Share with players</button>
@@ -102,7 +102,7 @@
     </section>
   </main>
 
-  <script src="app.js?v=12"></script>
+  <script src="app.js?v=13"></script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
 </body>
 </html>
