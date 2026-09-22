@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#050806">
+  <meta name="description" content="A private, password-protected collection of notes.">
+  <title>Post it · F4M1LY</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html"><span aria-hidden="true">■</span> F4M1LY TERMINAL</a>
+    <nav aria-label="Main navigation">
+      <a href="../index.html">Main page</a>
+      <a href="../The Pool of Memory/index.html?v=3">Pool of Memory</a>
+      <a href="../sudoku game/index.html?v=14">Gridline</a>
+      <a href="../counting/index.html">Counting</a>
+      <a href="../timer.html?v=6">Timer</a>
+      <a href="../tts.html">Text to Speech</a>
+      <a href="../webshop/index.html">Shoes Cabinet</a>
+      <a href="../rpg/index.html">RPG</a>
+      <a aria-current="page" href="index.html">Post it</a>
+      <a href="../archive.html?v=3">Archive</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="libraryView" class="library-view">
+      <div class="intro">
+        <div><p class="prompt">C:\F4M1LY\POST-IT&gt;</p><h1>Post it<span class="cursor" aria-hidden="true"></span></h1><p>Private drafts stored in the cloud. Choose a note and enter its password to open it.</p></div>
+        <form id="newNoteForm" class="new-note">
+          <label>New note title<input id="newTitle" maxlength="80" autocomplete="off" required></label>
+          <label>Password<input id="newPassword" type="password" maxlength="128" autocomplete="new-password" required></label>
+          <button type="submit">Create note</button>
+          <p id="newStatus" role="status"></p>
+        </form>
+      </div>
+      <div class="library-heading"><h2>Saved notes</h2><span id="noteCount">Connecting…</span></div>
+      <section id="notesGrid" class="notes-grid" aria-live="polite"></section>
+    </section>
+
+    <section id="editorView" class="editor-view" hidden>
+      <div class="editor-bar">
+        <button id="backButton" type="button">← All notes</button>
+        <span id="saveStatus" role="status">Ready</span>
+        <button id="saveButton" type="button">Save</button>
+        <button id="deleteOpenButton" class="danger" type="button">Delete</button>
+      </div>
+      <input id="editorTitle" class="editor-title" maxlength="80" aria-label="Note title">
+      <textarea id="editorContent" spellcheck="true" aria-label="Note text" placeholder="Start typing…"></textarea>
+      <div class="editor-footer"><span>POST-IT CLOUD DRAFT</span><span id="characterCount">0 characters</span></div>
+    </section>
+  </main>
+
+  <script src="app.js?v=1"></script>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
+</body>
+</html>
