@@ -7,7 +7,7 @@
   <meta name="description" content="A private, password-protected collection of notes.">
   <title>Post it · F4M1LY</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
   <header class="topbar">
@@ -53,13 +53,14 @@
         <button type="button" data-command="bold" aria-label="Bold"><strong>B</strong></button>
         <button type="button" data-command="italic" aria-label="Italic"><em>I</em></button>
         <button type="button" data-command="underline" aria-label="Underline"><u>U</u></button>
+        <button id="readModeButton" class="read-mode-button" type="button" aria-pressed="false">Read</button>
       </div>
       <div id="editorContent" class="editor-content" contenteditable="true" role="textbox" aria-multiline="true" spellcheck="true" data-placeholder="Start typing…"></div>
       <div class="editor-footer"><span>POST-IT CLOUD DRAFT</span><span id="characterCount">0 characters</span></div>
     </section>
   </main>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
 </body>
 </html>
