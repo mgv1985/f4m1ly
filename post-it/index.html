@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap&subset=greek" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=5">
-  <link rel="stylesheet" href="dictionary.css?v=1">
+  <link rel="stylesheet" href="dictionary.css?v=2">
 </head>
 <body>
   <header class="topbar">
@@ -66,12 +66,16 @@
         <p class="dictionary-label">DICTIONARY LOOKUP</p>
         <h2 id="dictionaryWord"></h2>
         <div id="dictionaryMeaning" class="dictionary-meaning" role="status"></div>
+        <form id="dictionarySearchForm" class="dictionary-search">
+          <label for="dictionarySearch">Look up another word</label>
+          <div><input id="dictionarySearch" type="search" autocomplete="off" spellcheck="false"><button type="submit">Search</button></div>
+        </form>
         <a id="dictionarySource" target="_blank" rel="noopener">View dictionary entry ↗</a>
       </aside>
     </section>
   </main>
 
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
 </body>
 </html>

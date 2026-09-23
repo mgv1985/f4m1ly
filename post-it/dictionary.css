@@ -60,3 +60,30 @@
 .dictionary-popup a:hover {
   color: var(--green);
 }
+
+.dictionary-search {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.dictionary-search label {
+  margin-bottom: 8px;
+  color: var(--green-dim);
+  font-size: 10px;
+}
+
+.dictionary-search div {
+  display: flex;
+  gap: 7px;
+}
+
+.dictionary-search input {
+  min-width: 0;
+  flex: 1;
+  padding: 8px 10px;
+}
+
+.dictionary-search button {
+  padding: 8px 12px;
+}
