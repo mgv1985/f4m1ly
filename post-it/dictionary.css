@@ -1,0 +1,62 @@
+.editor-view.reading-mode .editor-content {
+  cursor: text;
+}
+
+.dictionary-popup {
+  position: fixed;
+  z-index: 1100;
+  max-height: min(360px, 60dvh);
+  overflow: auto;
+  border: 1px solid var(--green);
+  background: rgba(2, 8, 4, 0.98);
+  padding: 22px;
+  box-shadow: 0 0 0 3px var(--black), 0 0 28px rgba(116, 255, 139, 0.22);
+  text-shadow: 0 0 7px rgba(116, 255, 139, 0.22);
+}
+
+.dictionary-popup[hidden] {
+  display: none;
+}
+
+.dictionary-close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 31px;
+  height: 31px;
+  padding: 0;
+  font-size: 20px;
+}
+
+.dictionary-label {
+  margin: 0 42px 9px 0;
+  color: var(--green-dim);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+.dictionary-popup h2 {
+  margin: 0 40px 15px 0;
+  font-size: 25px;
+  overflow-wrap: anywhere;
+}
+
+.dictionary-meaning {
+  color: #b8ffc3;
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.dictionary-popup a {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--green-dim);
+  font-size: 11px;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.dictionary-popup a:hover {
+  color: var(--green);
+}
