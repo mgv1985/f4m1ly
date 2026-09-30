@@ -1,0 +1,31 @@
+body {
+  overflow-x: hidden;
+}
+
+@media (max-width: 600px) {
+  .hero {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 90px 0 55px;
+  }
+
+  .hero .eyebrow {
+    max-width: 100%;
+    font-size: 8px;
+    letter-spacing: 0.13em;
+    overflow-wrap: anywhere;
+  }
+
+  .hero h1 {
+    font-size: 58px;
+  }
+
+  .introduction {
+    width: min(300px, 100%);
+    max-width: 300px;
+    padding-inline: 4px;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+}
