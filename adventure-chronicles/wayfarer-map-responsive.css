@@ -1,0 +1,21 @@
+.map-viewport {
+  min-width: 0;
+}
+
+.map-frame {
+  max-width: 100%;
+}
+
+@media (max-width: 700px) {
+  .map-console {
+    width: 100vw;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .map-frame {
+    width: calc(100vw - 20px);
+    min-width: 0;
+    max-width: calc(100vw - 20px);
+  }
+}

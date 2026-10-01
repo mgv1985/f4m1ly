@@ -1,0 +1,62 @@
+.mission-resources {
+  width: min(1080px, calc(100% - 30px));
+  margin: -80px auto 70px;
+  border: 1px solid var(--line);
+  background: rgba(7, 10, 17, 0.96);
+}
+
+.mission-resources > p {
+  margin: 0;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--dim);
+  font: 700 9px "Courier New", monospace;
+  letter-spacing: 0.16em;
+}
+
+.mission-resources a {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 22px 18px;
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.mission-resources a:hover {
+  background: var(--blue);
+  color: var(--space);
+}
+
+.mission-resources span,
+.mission-resources i {
+  font: 700 10px "Courier New", monospace;
+  letter-spacing: 0.1em;
+  font-style: normal;
+}
+
+.mission-resources strong {
+  color: var(--gold);
+  font-size: 18px;
+}
+
+.mission-resources a:hover strong {
+  color: var(--space);
+}
+
+@media (max-width: 650px) {
+  .mission-resources {
+    width: calc(100% - 16px);
+    margin-top: -45px;
+  }
+
+  .mission-resources a {
+    grid-template-columns: 58px 1fr;
+    gap: 10px;
+  }
+
+  .mission-resources i {
+    grid-column: 2;
+  }
+}

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#02050a">
+  <meta name="description" content="Wayfarer Station cargo bay tactical map for Star Wars — The Bounty.">
+  <title>Wayfarer Station Cargo Bay Map · The Bounty</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="wayfarer-map.css?v=1">
+  <link rel="stylesheet" href="wayfarer-map-responsive.css?v=1">
+</head>
+<body>
+  <main class="map-console">
+    <header class="console-header">
+      <div class="console-brand"><span class="target-mark" aria-hidden="true"></span><div><p>WAYFARER STATION // DECK SCHEMATIC</p><h1>Cargo Bay Map</h1></div></div>
+      <nav aria-label="Map navigation"><a href="star-wars-the-bounty.html">← THE BOUNTY</a><a href="index.html">CHRONICLES</a></nav>
+    </header>
+
+    <section class="telemetry" aria-label="Map information">
+      <span>FILE: WF-CB-01</span><span>DECK: CARGO OPERATIONS</span><span>GRID: ACTIVE</span><span class="status">● SCHEMATIC ONLINE</span>
+    </section>
+
+    <div class="map-toolbar" role="toolbar" aria-label="Map controls">
+      <button id="zoomOut" type="button" aria-label="Zoom out">−</button>
+      <output id="zoomLevel" aria-live="polite">100%</output>
+      <button id="zoomIn" type="button" aria-label="Zoom in">+</button>
+      <button id="resetMap" type="button">FIT MAP</button>
+      <button id="fullscreenMap" type="button">FULL SCREEN</button>
+      <span>SCROLL TO NAVIGATE</span>
+    </div>
+
+    <section id="mapViewport" class="map-viewport" aria-label="Wayfarer Station Cargo Bay tactical map">
+      <div class="map-frame">
+        <img id="mapImage" src="images/wayfarer-station-cargo-bay-map.png" alt="Detailed technical map of Wayfarer Station cargo bay, docked ship, security rooms, storage areas and service facilities" draggable="false">
+      </div>
+    </section>
+
+    <footer><span>IMPERIAL NAVIGATION ARCHIVE</span><span>TACTICAL USE // GM REFERENCE</span><span>F4M1LY · 2026</span></footer>
+  </main>
+  <script src="wayfarer-map.js?v=1"></script>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
+</body>
+</html>
