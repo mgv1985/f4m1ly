@@ -10,8 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=1">
-  <link rel="stylesheet" href="responsive.css?v=1">
+  <link rel="stylesheet" href="gallery.css?v=2">
 </head>
 <body>
   <header class="site-header">
@@ -34,28 +33,39 @@
   </header>
 
   <main>
-    <section id="catalogueView" class="catalogue-view">
-      <header class="hero">
+    <section class="hero" aria-labelledby="pageTitle">
+      <img src="header.webp" alt="An ornate Victorian botanical frame surrounding a quotation about ethos and inward measure">
+      <div class="hero-title">
         <p class="eyebrow">A private botanical collection</p>
-        <h1>The poetry<br><em>of flowers.</em></h1>
-        <p class="introduction">A cabinet of cultivated beauties—each bloom preserved not beneath glass, but in memory.</p>
-        <div class="flourish" aria-hidden="true"><span></span>❦<span></span></div>
-      </header>
-      <section aria-labelledby="collectionTitle">
-        <div class="section-heading"><p>I.</p><h2 id="collectionTitle">The collection</h2><span id="collectionCount"></span></div>
-        <div id="categoryGrid" class="category-grid"></div>
-      </section>
+        <h1 id="pageTitle"><span>The Floral</span> <span>Cabinet</span></h1>
+        <p>Flowers gathered into one living catalogue.</p>
+      </div>
     </section>
 
-    <section id="galleryView" class="gallery-view" hidden>
-      <button id="backButton" class="back-button" type="button">← The collection</button>
-      <header class="gallery-heading">
-        <p id="galleryNumber" class="eyebrow"></p>
-        <h1 id="galleryTitle"></h1>
-        <p id="gallerySubtitle"></p>
+    <section class="collection" aria-labelledby="collectionTitle">
+      <header class="collection-heading">
+        <div>
+          <p class="eyebrow">The complete collection</p>
+          <h2 id="collectionTitle">Botanical specimens</h2>
+        </div>
+        <p id="resultCount" class="result-count" aria-live="polite"></p>
       </header>
-      <nav id="roseFilters" class="rose-filters" aria-label="Rose colours" hidden></nav>
+
+      <div class="filter-panel" aria-label="Filter the floral collection">
+        <div class="filter-group">
+          <div class="filter-label"><span>I.</span><h3>Flower</h3></div>
+          <div id="typeFilters" class="filter-options"></div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-label"><span>II.</span><h3>Colour</h3></div>
+          <div id="colourFilters" class="filter-options"></div>
+        </div>
+        <button id="clearFilters" class="clear-filters" type="button" hidden>Clear all filters</button>
+      </div>
+
+      <div id="activeFilters" class="active-filters" aria-live="polite"></div>
       <div id="photoGrid" class="photo-grid"></div>
+      <p id="emptyState" class="empty-state" hidden>No flowers match this combination. Choose another flower or colour.</p>
     </section>
   </main>
 
@@ -67,8 +77,8 @@
   </dialog>
 
   <footer><span>F4M1LY · 2026</span><span>Beauty is a form of genius.</span></footer>
-  <script src="gallery-data.js?v=1"></script>
-  <script src="app.js?v=1"></script>
+  <script src="gallery-manifest.js?v=2"></script>
+  <script src="gallery.js?v=2"></script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
 </body>
 </html>
