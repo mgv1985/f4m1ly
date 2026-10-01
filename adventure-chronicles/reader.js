@@ -1,0 +1,6 @@
+const synth=window.speechSynthesis;
+let activeButton=null,activeUtterance=null;
+function resetButton(){if(activeButton){activeButton.classList.remove('speaking');activeButton.textContent='▶ ΑΚΡΟΑΣΗ';activeButton.setAttribute('aria-pressed','false');}activeButton=null;activeUtterance=null;}
+function greekVoice(){return synth.getVoices().find(voice=>voice.lang.toLowerCase().startsWith('el'))||null;}
+document.querySelectorAll('.listen-button').forEach(button=>{button.setAttribute('aria-pressed','false');button.addEventListener('click',()=>{if(!('speechSynthesis'in window)){button.textContent='ΜΗ ΔΙΑΘΕΣΙΜΟ';return;}if(button===activeButton&&synth.speaking){synth.cancel();resetButton();return;}synth.cancel();resetButton();const text=button.closest('.story-paragraph').querySelector('p').innerText.trim(),utterance=new SpeechSynthesisUtterance(text);utterance.lang='el-GR';utterance.rate=.92;const voice=greekVoice();if(voice)utterance.voice=voice;activeButton=button;activeUtterance=utterance;button.classList.add('speaking');button.textContent='■ ΔΙΑΚΟΠΗ';button.setAttribute('aria-pressed','true');utterance.onend=resetButton;utterance.onerror=resetButton;synth.speak(utterance);});});
+window.addEventListener('beforeunload',()=>synth?.cancel());

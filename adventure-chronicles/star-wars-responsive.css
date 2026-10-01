@@ -1,0 +1,42 @@
+body {
+  overflow-x: hidden;
+}
+
+@media (max-width: 650px) {
+  .story-header {
+    padding-inline: 14px;
+  }
+
+  .back-link {
+    display: block;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .adventure-title {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 10px;
+  }
+
+  .adventure-title > p {
+    width: min(320px, 100%);
+    margin-inline: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .adventure-title h1 {
+    font-size: 39px;
+    letter-spacing: -0.055em;
+  }
+
+  .adventure-title h1 span {
+    font-size: 0.43em;
+  }
+
+  .chapter-heading h2 {
+    font-size: 43px;
+    overflow-wrap: anywhere;
+  }
+}
