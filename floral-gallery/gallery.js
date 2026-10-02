@@ -2,6 +2,7 @@ const files = window.FLORAL_IMAGES || [];
 
 const CATEGORY_NAMES = {
   Chamelaucium: 'Chamelaucium',
+  ChrysanthemumBloom: 'Chrysanthemum Bloom',
   Ecuador: 'Ecuador Roses',
   Gypsophilla: 'Gypsophila',
   Hydrangea: 'Hydrangea',

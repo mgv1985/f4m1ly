@@ -1,5 +1,6 @@
 window.FLORAL_IMAGES = [
     "Chamelaucium Cerise Chamecordia rey Shachlav Flowers_result.webp",
+    "ChrysanthemumBloom Red lamira red 95gr VannoVa Master Growers - J \u0026 A Flowers_result.webp",
     "Ecuador Blue mondial tinted blue flora Verders 2026-02-04_20-04-29-870_result.webp",
     "Ecuador Bordeaux_Ivory Paloma 2_result.webp",
     "Ecuador Bordeaux_Ivory Paloma Rosa Nova EC_result.webp",
@@ -73,6 +74,7 @@ window.FLORAL_IMAGES = [
     "Roses Orange Tabasco 40 Alisha ++_result.webp",
     "Roses Pink Athena Royale Tinaw (1)_result.webp",
     "Roses Pink Athena Royale Tinaw (2)_result.webp",
+    "Roses Pink Mandala 50cm Rosesland Farm_result.webp",
     "Roses Pink_Light Dorchester and Harmony in Peach (1)_result.webp",
     "Roses Pink_Light Dorchester and Harmony in Peach (2)_result.webp",
     "Roses Pink_White Jumilia Simbi_result.webp",
@@ -99,6 +101,7 @@ window.FLORAL_IMAGES = [
     "Roses Salmon Dorchester and Harmony in Peach (5)_result.webp",
     "Roses Salmon Dorchester and Harmony in Peach (6)_result.webp",
     "Roses Salmon Unicorn Mlima (1)_result.webp",
+    "Roses Salmon_Pink Atlas 60cm High Connection Flowers_result.webp",
     "Roses White Avalanche A1 Bernhard Elegantum_result.webp",
     "Roses White David Austin Patience (1)_result.webp",
     "Roses Yellow catalunya hulst viber_image_2025-12-23_16-25-59-957_result.webp",
