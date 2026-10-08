@@ -1,0 +1,4 @@
+@media (max-width: 600px) {
+  .hero-copy h1 { font-size: 3.5rem; }
+  .intro h2 { font-size: 3rem; }
+}

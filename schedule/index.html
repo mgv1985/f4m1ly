@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0879ca">
+  <meta name="description" content="Our private weekly family schedule for 2026–2027.">
+  <title>Schedule · F4M1LY</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="schedule.css?v=1">
+  <link rel="stylesheet" href="mobile.css?v=1">
+</head>
+<body>
+  <section id="accessGate" class="access-gate" aria-labelledby="gateTitle">
+    <div class="gate-card">
+      <a class="gate-home" href="../index.html">F4M1LY</a>
+      <div class="gate-brick" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <p class="eyebrow">Private family page</p>
+      <h1 id="gateTitle">Schedule</h1>
+      <p>Enter the family password to see the weekly timetable.</p>
+      <form id="accessForm">
+        <label for="schedulePassword">Password</label>
+        <div class="password-row">
+          <input id="schedulePassword" type="password" inputmode="numeric" autocomplete="current-password" required autofocus>
+          <button type="submit">Open schedule</button>
+        </div>
+        <p id="accessError" class="access-error" role="alert" hidden>That password is not correct.</p>
+      </form>
+    </div>
+  </section>
+
+  <div id="protectedContent" hidden>
+    <header class="site-header">
+      <a class="wordmark" href="../index.html"><span aria-hidden="true">F</span> F4M1LY</a>
+      <nav aria-label="Schedule navigation">
+        <a href="../index.html">Main page</a>
+        <a href="#lucas">Lucas</a>
+        <a href="#thanos">Thanos</a>
+        <button id="lockButton" type="button">Lock</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="pageTitle">
+        <img src="hero.webp" alt="LEGO minifigures exploring a colourful adventure world">
+        <div class="hero-copy">
+          <p class="eyebrow">Our family week</p>
+          <h1 id="pageTitle">Our weekly<br>Schedule</h1>
+          <p class="school-year">2026—2027</p>
+        </div>
+      </section>
+
+      <section class="intro" aria-label="Schedule introduction">
+        <p class="eyebrow">Monday to Friday</p>
+        <h2>Two busy weeks,<br>side by side.</h2>
+        <p>School lessons and afternoon activities for Lucas and Thanos. Choose a name below or scroll through both timetables.</p>
+        <div class="child-links">
+          <a href="#lucas">Lucas’s week</a>
+          <a href="#thanos">Thanos’s week</a>
+        </div>
+      </section>
+
+      <div id="scheduleSections"></div>
+    </main>
+
+    <footer><span>Our weekly schedule</span><span>2026—2027</span></footer>
+  </div>
+
+  <script src="schedule.js?v=1"></script>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
+</body>
+</html>
