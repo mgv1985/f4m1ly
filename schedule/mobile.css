@@ -1,5 +1,5 @@
 .hero-copy {
-  top: 8%;
+  top: 5%;
   bottom: auto;
 }
 
@@ -24,7 +24,7 @@
 }
 
 @media (max-width: 600px) {
-  .hero-copy { top: 7%; bottom: auto; }
+  .hero-copy { top: 4%; bottom: auto; }
   .hero-copy h1 { font-size: 2rem; line-height: 1.1; }
   .hero:after { background: linear-gradient(180deg, rgba(2,38,70,.78), rgba(2,38,70,.18) 72%, rgba(2,38,70,.3)); }
   .intro h2 { font-size: 3rem; }
