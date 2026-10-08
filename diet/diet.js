@@ -86,7 +86,9 @@ $$('.tab').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.tab)));
 
 function localDateKey(date=new Date()){const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");return `${y}-${m}-${d}`}
 function optionMarkup(choices,mealId,draft){
-  return `<div class="options">${choices.map((text,i)=>`<button class="option ${draft[mealId]===i?'selected':''}" data-meal="${mealId}" data-choice="${i}" type="button"><span class="option-number">OPTION ${i+1}</span><span class="option-text">${escapeHtml(text)}</span></button>`).join("")}</div>`;
+  const selected=draft[mealId], prescribed=Number.isInteger(selected)&&selected>=0?choices[selected]:"", actual=draft.edits?.[mealId]??prescribed;
+  const editor=Number.isInteger(selected)?`<div class="meal-editor ${draft.edits?.[mealId]!==undefined?'edited':''}"><label for="edit-${mealId}">What did you actually eat?</label><textarea id="edit-${mealId}" data-meal-edit="${mealId}" data-prescribed="${escapeHtml(prescribed)}" rows="3" placeholder="Write what you ate…">${escapeHtml(actual)}</textarea><small>Edit this text if the amount or food was different. The change is recorded when you press OK.</small></div>`:"";
+  return `<div class="options">${choices.map((text,i)=>`<button class="option ${selected===i?'selected':''}" data-meal="${mealId}" data-choice="${i}" type="button"><span class="option-number">OPTION ${i+1}</span><span class="option-text">${escapeHtml(text)}</span></button>`).join("")}<button class="option custom-option ${selected===-1?'selected':''}" data-meal="${mealId}" data-choice="-1" type="button"><span class="option-number">CUSTOM</span><span class="option-text">I ate something different</span></button></div>${editor}`;
 }
 function renderToday(){
   const now=new Date(), dateKey=localDateKey(now), draft=drafts[dateKey]||{};
@@ -105,23 +107,35 @@ function renderToday(){
     return `<article class="meal-card ${i===next?'next':''} ${linked?'linked-meal':''}"><div class="meal-time">${meal.time}${i===next?'<span class="next-label">NEXT MEAL</span>':''}</div><div class="meal-content"><div class="meal-title-row"><h3>${meal.name}</h3>${linked?'<span class="linked-label">LINKED OPTIONS</span>':''}</div>${optionMarkup(meal.choices,meal.id,draft)}</div></article>`;
   }).join("");
   $$('[data-meal]').forEach(button=>button.addEventListener('click',()=>selectMeal(dateKey,button.dataset.meal,Number(button.dataset.choice))));
+  $$('[data-meal-edit]').forEach(editor=>editor.addEventListener('input',()=>editMeal(dateKey,editor.dataset.meal,editor.value,editor.dataset.prescribed)));
   const saved=history[dateKey];
   $("#save-status").textContent=saved?"This date is saved. Change any option and press OK to update it.":"Select one option for every meal, then save your day.";
 }
 
 function selectMeal(dateKey,mealId,index){
   const draft=drafts[dateKey]||{};
+  draft.edits={...(draft.edits||{})};
   draft[mealId]=index;
-  if(mealId==="lunch")draft.dinner=index;
-  if(mealId==="dinner")draft.lunch=index;
+  delete draft.edits[mealId];
+  if(mealId==="lunch"){draft.dinner=index;delete draft.edits.dinner}
+  if(mealId==="dinner"){draft.lunch=index;delete draft.edits.lunch}
   drafts[dateKey]=draft;
   save("dietDraftChoices",drafts);
   renderToday();
+}
+function editMeal(dateKey,mealId,value,prescribed){
+  const draft=drafts[dateKey]||{};draft.edits={...(draft.edits||{})};
+  if(value.trim()===prescribed.trim())delete draft.edits[mealId];else draft.edits[mealId]=value.trim();
+  drafts[dateKey]=draft;save("dietDraftChoices",drafts);
+  const editor=$(`[data-meal-edit="${mealId}"]`)?.closest(".meal-editor");if(editor)editor.classList.toggle("edited",draft.edits[mealId]!==undefined);
+  $("#save-status").textContent="Your edit is ready. Press OK to save today.";
 }
 async function saveToday(){
   const dateKey=localDateKey(), draft=drafts[dateKey]||{}, required=["breakfast","snack","lunch","afternoon","dinner"];
   const missing=required.filter(key=>!Number.isInteger(draft[key]));
   if(missing.length){$("#save-status").textContent=`Please choose ${missing.length===1?"the remaining meal":`all ${missing.length} remaining meals`} before saving.`;return}
+  const emptyCustom=required.filter(key=>draft[key]===-1&&!draft.edits?.[key]?.trim());
+  if(emptyCustom.length){$("#save-status").textContent="Please describe each custom meal before saving.";return}
   history[dateKey]={...draft,savedAt:new Date().toISOString()};
   save("dietHistory",history);
   $("#save-day").disabled=true;
@@ -159,13 +173,13 @@ function renderHistory(){
 }
 function historyCard(date,entry){
   const items=[
-    ["Πρωινό",fixedMeals.breakfast.choices[entry.breakfast],entry.breakfast],
-    ["Δεκατιανό",fixedMeals.snack.choices[entry.snack],entry.snack],
-    ["Μεσημεριανό",linkedOptions[entry.lunch]?.lunch,entry.lunch],
-    ["Απογευματινό",fixedMeals.afternoon.choices[entry.afternoon],entry.afternoon],
-    ["Βραδινό",linkedOptions[entry.dinner]?.dinner,entry.dinner]
+    ["breakfast","Πρωινό",fixedMeals.breakfast.choices[entry.breakfast],entry.breakfast],
+    ["snack","Δεκατιανό",fixedMeals.snack.choices[entry.snack],entry.snack],
+    ["lunch","Μεσημεριανό",linkedOptions[entry.lunch]?.lunch,entry.lunch],
+    ["afternoon","Απογευματινό",fixedMeals.afternoon.choices[entry.afternoon],entry.afternoon],
+    ["dinner","Βραδινό",linkedOptions[entry.dinner]?.dinner,entry.dinner]
   ];
-  return `<article class="history-card"><header><div><p class="eyebrow">SAVED DAY</p><h3>${formatDate(date)}</h3></div><button type="button" data-delete-history="${date}">Delete</button></header><div>${items.map(([name,text,index])=>`<section><span>${name} · Option ${Number(index)+1}</span><p>${escapeHtml(text||"")}</p></section>`).join("")}</div></article>`;
+  return `<article class="history-card"><header><div><p class="eyebrow">SAVED DAY</p><h3>${formatDate(date)}</h3></div><button type="button" data-delete-history="${date}">Delete</button></header><div>${items.map(([id,name,prescribed,index])=>{const actual=entry.edits?.[id]??prescribed??"",changed=index===-1||(entry.edits?.[id]!==undefined&&actual.trim()!==(prescribed||"").trim());return `<section class="${changed?'deviation':''}"><span>${name} · ${index===-1?'Custom':`Option ${Number(index)+1}`}</span><p>${escapeHtml(actual)}</p>${changed?'<b class="deviation-label">CHANGED FROM PLAN</b>':''}</section>`}).join("")}</div></article>`;
 }
 function formatDate(value){const [year,month,day]=value.split("-").map(Number);return new Date(year,month-1,day).toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
 function fruitGrid(items){return `<div class="fruit-grid">${items.map(([name,amount])=>`<div class="fruit"><b>${name}</b><span>${amount}</span></div>`).join('')}</div>`}
@@ -181,7 +195,7 @@ const previewTab=new URLSearchParams(location.search).get("preview");
 const storedPassword=sessionStorage.getItem("familyDietPassword")||"";
 if((sessionStorage.getItem("familyDietAccess")==="yes"&&storedPassword) || (location.protocol==="file:" && previewTab)){
   if(location.protocol==="file:" && (previewTab==="selected"||previewTab==="history")){
-    drafts[localDateKey()]={breakfast:0,snack:1,lunch:7,dinner:7,afternoon:3};
+    drafts[localDateKey()]={breakfast:0,snack:1,lunch:7,dinner:7,afternoon:2,edits:{afternoon:"½ κεσεδάκι γιαούρτι 2%."}};
     if(previewTab==="history")history[localDateKey()]={...drafts[localDateKey()],savedAt:new Date().toISOString()};
   }
   unlock(storedPassword||"2004");
