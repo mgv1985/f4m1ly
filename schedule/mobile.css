@@ -15,6 +15,14 @@
 
 .hero-copy .school-year { color: var(--yellow); }
 
+.child-heading .eyebrow {
+  margin-bottom: .8rem;
+}
+
+.child-heading h2 {
+  line-height: .88;
+}
+
 @media (max-width: 600px) {
   .hero-copy { top: 7%; bottom: auto; }
   .hero-copy h1 { font-size: 2rem; line-height: 1.1; }
