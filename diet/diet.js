@@ -57,9 +57,10 @@ const dried = [["Σταφίδες","2 κ.σ."],["Αποξηραμένα δαμά
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const escapeHtml = value => String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let settings = load("dietSettings", {activeProgram:"1",start1:"",start2:""});
 let selections = load("dietChoices", {});
-let viewedProgram = "1";
+let datePlans = load("dietDatePlans", {});
+let plannerDate = localDateKey();
+const mealPairs = Object.entries(programs).flatMap(([program,days])=>days.map((day,index)=>({id:`p${program}d${index}`,program,index,lunch:day.l,dinner:day.d})));
 
 function load(key, fallback){ try{return JSON.parse(localStorage.getItem(key)) || fallback}catch{return fallback} }
 function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
@@ -79,38 +80,54 @@ $$('.tab').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.tab)));
 $$('[data-open-tab]').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.openTab)));
 
 function localDateKey(date=new Date()){const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");return `${y}-${m}-${d}`}
-function cycleDay(program){
-  const start=settings[`start${program}`];
-  if(!start)return 0;
-  const [y,m,d]=start.split("-").map(Number), startDate=new Date(y,m-1,d), today=new Date();
-  today.setHours(0,0,0,0); startDate.setHours(0,0,0,0);
-  const delta=Math.floor((today-startDate)/86400000), length=programs[program].length;
-  return ((delta%length)+length)%length;
-}
+function pairById(id){return mealPairs.find(pair=>pair.id===id)}
 function optionMarkup(choices,key){
   return `<div class="options">${choices.map((text,i)=>`<button class="option ${selections[key]===i?'selected':''}" data-choice-key="${key}" data-choice="${i}" type="button"><span class="option-number">OPTION ${i+1}</span><span class="option-text">${escapeHtml(text)}</span></button>`).join("")}</div>`;
 }
 function renderToday(){
-  const now=new Date(), program=settings.activeProgram||"1", index=cycleDay(program), day=programs[program][index], dateKey=localDateKey(now);
+  const now=new Date(), dateKey=localDateKey(now), plan=datePlans[dateKey], pair=plan&&pairById(plan.pairId);
   $("#today-weekday").textContent=now.toLocaleDateString("en-GB",{weekday:"long"});
   $("#today-date").textContent=now.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
-  $("#today-cycle").textContent=`Plan ${program} · Day ${index+1}`;
-  $("#setup-note").hidden=Boolean(settings[`start${program}`]);
-  const meals=[fixedMeals.breakfast,fixedMeals.snack,{name:"Μεσημεριανό",time:"15:00",choices:day.l},fixedMeals.afternoon,{name:"Βραδινό",time:"21:00",choices:day.d}];
+  $("#setup-note").hidden=Boolean(pair);
+  const lunch=pair?pair.lunch[plan.lunchIndex||0]:"No lunch selected yet.";
+  const dinner=pair?pair.dinner[plan.dinnerIndex||0]:"No dinner selected yet.";
+  const meals=[fixedMeals.breakfast,fixedMeals.snack,{name:"Μεσημεριανό",time:"15:00",chosen:lunch},fixedMeals.afternoon,{name:"Βραδινό",time:"21:00",chosen:dinner}];
   const minutes=now.getHours()*60+now.getMinutes(), next=meals.findIndex(m=>{const [h,min]=m.time.split(':').map(Number);return h*60+min>minutes});
   $("#today-meals").innerHTML=meals.map((meal,i)=>{
     const key=`${dateKey}-${meal.name}`;
     const linked=meal.name==="Μεσημεριανό"||meal.name==="Βραδινό";
-    return `<article class="meal-card ${i===next?'next':''} ${linked?'linked-meal':''}"><div class="meal-time">${meal.time}${i===next?'<span class="next-label">NEXT MEAL</span>':''}</div><div class="meal-content"><div class="meal-title-row"><h3>${meal.name}</h3>${linked?'<span class="linked-label">LINKED DAILY PLAN</span>':''}</div>${optionMarkup(meal.choices,key)}</div></article>`;
+    const body=linked?`<div class="chosen-meal ${pair?'':'empty-choice'}">${escapeHtml(meal.chosen)}</div>`:optionMarkup(meal.choices,key);
+    return `<article class="meal-card ${i===next?'next':''} ${linked?'linked-meal':''}"><div class="meal-time">${meal.time}${i===next?'<span class="next-label">NEXT MEAL</span>':''}</div><div class="meal-content"><div class="meal-title-row"><h3>${meal.name}</h3>${linked?'<span class="linked-label">LINKED DAILY PLAN</span>':''}</div>${body}</div></article>`;
   }).join("");
   $$('[data-choice-key]').forEach(b=>b.addEventListener('click',()=>{selections[b.dataset.choiceKey]=Number(b.dataset.choice);save("dietChoices",selections);renderToday()}));
 }
 
 function renderProgram(){
-  const list=programs[viewedProgram];
-  const weekdays={"Δευτέρα":"Monday","Τρίτη":"Tuesday","Τετάρτη":"Wednesday","Πέμπτη":"Thursday","Παρασκευή":"Friday","Σάββατο":"Saturday","Κυριακή":"Sunday"};
-  $("#program-days").innerHTML=list.map((day,i)=>`<article class="day-card"><header class="day-head"><span class="day-number">${i+1}</span><div><span class="paired-caption">LINKED LUNCH &amp; DINNER</span><h3>${weekdays[day.day]||day.day}</h3></div></header><div class="day-meals"><div class="day-meal"><h4>Main meal · Μεσημεριανό · 15:00</h4>${day.l.map((x,j)=>`<p>${day.l.length>1?`<b>Option ${j+1}</b><br>`:''}${escapeHtml(x)}</p>`).join('')}</div><div class="day-meal"><h4>Dinner · Βραδινό · 21:00</h4>${day.d.map((x,j)=>`<p>${day.d.length>1?`<b>Option ${j+1}</b><br>`:''}${escapeHtml(x)}</p>`).join('')}</div></div></article>`).join('');
-  $$('[data-program]').forEach(b=>b.classList.toggle('active',b.dataset.program===viewedProgram));
+  const plan=datePlans[plannerDate], pair=plan&&pairById(plan.pairId);
+  $("#meal-date").value=plannerDate;
+  $("#lunch-picker").innerHTML='<option value="">Choose any lunch…</option>'+mealPairs.flatMap(p=>p.lunch.map((meal,i)=>`<option value="${p.id}|${i}">${escapeHtml(meal.replace(/\n/g," · "))}</option>`)).join("");
+  $("#dinner-picker").innerHTML='<option value="">Choose any dinner…</option>'+mealPairs.flatMap(p=>p.dinner.map((meal,i)=>`<option value="${p.id}|${i}">${escapeHtml(meal.replace(/\n/g," · "))}</option>`)).join("");
+  if(pair){
+    $("#lunch-picker").value=`${pair.id}|${plan.lunchIndex||0}`;
+    $("#dinner-picker").value=`${pair.id}|${plan.dinnerIndex||0}`;
+    $("#linked-selection").innerHTML=`<div class="pair-heading"><span>LINKED MEAL PAIR</span><strong>${formatPlannerDate(plannerDate)}</strong></div><div class="linked-pair-grid"><section><h3>Μεσημεριανό</h3>${pair.lunch.map((meal,i)=>choiceButton("lunch",meal,i,(plan.lunchIndex||0)===i)).join("")}</section><div class="pair-line">↔</div><section><h3>Βραδινό</h3>${pair.dinner.map((meal,i)=>choiceButton("dinner",meal,i,(plan.dinnerIndex||0)===i)).join("")}</section></div>`;
+  }else{
+    $("#lunch-picker").value=""; $("#dinner-picker").value="";
+    $("#linked-selection").innerHTML='<div class="planner-empty">Choose either a lunch or a dinner. Its linked meal will appear here automatically.</div>';
+  }
+  $("#clear-plan").hidden=!pair;
+  $("#saved-date-list").innerHTML=Object.keys(datePlans).sort().map(date=>`<button type="button" data-saved-date="${date}"><span>${formatPlannerDate(date)}</span><b>View pair →</b></button>`).join("")||'<p class="planner-empty">No dates saved yet.</p>';
+  $$('[data-pair-side]').forEach(button=>button.addEventListener('click',()=>{datePlans[plannerDate][`${button.dataset.pairSide}Index`]=Number(button.dataset.pairIndex);save("dietDatePlans",datePlans);renderProgram();renderToday()}));
+  $$('[data-saved-date]').forEach(button=>button.addEventListener('click',()=>{plannerDate=button.dataset.savedDate;renderProgram()}));
+}
+function choiceButton(side,meal,index,selected){return `<button class="linked-choice ${selected?'selected':''}" type="button" data-pair-side="${side}" data-pair-index="${index}"><span>OPTION ${index+1}</span>${escapeHtml(meal)}</button>`}
+function formatPlannerDate(value){const [year,month,day]=value.split("-").map(Number);return new Date(year,month-1,day).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"})}
+function choosePair(side,value){
+  if(!value)return;
+  const [pairId,indexText]=value.split("|"), existing=datePlans[plannerDate], samePair=existing&&existing.pairId===pairId;
+  datePlans[plannerDate]={pairId,lunchIndex:samePair?existing.lunchIndex||0:0,dinnerIndex:samePair?existing.dinnerIndex||0:0};
+  datePlans[plannerDate][`${side}Index`]=Number(indexText);
+  save("dietDatePlans",datePlans);renderProgram();renderToday();
 }
 function renderFixed(){
   $("#fixed-choices").innerHTML=Object.values(fixedMeals).map(meal=>`<section class="choice-section"><header><p class="eyebrow">${meal.time}</p><h3>${meal.name}</h3></header><ol>${meal.choices.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ol></section>`).join('')+`<section class="choice-section"><header><p class="eyebrow">EVERY DAY</p><h3>Καφές</h3></header><ol><li>Μέχρι 2 καφέδες την ημέρα.</li></ol></section>`;
@@ -120,11 +137,16 @@ function renderPortions(){
   $("#portions-content").innerHTML=`<div class="portion-layout"><section class="portion-card"><h3>Fresh fruit</h3>${fruitGrid(fruits)}<p>When breakfast lists ½ fruit, use half of the stated portion. One fruit portion contains approximately 15 g of carbohydrates.</p></section><div><section class="portion-card"><h3>Dried fruit</h3>${fruitGrid(dried)}</section><section class="portion-card" style="margin-top:18px"><h3>Measurements</h3><div class="measure-list"><div class="measure"><b>Σπιρτόκουτο</b>A piece of cheese approximately the size of a matchbox.</div><div class="measure"><b>Παλάμη</b>The palm-sized measurement given in the original meal plan.</div><div class="measure"><b>κ.σ.</b>Tablespoon.</div><div class="measure"><b>κ.γ.</b>Teaspoon.</div></div></section></div></div>`;
 }
 function renderAll(){
-  $("#active-program").value=settings.activeProgram; $("#start-1").value=settings.start1; $("#start-2").value=settings.start2;
   renderToday();renderProgram();renderFixed();renderPortions();
 }
-$("#active-program").addEventListener("change",e=>{settings.activeProgram=e.target.value;save("dietSettings",settings);renderToday()});
-[$("#start-1"),$("#start-2")].forEach((input,i)=>input.addEventListener("change",e=>{settings[`start${i+1}`]=e.target.value;save("dietSettings",settings);renderToday()}));
-$$('[data-program]').forEach(b=>b.addEventListener('click',()=>{viewedProgram=b.dataset.program;renderProgram()}));
+$("#meal-date").addEventListener("change",e=>{plannerDate=e.target.value||localDateKey();renderProgram()});
+$("#lunch-picker").addEventListener("change",e=>choosePair("lunch",e.target.value));
+$("#dinner-picker").addEventListener("change",e=>choosePair("dinner",e.target.value));
+$("#clear-plan").addEventListener("click",()=>{delete datePlans[plannerDate];save("dietDatePlans",datePlans);renderProgram();renderToday()});
 
-if(sessionStorage.getItem("familyDietAccess")==="yes" || (location.protocol==="file:" && new URLSearchParams(location.search).has("preview")))unlock();
+const previewTab=new URLSearchParams(location.search).get("preview");
+if(sessionStorage.getItem("familyDietAccess")==="yes" || (location.protocol==="file:" && previewTab)){
+  if(location.protocol==="file:" && previewTab==="pair")datePlans[plannerDate]={pairId:"p1d1",lunchIndex:0,dinnerIndex:1};
+  unlock();
+  if(previewTab==="program"||previewTab==="pair")openTab("program");
+}
