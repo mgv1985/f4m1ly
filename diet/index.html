@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f6ef">
   <title>Diet · Personal meal diary</title>
-  <link rel="stylesheet" href="diet.css?v=3">
+  <link rel="stylesheet" href="diet.css?v=4">
 </head>
 <body>
   <div class="gate" id="gate">
@@ -33,8 +33,7 @@
 
     <nav class="tabs" aria-label="Main navigation">
       <button class="tab active" data-tab="today" type="button">Today</button>
-      <button class="tab" data-tab="program" type="button">Planner</button>
-      <button class="tab" data-tab="choices" type="button">Choices</button>
+      <button class="tab" data-tab="history" type="button">History</button>
       <button class="tab" data-tab="portions" type="button">Portions</button>
     </nav>
 
@@ -45,43 +44,18 @@
             <p class="eyebrow" id="today-weekday"></p>
             <h2 id="today-date">Today</h2>
           </div>
-          <button class="cycle-badge planner-link" type="button" data-open-tab="program">Choose today’s meals</button>
         </div>
-        <div class="setup-note" id="setup-note" hidden>There is no lunch and dinner selected for today. <button type="button" data-open-tab="program">Choose meals</button></div>
         <div class="meal-list" id="today-meals"></div>
+        <div class="save-day-bar">
+          <p id="save-status" role="status">Select one option for every meal, then save your day.</p>
+          <button id="save-day" type="button">OK · Save today</button>
+        </div>
       </section>
 
-      <section class="panel" id="program-panel" hidden>
-        <div class="page-heading">
-          <div><p class="eyebrow">YOUR DATES, YOUR CHOICE</p><h2>Meal planner</h2></div>
-        </div>
-        <p class="intro">Choose any date, then choose either a lunch or a dinner. Its linked meal will appear automatically. You can use any meal pair on any date.</p>
-        <div class="free-planner">
-          <div class="planner-date">
-            <label for="meal-date">Date</label>
-            <input id="meal-date" type="date">
-          </div>
-          <div class="meal-picker-grid">
-            <section class="meal-picker">
-              <label for="lunch-picker">Choose lunch · Μεσημεριανό</label>
-              <select id="lunch-picker"><option value="">Choose any lunch…</option></select>
-            </section>
-            <div class="pair-symbol" aria-hidden="true">↔</div>
-            <section class="meal-picker">
-              <label for="dinner-picker">Choose dinner · Βραδινό</label>
-              <select id="dinner-picker"><option value="">Choose any dinner…</option></select>
-            </section>
-          </div>
-          <div class="linked-selection" id="linked-selection"></div>
-          <button class="clear-plan" id="clear-plan" type="button">Clear this date</button>
-        </div>
-        <div class="saved-dates"><p class="eyebrow">SAVED DATES</p><div id="saved-date-list"></div></div>
-      </section>
-
-      <section class="panel" id="choices-panel" hidden>
-        <div class="page-heading"><div><p class="eyebrow">EVERYDAY ALTERNATIVES</p><h2>Meal choices</h2></div></div>
-        <p class="intro">Choose one complete option. Foods shown within the same option are eaten together.</p>
-        <div class="choice-sections" id="fixed-choices"></div>
+      <section class="panel" id="history-panel" hidden>
+        <div class="page-heading"><div><p class="eyebrow">YOUR SAVED DAYS</p><h2>History</h2></div></div>
+        <p class="intro">Each day appears here only after you press “OK · Save today”.</p>
+        <div class="history-list" id="history-list"></div>
       </section>
 
       <section class="panel" id="portions-panel" hidden>
@@ -90,6 +64,6 @@
       </section>
     </main>
   </div>
-  <script src="diet.js?v=3"></script>
+  <script src="diet.js?v=4"></script>
 </body>
 </html>
