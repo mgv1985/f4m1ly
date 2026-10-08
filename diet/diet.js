@@ -1,4 +1,8 @@
 const PASSWORD_HASH = "483029d526219f816e8e8f6a9de07b422633dba180ffc26faac22862a017519f";
+const SUPABASE_URL = "https://owceeowarwqjsxpylnoo.supabase.co";
+const SUPABASE_KEY = "sb_publishable_DxH30XOgchm8PifrXNKn-w_9fRNFoQg";
+const cloudHeaders = {apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,"Content-Type":"application/json"};
+let dietPassword = "";
 
 const fixedMeals = {
   breakfast: { name: "Πρωινό", time: "09:00", choices: [
@@ -65,10 +69,11 @@ const linkedOptions = mealPairs.flatMap(pair=>pair.l.flatMap(lunch=>pair.d.map(d
 function load(key, fallback){ try{return JSON.parse(localStorage.getItem(key)) || fallback}catch{return fallback} }
 function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
 async function hash(text){const data=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));return [...new Uint8Array(data)].map(v=>v.toString(16).padStart(2,"0")).join("")}
+async function cloudRpc(name,body){const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`,{method:"POST",headers:cloudHeaders,body:JSON.stringify(body)});if(!response.ok)throw Error("Cloud history is not ready.");return response.json()}
 
-function unlock(){ sessionStorage.setItem("familyDietAccess","yes"); $("#gate").hidden=true; $("#app").hidden=false; renderAll(); }
-$("#gate-form").addEventListener("submit",async e=>{e.preventDefault(); if(await hash($("#password").value)===PASSWORD_HASH){unlock()}else{$("#gate-error").textContent="The password is incorrect.";$("#password").select()}});
-$("#lock-button").addEventListener("click",()=>{sessionStorage.removeItem("familyDietAccess");location.reload()});
+function unlock(password){dietPassword=password;sessionStorage.setItem("familyDietAccess","yes");sessionStorage.setItem("familyDietPassword",password);$("#gate").hidden=true;$("#app").hidden=false;renderAll();loadCloudHistory();}
+$("#gate-form").addEventListener("submit",async e=>{e.preventDefault(); if(await hash($("#password").value)===PASSWORD_HASH){unlock($("#password").value)}else{$("#gate-error").textContent="The password is incorrect.";$("#password").select()}});
+$("#lock-button").addEventListener("click",()=>{sessionStorage.removeItem("familyDietAccess");sessionStorage.removeItem("familyDietPassword");location.reload()});
 
 function openTab(name){
   $$(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));
@@ -113,18 +118,44 @@ function selectMeal(dateKey,mealId,index){
   save("dietDraftChoices",drafts);
   renderToday();
 }
-function saveToday(){
+async function saveToday(){
   const dateKey=localDateKey(), draft=drafts[dateKey]||{}, required=["breakfast","snack","lunch","afternoon","dinner"];
   const missing=required.filter(key=>!Number.isInteger(draft[key]));
   if(missing.length){$("#save-status").textContent=`Please choose ${missing.length===1?"the remaining meal":`all ${missing.length} remaining meals`} before saving.`;return}
   history[dateKey]={...draft,savedAt:new Date().toISOString()};
   save("dietHistory",history);
-  $("#save-status").textContent="Saved. Today’s choices are now available in History.";
+  $("#save-day").disabled=true;
+  try{
+    const saved=await cloudRpc("save_diet_history",{access_password:dietPassword,selected_date:dateKey,selected_choices:history[dateKey]});
+    if(saved!==true)throw Error();
+    $("#save-status").textContent="Saved online. Today’s choices are available on your other browsers.";
+  }catch{$("#save-status").textContent="Saved on this browser only. Run diet/supabase-schema.sql to enable online history."}
+  $("#save-day").disabled=false;
+}
+async function loadCloudHistory(){
+  $("#history-status").textContent="Loading online history…";
+  try{
+    const rows=await cloudRpc("list_diet_history",{access_password:dietPassword}), local={...history}, merged={};
+    for(const row of rows)merged[row.meal_date]={...row.choices,savedAt:row.choices.savedAt||row.updated_at};
+    for(const [date,entry] of Object.entries(local)){
+      const remote=rows.find(row=>row.meal_date===date);
+      if(!remote||new Date(entry.savedAt||0)>new Date(remote.updated_at)){
+        merged[date]=entry;
+        await cloudRpc("save_diet_history",{access_password:dietPassword,selected_date:date,selected_choices:entry});
+      }
+    }
+    history=merged;save("dietHistory",history);renderHistory();renderToday();
+    $("#history-status").textContent="Online history is up to date.";
+  }catch{$("#history-status").textContent="Showing history from this browser. Run diet/supabase-schema.sql to enable online history."}
 }
 function renderHistory(){
   const dates=Object.keys(history).sort().reverse();
   $("#history-list").innerHTML=dates.map(date=>historyCard(date,history[date])).join("")||'<div class="history-empty">No saved days yet. Make your choices under Today and press OK.</div>';
-  $$('[data-delete-history]').forEach(button=>button.addEventListener('click',()=>{delete history[button.dataset.deleteHistory];save("dietHistory",history);renderHistory()}));
+  $$('[data-delete-history]').forEach(button=>button.addEventListener('click',async()=>{
+    const date=button.dataset.deleteHistory;button.disabled=true;
+    try{const removed=await cloudRpc("delete_diet_history",{access_password:dietPassword,selected_date:date});if(removed!==true)throw Error();delete history[date];save("dietHistory",history);renderHistory();$("#history-status").textContent="The saved day was deleted online."}
+    catch{button.disabled=false;$("#history-status").textContent="The saved day could not be deleted online. Please run the latest Diet database script."}
+  }));
 }
 function historyCard(date,entry){
   const items=[
@@ -147,11 +178,12 @@ function renderAll(){
 $("#save-day").addEventListener("click",saveToday);
 
 const previewTab=new URLSearchParams(location.search).get("preview");
-if(sessionStorage.getItem("familyDietAccess")==="yes" || (location.protocol==="file:" && previewTab)){
+const storedPassword=sessionStorage.getItem("familyDietPassword")||"";
+if((sessionStorage.getItem("familyDietAccess")==="yes"&&storedPassword) || (location.protocol==="file:" && previewTab)){
   if(location.protocol==="file:" && (previewTab==="selected"||previewTab==="history")){
     drafts[localDateKey()]={breakfast:0,snack:1,lunch:7,dinner:7,afternoon:3};
     if(previewTab==="history")history[localDateKey()]={...drafts[localDateKey()],savedAt:new Date().toISOString()};
   }
-  unlock();
+  unlock(storedPassword||"2004");
   if(previewTab==="history")openTab("history");
 }
