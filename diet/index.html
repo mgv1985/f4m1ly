@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6ef">
+  <title>Diet · Προσωπικό ημερολόγιο διατροφής</title>
+  <link rel="stylesheet" href="diet.css?v=1">
+</head>
+<body>
+  <div class="gate" id="gate">
+    <form class="gate-card" id="gate-form">
+      <p class="eyebrow">ΠΡΟΣΩΠΙΚΟ ΗΜΕΡΟΛΟΓΙΟ</p>
+      <h1>Diet</h1>
+      <p>Πληκτρολόγησε τον κωδικό για να ανοίξεις το διατροφικό σου πρόγραμμα.</p>
+      <label for="password">Κωδικός πρόσβασης</label>
+      <div class="password-row">
+        <input id="password" type="password" inputmode="numeric" autocomplete="current-password" required autofocus>
+        <button type="submit">Είσοδος</button>
+      </div>
+      <p class="gate-error" id="gate-error" role="alert"></p>
+    </form>
+  </div>
+
+  <div class="app" id="app" hidden>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Αρχική σελίδα">
+        <span class="brand-mark">D</span>
+        <span><b>Diet</b><small>Προσωπικό ημερολόγιο διατροφής</small></span>
+      </a>
+      <button class="quiet-button" id="lock-button" type="button">Κλείδωμα</button>
+    </header>
+
+    <nav class="tabs" aria-label="Κύρια πλοήγηση">
+      <button class="tab active" data-tab="today" type="button">Σήμερα</button>
+      <button class="tab" data-tab="program" type="button">Πρόγραμμα</button>
+      <button class="tab" data-tab="choices" type="button">Επιλογές</button>
+      <button class="tab" data-tab="portions" type="button">Μερίδες</button>
+    </nav>
+
+    <main>
+      <section class="panel active" id="today-panel">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow" id="today-weekday"></p>
+            <h2 id="today-date">Σήμερα</h2>
+          </div>
+          <div class="cycle-badge" id="today-cycle">Πρόγραμμα 1 · Ημέρα 1</div>
+        </div>
+        <div class="setup-note" id="setup-note" hidden>
+          Όρισε την ημερομηνία έναρξης στην καρτέλα «Πρόγραμμα» για αυτόματη αντιστοίχιση ημερών.
+          <button type="button" data-open-tab="program">Ρύθμιση</button>
+        </div>
+        <div class="meal-list" id="today-meals"></div>
+      </section>
+
+      <section class="panel" id="program-panel" hidden>
+        <div class="page-heading">
+          <div><p class="eyebrow">ΟΛΟΚΛΗΡΟΣ Ο ΚΥΚΛΟΣ</p><h2>Πρόγραμμα</h2></div>
+        </div>
+        <div class="program-settings">
+          <div>
+            <label for="active-program">Ενεργό πρόγραμμα</label>
+            <select id="active-program"><option value="1">Πρόγραμμα 1 · 10 ημέρες</option><option value="2">Πρόγραμμα 2 · 8 ημέρες</option></select>
+          </div>
+          <div>
+            <label for="start-1">Έναρξη Προγράμματος 1</label>
+            <input id="start-1" type="date">
+          </div>
+          <div>
+            <label for="start-2">Έναρξη Προγράμματος 2</label>
+            <input id="start-2" type="date">
+          </div>
+        </div>
+        <div class="program-switch" role="group" aria-label="Επιλογή προγράμματος">
+          <button class="active" data-program="1" type="button">Πρόγραμμα 1 <span>10 ημέρες</span></button>
+          <button data-program="2" type="button">Πρόγραμμα 2 <span>8 ημέρες</span></button>
+        </div>
+        <div class="days-grid" id="program-days"></div>
+      </section>
+
+      <section class="panel" id="choices-panel" hidden>
+        <div class="page-heading"><div><p class="eyebrow">ΚΑΘΗΜΕΡΙΝΕΣ ΕΝΑΛΛΑΚΤΙΚΕΣ</p><h2>Επιλογές γευμάτων</h2></div></div>
+        <p class="intro">Διάλεξε μία ολόκληρη επιλογή. Όσα τρόφιμα βρίσκονται στην ίδια επιλογή καταναλώνονται μαζί.</p>
+        <div class="choice-sections" id="fixed-choices"></div>
+      </section>
+
+      <section class="panel" id="portions-panel" hidden>
+        <div class="page-heading"><div><p class="eyebrow">ΧΡΗΣΙΜΟΣ ΟΔΗΓΟΣ</p><h2>Μερίδες</h2></div></div>
+        <div id="portions-content"></div>
+      </section>
+    </main>
+  </div>
+  <script src="diet.js?v=1"></script>
+</body>
+</html>
