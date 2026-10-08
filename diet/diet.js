@@ -66,7 +66,7 @@ function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
 async function hash(text){const data=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));return [...new Uint8Array(data)].map(v=>v.toString(16).padStart(2,"0")).join("")}
 
 function unlock(){ sessionStorage.setItem("familyDietAccess","yes"); $("#gate").hidden=true; $("#app").hidden=false; renderAll(); }
-$("#gate-form").addEventListener("submit",async e=>{e.preventDefault(); if(await hash($("#password").value)===PASSWORD_HASH){unlock()}else{$("#gate-error").textContent="Ο κωδικός δεν είναι σωστός.";$("#password").select()}});
+$("#gate-form").addEventListener("submit",async e=>{e.preventDefault(); if(await hash($("#password").value)===PASSWORD_HASH){unlock()}else{$("#gate-error").textContent="The password is incorrect.";$("#password").select()}});
 $("#lock-button").addEventListener("click",()=>{sessionStorage.removeItem("familyDietAccess");location.reload()});
 
 function openTab(name){
@@ -88,35 +88,36 @@ function cycleDay(program){
   return ((delta%length)+length)%length;
 }
 function optionMarkup(choices,key){
-  if(choices.length===1)return `<p class="single-option">${escapeHtml(choices[0])}</p>`;
-  return `<div class="options">${choices.map((text,i)=>`<button class="option ${selections[key]===i?'selected':''}" data-choice-key="${key}" data-choice="${i}" type="button"><span class="option-number">ΕΠΙΛΟΓΗ ${i+1}</span><span class="option-text">${escapeHtml(text)}</span></button>`).join("")}</div>`;
+  return `<div class="options">${choices.map((text,i)=>`<button class="option ${selections[key]===i?'selected':''}" data-choice-key="${key}" data-choice="${i}" type="button"><span class="option-number">OPTION ${i+1}</span><span class="option-text">${escapeHtml(text)}</span></button>`).join("")}</div>`;
 }
 function renderToday(){
   const now=new Date(), program=settings.activeProgram||"1", index=cycleDay(program), day=programs[program][index], dateKey=localDateKey(now);
-  $("#today-weekday").textContent=now.toLocaleDateString("el-GR",{weekday:"long"});
-  $("#today-date").textContent=now.toLocaleDateString("el-GR",{day:"numeric",month:"long",year:"numeric"});
-  $("#today-cycle").textContent=`Πρόγραμμα ${program} · Ημέρα ${index+1}`;
+  $("#today-weekday").textContent=now.toLocaleDateString("en-GB",{weekday:"long"});
+  $("#today-date").textContent=now.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  $("#today-cycle").textContent=`Plan ${program} · Day ${index+1}`;
   $("#setup-note").hidden=Boolean(settings[`start${program}`]);
   const meals=[fixedMeals.breakfast,fixedMeals.snack,{name:"Μεσημεριανό",time:"15:00",choices:day.l},fixedMeals.afternoon,{name:"Βραδινό",time:"21:00",choices:day.d}];
   const minutes=now.getHours()*60+now.getMinutes(), next=meals.findIndex(m=>{const [h,min]=m.time.split(':').map(Number);return h*60+min>minutes});
   $("#today-meals").innerHTML=meals.map((meal,i)=>{
     const key=`${dateKey}-${meal.name}`;
-    return `<article class="meal-card ${i===next?'next':''}"><div class="meal-time">${meal.time}${i===next?'<span class="next-label">ΕΠΟΜΕΝΟ ΓΕΥΜΑ</span>':''}</div><div class="meal-content"><h3>${meal.name}</h3>${optionMarkup(meal.choices,key)}</div></article>`;
+    const linked=meal.name==="Μεσημεριανό"||meal.name==="Βραδινό";
+    return `<article class="meal-card ${i===next?'next':''} ${linked?'linked-meal':''}"><div class="meal-time">${meal.time}${i===next?'<span class="next-label">NEXT MEAL</span>':''}</div><div class="meal-content"><div class="meal-title-row"><h3>${meal.name}</h3>${linked?'<span class="linked-label">LINKED DAILY PLAN</span>':''}</div>${optionMarkup(meal.choices,key)}</div></article>`;
   }).join("");
   $$('[data-choice-key]').forEach(b=>b.addEventListener('click',()=>{selections[b.dataset.choiceKey]=Number(b.dataset.choice);save("dietChoices",selections);renderToday()}));
 }
 
 function renderProgram(){
   const list=programs[viewedProgram];
-  $("#program-days").innerHTML=list.map((day,i)=>`<article class="day-card"><header class="day-head"><span class="day-number">${i+1}</span><h3>${day.day}</h3></header><div class="day-meals"><div class="day-meal"><h4>Μεσημεριανό · 15:00</h4>${day.l.map((x,j)=>`<p>${day.l.length>1?`<b>Επιλογή ${j+1}</b><br>`:''}${escapeHtml(x)}</p>`).join('')}</div><div class="day-meal"><h4>Βραδινό · 21:00</h4>${day.d.map((x,j)=>`<p>${day.d.length>1?`<b>Επιλογή ${j+1}</b><br>`:''}${escapeHtml(x)}</p>`).join('')}</div></div></article>`).join('');
+  const weekdays={"Δευτέρα":"Monday","Τρίτη":"Tuesday","Τετάρτη":"Wednesday","Πέμπτη":"Thursday","Παρασκευή":"Friday","Σάββατο":"Saturday","Κυριακή":"Sunday"};
+  $("#program-days").innerHTML=list.map((day,i)=>`<article class="day-card"><header class="day-head"><span class="day-number">${i+1}</span><div><span class="paired-caption">LINKED LUNCH &amp; DINNER</span><h3>${weekdays[day.day]||day.day}</h3></div></header><div class="day-meals"><div class="day-meal"><h4>Main meal · Μεσημεριανό · 15:00</h4>${day.l.map((x,j)=>`<p>${day.l.length>1?`<b>Option ${j+1}</b><br>`:''}${escapeHtml(x)}</p>`).join('')}</div><div class="day-meal"><h4>Dinner · Βραδινό · 21:00</h4>${day.d.map((x,j)=>`<p>${day.d.length>1?`<b>Option ${j+1}</b><br>`:''}${escapeHtml(x)}</p>`).join('')}</div></div></article>`).join('');
   $$('[data-program]').forEach(b=>b.classList.toggle('active',b.dataset.program===viewedProgram));
 }
 function renderFixed(){
-  $("#fixed-choices").innerHTML=Object.values(fixedMeals).map(meal=>`<section class="choice-section"><header><p class="eyebrow">${meal.time}</p><h3>${meal.name}</h3></header><ol>${meal.choices.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ol></section>`).join('')+`<section class="choice-section"><header><p class="eyebrow">ΚΑΘΗΜΕΡΙΝΑ</p><h3>Καφές</h3></header><ol><li>Μέχρι 2 καφέδες την ημέρα.</li></ol></section>`;
+  $("#fixed-choices").innerHTML=Object.values(fixedMeals).map(meal=>`<section class="choice-section"><header><p class="eyebrow">${meal.time}</p><h3>${meal.name}</h3></header><ol>${meal.choices.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ol></section>`).join('')+`<section class="choice-section"><header><p class="eyebrow">EVERY DAY</p><h3>Καφές</h3></header><ol><li>Μέχρι 2 καφέδες την ημέρα.</li></ol></section>`;
 }
 function fruitGrid(items){return `<div class="fruit-grid">${items.map(([name,amount])=>`<div class="fruit"><b>${name}</b><span>${amount}</span></div>`).join('')}</div>`}
 function renderPortions(){
-  $("#portions-content").innerHTML=`<div class="portion-layout"><section class="portion-card"><h3>Φρέσκα φρούτα</h3>${fruitGrid(fruits)}<p>Όταν στο πρωινό αναφέρεται ½ φρούτο, χρησιμοποίησε τη μισή ποσότητα. Μία μερίδα φρούτου αντιστοιχεί περίπου σε 15 γρ. υδατανθράκων.</p></section><div><section class="portion-card"><h3>Αποξηραμένα</h3>${fruitGrid(dried)}</section><section class="portion-card" style="margin-top:18px"><h3>Μονάδες μέτρησης</h3><div class="measure-list"><div class="measure"><b>Σπιρτόκουτο</b>Κομμάτι τυριού περίπου στο μέγεθος ενός σπιρτόκουτου.</div><div class="measure"><b>Παλάμη</b>Η μονάδα μέτρησης όπως δόθηκε στο αρχικό πρόγραμμα.</div><div class="measure"><b>κ.σ.</b>Κουταλιά της σούπας.</div><div class="measure"><b>κ.γ.</b>Κουταλάκι του γλυκού.</div></div></section></div></div>`;
+  $("#portions-content").innerHTML=`<div class="portion-layout"><section class="portion-card"><h3>Fresh fruit</h3>${fruitGrid(fruits)}<p>When breakfast lists ½ fruit, use half of the stated portion. One fruit portion contains approximately 15 g of carbohydrates.</p></section><div><section class="portion-card"><h3>Dried fruit</h3>${fruitGrid(dried)}</section><section class="portion-card" style="margin-top:18px"><h3>Measurements</h3><div class="measure-list"><div class="measure"><b>Σπιρτόκουτο</b>A piece of cheese approximately the size of a matchbox.</div><div class="measure"><b>Παλάμη</b>The palm-sized measurement given in the original meal plan.</div><div class="measure"><b>κ.σ.</b>Tablespoon.</div><div class="measure"><b>κ.γ.</b>Teaspoon.</div></div></section></div></div>`;
 }
 function renderAll(){
   $("#active-program").value=settings.activeProgram; $("#start-1").value=settings.start1; $("#start-2").value=settings.start2;
