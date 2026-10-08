@@ -1,13 +1,13 @@
 .hero-copy {
-  top: 16%;
+  top: 8%;
   bottom: auto;
 }
 
 .hero-copy h1 {
-  max-width: 980px;
+  max-width: 800px;
   color: #fff;
   font-family: "Microgramma D Extended", Microgramma, Michroma, sans-serif;
-  font-size: clamp(2.7rem, 7vw, 6.4rem);
+  font-size: clamp(2.5rem, 6vw, 5.3rem);
   line-height: 1.02;
   letter-spacing: .01em;
   text-transform: uppercase;
@@ -16,8 +16,8 @@
 .hero-copy .school-year { color: var(--yellow); }
 
 @media (max-width: 600px) {
-  .hero-copy { top: 11%; bottom: auto; }
-  .hero-copy h1 { font-size: 2.2rem; line-height: 1.1; }
+  .hero-copy { top: 7%; bottom: auto; }
+  .hero-copy h1 { font-size: 2rem; line-height: 1.1; }
   .hero:after { background: linear-gradient(180deg, rgba(2,38,70,.78), rgba(2,38,70,.18) 72%, rgba(2,38,70,.3)); }
   .intro h2 { font-size: 3rem; }
 }
