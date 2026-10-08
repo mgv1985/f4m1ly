@@ -1,4 +1,4 @@
-const PASSWORD_HASH = "27badc983df1780b60c2b3fa9d3a19a00e46aac798451f0febdca52920faaddf";
+const PASSWORD_HASH = "483029d526219f816e8e8f6a9de07b422633dba180ffc26faac22862a017519f";
 
 const fixedMeals = {
   breakfast: { name: "Πρωινό", time: "09:00", choices: [
