@@ -75,6 +75,22 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
   .archive-link { font-size:10px; }
 }
 
+/* Pool-themed category dropdowns */
+.topbar .category-dropdown-panel {
+  border:2px solid #f07b62;
+  background:#291452;
+  color:#f8d9ae;
+  box-shadow:7px 7px 0 #130a35;
+}
+.topbar .category-dropdown-panel p { color:#f07b62; opacity:1; }
+.topbar .category-dropdown-panel a {
+  border-top-color:#5a2c77!important;
+  color:#f8d9ae!important;
+}
+.topbar .category-dropdown-panel a span { color:#f07b62; }
+.topbar .category-dropdown-panel a:hover,
+.topbar .category-dropdown-panel a:focus-visible { color:#ffd28f!important; opacity:1; }
+
 /* Named leaderboard and explained percentile */
 .score-fields{display:grid;grid-template-columns:minmax(180px,1fr) 120px auto;gap:10px;align-items:end}
 .score-fields label{display:flex;flex-direction:column;gap:8px;margin:0}
