@@ -143,6 +143,39 @@ dialog::backdrop { background:rgba(25,24,21,.78); backdrop-filter:blur(5px); }
 .archive-card { border-top:8px solid var(--mustard); }
 .home-page .about-button { color:#fff; text-decoration:none; }
 .home-page .header-actions { position:relative; }
+.explore-menu { position:relative; }
+.explore-menu summary { display:flex; align-items:center; gap:10px; padding:8px 0 6px; border-bottom:2px solid var(--mustard); list-style:none; color:var(--ink); cursor:pointer; font-size:12px; font-weight:600; }
+.explore-menu summary::-webkit-details-marker { display:none; }
+.explore-menu summary span { transition:transform .2s ease; }
+.explore-menu[open] summary span { transform:rotate(45deg); }
+.explore-panel { position:absolute; z-index:30; top:calc(100% + 21px); right:0; width:min(760px,calc(100vw - 48px)); padding:28px; background:var(--ink); color:var(--paper); box-shadow:10px 10px 0 var(--mustard); }
+.explore-heading { display:flex; justify-content:space-between; gap:20px; padding-bottom:18px; border-bottom:1px solid rgba(243,234,216,.25); }
+.explore-heading span,.explore-columns p { color:var(--mustard); font-size:9px; font-weight:600; letter-spacing:.15em; }
+.explore-heading strong { font-family:"Newsreader",serif; font-size:25px; font-weight:400; }
+.explore-columns { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:25px; padding-top:18px; }
+.explore-columns section { display:flex; flex-direction:column; align-items:flex-start; }
+.explore-columns p { margin:0 0 7px; }
+.explore-columns a { padding:7px 0; color:var(--paper); font-size:11px; line-height:1.3; text-decoration:none; }
+.explore-columns a:hover { color:var(--mustard); }
+.home-directory { padding:100px clamp(24px,5vw,76px) 120px; background:var(--paper); border-top:2px solid var(--ink); }
+.directory-intro { display:grid; grid-template-columns:1fr 1fr; gap:30px; align-items:end; margin-bottom:50px; }
+.directory-intro .eyebrow { grid-column:1/-1; margin:0; }
+.directory-intro h2 { max-width:650px; }
+.directory-intro > p:last-child { max-width:400px; margin:0; color:var(--muted); font-family:"Newsreader",serif; font-size:18px; line-height:1.5; }
+.directory-groups { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); border-top:2px solid var(--ink); border-left:1px solid var(--line); }
+.directory-group { min-width:0; padding:28px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+.directory-group-heading { display:flex; gap:18px; align-items:flex-start; margin-bottom:28px; }
+.directory-group-heading > span { color:var(--red); font-family:"Newsreader",serif; font-size:30px; }
+.directory-group-heading p { margin:2px 0 3px; color:var(--muted); font-size:9px; font-weight:600; letter-spacing:.14em; }
+.directory-group-heading h3 { font-size:30px; }
+.directory-group > a { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:14px 0; border-top:1px solid var(--line); color:inherit; text-decoration:none; }
+.directory-group > a strong { font-family:"Newsreader",serif; font-size:20px; font-weight:400; }
+.directory-group > a span { color:var(--muted); font-size:10px; text-align:right; }
+.directory-group > a:hover strong { color:var(--red); }
+.play-group { border-top:8px solid var(--red); }
+.family-group { border-top:8px solid var(--mustard); }
+.learn-group { border-top:8px solid var(--blue); }
+.tools-group { border-top:8px solid var(--green); }
 .screensaver-entry { position:absolute; left:100%; top:0; bottom:0; width:18px; padding:0; border:0; outline:0; background:transparent; opacity:0; cursor:default; }
 @media (max-width:900px) {
   .home-hero { min-height:720px; align-items:flex-start; }
@@ -154,15 +187,23 @@ dialog::backdrop { background:rgba(25,24,21,.78); backdrop-filter:blur(5px); }
   .home-page .site-header { min-height:68px; height:auto; padding:10px 16px; }
   .home-page .wordmark > span:last-child { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
   .home-page .header-actions { gap:10px; }
-  .home-page .header-actions .game-link { max-width:92px; font-size:9px; }
   .home-page .about-button { padding:8px; font-size:9px; }
+  .explore-panel { position:fixed; top:68px; right:12px; left:12px; width:auto; max-height:calc(100vh - 84px); overflow:auto; padding:22px; }
+  .explore-heading { display:block; }
+  .explore-heading strong { display:block; margin-top:7px; }
+  .explore-columns { grid-template-columns:1fr 1fr; }
   .home-hero { min-height:680px; }
   .home-copy { width:calc(100% - 32px); margin:26px 16px; padding:38px 24px; }
   .home-copy h1 { font-size:clamp(44px,14vw,54px); }
   .home-copy > p:not(.eyebrow) { margin:24px 0; font-size:18px; }
   .home-image > span { width:82px; height:82px; right:16px; bottom:16px; font-size:8px; }
   .home-destinations { padding-top:72px; }
+  .home-directory { padding-top:72px; }
+  .directory-intro,.directory-groups { grid-template-columns:1fr; }
+  .directory-intro .eyebrow { grid-column:auto; }
+  .directory-group { padding:22px; }
 }
+@media (max-width:440px) { .explore-columns { grid-template-columns:1fr; } }
 /* Shared header navigation */
 @media (max-width: 900px) {
   .archive-page .site-header { height:auto; min-height:82px; padding-block:10px; gap:18px; }

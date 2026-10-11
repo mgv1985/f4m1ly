@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="styles.css?v=9" />
   </head>
   <body class="home-page">
     <header class="site-header">
@@ -19,19 +19,18 @@
         <span>The Family Archive</span>
       </a>
       <div class="header-actions">
-        <a class="game-link" href="The Pool of Memory/index.html?v=3">The Pool of Memory</a>
-        <a class="game-link" href="sudoku game/index.html?v=13">Gridline</a>
-        <a class="game-link" href="counting/index.html">Counting</a>
-        <a class="game-link" href="timer.html?v=6">Timer</a>
-        <a class="game-link" href="tts.html">Text to Speech</a>
-        <a class="game-link" href="webshop/index.html">Shoes Cabinet</a>
-        <a class="game-link" href="rpg/index.html">RPG</a>
-        <a class="game-link" href="adventure-chronicles/index.html">Adventure Chronicles</a>
-        <a class="game-link" href="post-it/index.html">Post it</a>
-        <a class="game-link" href="floral-gallery/index.html">Floral Gallery</a>
-        <a class="game-link" href="schedule/index.html">Schedule</a>
-        <a class="game-link" href="diet/index.html">Diet</a>
-        <a class="game-link" href="history/index.html">History</a>
+        <details class="explore-menu">
+          <summary>Explore <span aria-hidden="true">＋</span></summary>
+          <div class="explore-panel">
+            <div class="explore-heading"><span>ALL PLACES</span><strong>What would you like to open?</strong></div>
+            <div class="explore-columns">
+              <section><p>PLAY</p><a href="The Pool of Memory/index.html?v=3">The Pool of Memory</a><a href="sudoku game/index.html?v=13">Gridline Sudoku</a><a href="counting/index.html">Counting</a><a href="rpg/index.html">RPG Tabletop</a></section>
+              <section><p>FAMILY</p><a href="webshop/index.html">Shoes Cabinet</a><a href="floral-gallery/index.html">Floral Gallery</a><a href="schedule/index.html">Schedule</a><a href="diet/index.html">Diet</a></section>
+              <section><p>READ &amp; LEARN</p><a href="adventure-chronicles/index.html">Adventure Chronicles</a><a href="history/index.html">History Lessons</a><a href="tts.html">Text to Speech</a></section>
+              <section><p>TOOLS</p><a href="timer.html?v=6">Timer</a><a href="post-it/index.html">Post it</a></section>
+            </div>
+          </div>
+        </details>
         <a class="about-button" href="archive.html?v=3">Family archive <span aria-hidden="true">↗</span></a>
         <button class="screensaver-entry" id="screensaverEntry" type="button" tabindex="-1" aria-hidden="true"></button>
       </div>
@@ -42,7 +41,7 @@
         <div class="home-copy">
           <p class="eyebrow">OUR FAMILY, IN ONE PLACE</p>
           <h1 id="home-title">Things worth<br /><em>remembering.</em></h1>
-          <p>A home for our family films, shared memories, and small games made to enjoy together.</p>
+          <p>A home for our family films, shared memories, games, learning pages, and useful everyday tools.</p>
           <a class="home-primary" href="archive.html?v=3">Enter the private archive <span aria-hidden="true">→</span></a>
         </div>
         <div class="home-image">
@@ -80,6 +79,42 @@
           </a>
         </div>
       </section>
+
+      <section class="home-directory" aria-labelledby="directory-title">
+        <div class="directory-intro">
+          <p class="eyebrow">EVERYTHING, ORGANIZED</p>
+          <h2 id="directory-title">Explore the whole family site.</h2>
+          <p>Games, family collections, learning pages and practical tools—each in its own place.</p>
+        </div>
+        <div class="directory-groups">
+          <section class="directory-group play-group">
+            <div class="directory-group-heading"><span>01</span><div><p>PLAY</p><h3>Games &amp; imagination</h3></div></div>
+            <a href="The Pool of Memory/index.html?v=3"><strong>The Pool of Memory</strong><span>Memory game →</span></a>
+            <a href="sudoku game/index.html?v=13"><strong>Gridline</strong><span>Sudoku studio →</span></a>
+            <a href="counting/index.html"><strong>Counting</strong><span>Number challenge →</span></a>
+            <a href="rpg/index.html"><strong>RPG</strong><span>Shared tabletop map →</span></a>
+          </section>
+          <section class="directory-group family-group">
+            <div class="directory-group-heading"><span>02</span><div><p>FAMILY</p><h3>Everyday life &amp; collections</h3></div></div>
+            <a href="archive.html?v=3"><strong>Family Archive</strong><span>Family films →</span></a>
+            <a href="webshop/index.html"><strong>Shoes Cabinet</strong><span>Visual catalogue →</span></a>
+            <a href="floral-gallery/index.html"><strong>Floral Gallery</strong><span>Flower collection →</span></a>
+            <a href="schedule/index.html"><strong>Schedule</strong><span>Weekly activities →</span></a>
+            <a href="diet/index.html"><strong>Diet</strong><span>Meal diary →</span></a>
+          </section>
+          <section class="directory-group learn-group">
+            <div class="directory-group-heading"><span>03</span><div><p>READ &amp; LEARN</p><h3>Stories &amp; lessons</h3></div></div>
+            <a href="adventure-chronicles/index.html"><strong>Adventure Chronicles</strong><span>TTRPG stories →</span></a>
+            <a href="history/index.html"><strong>History</strong><span>Interactive school lessons →</span></a>
+            <a href="tts.html"><strong>Text to Speech</strong><span>Accessible reading →</span></a>
+          </section>
+          <section class="directory-group tools-group">
+            <div class="directory-group-heading"><span>04</span><div><p>TOOLS</p><h3>Simple, useful utilities</h3></div></div>
+            <a href="timer.html?v=6"><strong>Timer</strong><span>Keep time →</span></a>
+            <a href="post-it/index.html"><strong>Post it</strong><span>Online notes →</span></a>
+          </section>
+        </div>
+      </section>
     </main>
 
     <footer>
@@ -90,6 +125,13 @@
       document.querySelector('#currentYear').textContent = new Date().getFullYear();
       document.querySelector('#secretEntry').addEventListener('click', () => { window.location.href = 'op-gate.html'; });
       document.querySelector('#screensaverEntry').addEventListener('click', () => { window.location.href = 'screensaver.html'; });
+      const exploreMenu = document.querySelector('.explore-menu');
+      document.addEventListener('click', (event) => {
+        if (exploreMenu.open && !exploreMenu.contains(event.target)) exploreMenu.removeAttribute('open');
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') exploreMenu.removeAttribute('open');
+      });
     </script>
   <!-- Cloudflare Web Analytics -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"0ce505fb0b8c4a2399dd96c0189b03b1"}'></script>
