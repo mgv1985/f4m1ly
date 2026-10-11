@@ -17,3 +17,28 @@ nav.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{nav.c
 const sections=[...document.querySelectorAll('main [id]')],links=[...nav.querySelectorAll('a')];
 const observer=new IntersectionObserver(entries=>{const current=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(!current)return;links.forEach(link=>link.classList.toggle('active',link.hash===`#${current.target.id}`))},{rootMargin:'-20% 0px -65%',threshold:[0,.25,.6]});
 sections.forEach(section=>observer.observe(section));
+
+const lightbox=document.querySelector('#imageLightbox');
+const lightboxImage=document.querySelector('#lightboxImage');
+const lightboxCaption=document.querySelector('#lightboxCaption');
+const closeLightbox=()=>lightbox.close();
+document.querySelectorAll('main img').forEach(image=>{
+  image.tabIndex=0;
+  image.setAttribute('role','button');
+  image.setAttribute('aria-label',`${image.alt}. Μεγέθυνση εικόνας`);
+  const openImage=()=>{
+    lightboxImage.src=image.currentSrc||image.src;
+    lightboxImage.alt=image.alt;
+    lightboxCaption.textContent=image.closest('figure')?.querySelector('figcaption')?.textContent||image.alt;
+    lightbox.showModal();
+    document.body.classList.add('lightbox-open');
+  };
+  image.addEventListener('click',openImage);
+  image.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openImage()}});
+});
+lightbox.querySelector('.lightbox-close').addEventListener('click',closeLightbox);
+lightbox.addEventListener('click',event=>{if(event.target===lightbox)closeLightbox()});
+lightbox.addEventListener('close',()=>{
+  document.body.classList.remove('lightbox-open');
+  lightboxImage.removeAttribute('src');
+});
