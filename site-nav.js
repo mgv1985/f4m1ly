@@ -3,7 +3,7 @@
   const root = new URL('.', script.src);
   const style = document.createElement('link');
   style.rel = 'stylesheet';
-  style.href = new URL('site-nav.css?v=1', root).href;
+  style.href = new URL('site-nav.css?v=2', root).href;
   document.head.append(style);
   const href = (path) => new URL(path, root).href;
   const categories = [
@@ -24,9 +24,11 @@
   const header = document.createElement('header');
   header.className = 'global-site-nav';
   header.innerHTML = `
-    <a class="global-nav-brand" href="${href('index.html')}" aria-label="F4M1LY main page">
-      <span aria-hidden="true">✦</span><strong>F4M1LY</strong>
-    </a>
+    <div class="global-nav-brand">
+      <a class="global-nav-archive" href="${href('archive.html?v=3')}" aria-label="Open the Family Archive"><span aria-hidden="true">✦</span></a>
+      <a class="global-nav-secret" href="${href('screensaver.html')}" tabindex="-1" aria-hidden="true" title=""></a>
+      <a class="global-nav-home" href="${href('index.html')}">F4M1LY</a>
+    </div>
     <nav class="global-nav-groups" aria-label="Site categories">
       ${categories.map((category) => `
         <details class="global-nav-group">
