@@ -21,23 +21,36 @@ sections.forEach(section=>observer.observe(section));
 const lightbox=document.querySelector('#imageLightbox');
 const lightboxImage=document.querySelector('#lightboxImage');
 const lightboxCaption=document.querySelector('#lightboxCaption');
+const historyImages=[...document.querySelectorAll('main img')];
+let lightboxIndex=0;
 const closeLightbox=()=>lightbox.close();
-document.querySelectorAll('main img').forEach(image=>{
+const showHistoryImage=index=>{
+  lightboxIndex=(index+historyImages.length)%historyImages.length;
+  const image=historyImages[lightboxIndex];
+  lightboxImage.src=image.currentSrc||image.src;
+  lightboxImage.alt=image.alt;
+  lightboxCaption.textContent=image.closest('figure')?.querySelector('figcaption')?.textContent||image.alt;
+  if(!lightbox.open)lightbox.showModal();
+  document.body.classList.add('lightbox-open');
+};
+const changeHistoryImage=direction=>showHistoryImage(lightboxIndex+direction);
+historyImages.forEach((image,index)=>{
   image.tabIndex=0;
   image.setAttribute('role','button');
   image.setAttribute('aria-label',`${image.alt}. Μεγέθυνση εικόνας`);
-  const openImage=()=>{
-    lightboxImage.src=image.currentSrc||image.src;
-    lightboxImage.alt=image.alt;
-    lightboxCaption.textContent=image.closest('figure')?.querySelector('figcaption')?.textContent||image.alt;
-    lightbox.showModal();
-    document.body.classList.add('lightbox-open');
-  };
+  const openImage=()=>showHistoryImage(index);
   image.addEventListener('click',openImage);
   image.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openImage()}});
 });
 lightbox.querySelector('.lightbox-close').addEventListener('click',closeLightbox);
+document.querySelector('#previousHistoryImage').addEventListener('click',()=>changeHistoryImage(-1));
+document.querySelector('#nextHistoryImage').addEventListener('click',()=>changeHistoryImage(1));
 lightbox.addEventListener('click',event=>{if(event.target===lightbox)closeLightbox()});
+document.addEventListener('keydown',event=>{
+  if(!lightbox.open)return;
+  if(event.key==='ArrowLeft')changeHistoryImage(-1);
+  if(event.key==='ArrowRight')changeHistoryImage(1);
+});
 lightbox.addEventListener('close',()=>{
   document.body.classList.remove('lightbox-open');
   lightboxImage.removeAttribute('src');
