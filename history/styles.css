@@ -12,3 +12,7 @@ body{overflow-x:hidden}.hero h1{overflow-wrap:anywhere}.chapter-heading{grid-tem
 .rulers img,
 .palaces img,
 .monarch-feature img{width:100%;height:auto;max-height:none;object-fit:contain}
+
+/* A more restrained title keeps the portrait and the full heading visible. */
+.hero h1{max-width:780px;font-size:clamp(3.1rem,6vw,6.2rem);line-height:.94}
+@media(max-width:560px){.hero h1{font-size:2.5rem;line-height:.98}}
