@@ -9,7 +9,7 @@
   const categories = {
     games: {
       label: 'Games',
-      links: [['The Pool of Memory','The Pool of Memory/index.html?v=3'],['Gridline Sudoku','sudoku game/index.html?v=13'],['Counting','counting/index.html'],['RPG Tabletop','rpg/index.html'],['Adventure Chronicles','adventure-chronicles/index.html']]
+      links: [['The Pool of Memory','The Pool of Memory/index.html?v=3'],['Pool of Memory 2','pool-of-memory-2/index.html'],['Gridline Sudoku','sudoku game/index.html?v=13'],['Counting','counting/index.html'],['RPG Tabletop','rpg/index.html'],['Adventure Chronicles','adventure-chronicles/index.html']]
     },
     family: {
       label: 'Family',

@@ -1,0 +1,26 @@
+/* Pool of Memory 2: circular tokens scattered across a continuous field. */
+.board-wrap {
+  background:
+    radial-gradient(circle at 22% 28%, rgba(240,123,98,.09), transparent 18%),
+    radial-gradient(circle at 78% 70%, rgba(139,196,191,.08), transparent 20%),
+    rgba(17,8,47,.62);
+}
+.board { width: min(900px, 100%); height: 430px; }
+.tile {
+  width: clamp(58px, 8.5vw, 82px);
+  border-radius: 50%;
+  background: #160b3b;
+  box-shadow: 5px 5px 0 #0b0520, 0 0 0 2px #5a2c77;
+}
+.tile-inner,
+.tile-face { border-radius: 50%; }
+.tile-front {
+  background: #8bc4bf;
+  box-shadow: inset 0 0 0 4px rgba(248,217,174,.18);
+}
+.tile.is-correct .tile-front { background: #f07b62; }
+.tile.is-wrong .tile-front { background: #b54166; }
+@media (max-width:680px) {
+  .board { height: 380px; }
+  .tile { width: clamp(54px,16vw,70px); }
+}
