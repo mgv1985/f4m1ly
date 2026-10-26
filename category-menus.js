@@ -17,7 +17,7 @@
     },
     'read-learn': {
       label: 'Read & Learn',
-      links: [['History Lessons','history/index.html']]
+      links: [['News','news/index.html'],['History Lessons','history/index.html']]
     },
     'tools-work': {
       label: 'Tools and Work',

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f0e8" />
+    <meta name="description" content="F4M1LY News — stories and updates from around the family website." />
+    <title>News · F4M1LY</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="news.css?v=1" />
+    <script src="../category-menus.js?v=2" defer></script>
+    <script src="news.js?v=1" defer></script>
+  </head>
+  <body>
+    <header class="news-header">
+      <div class="news-nav">
+        <a class="back-home" href="../index.html" aria-label="Back to the F4M1LY home page">F4M1LY</a>
+        <nav aria-label="Main navigation">
+          <a href="#games">Games</a><a href="#family">Family</a><a href="#read-learn">Read &amp; Learn</a><a href="#tools-work">Tools and Work</a>
+        </nav>
+        <div class="nav-actions">
+          <button id="searchButton" type="button" aria-label="Search stories" aria-expanded="false">Search</button>
+          <button id="themeButton" class="theme-button" type="button" aria-label="Switch to dark mode"><span aria-hidden="true">◐</span></button>
+        </div>
+      </div>
+      <div class="masthead">
+        <p>THE FAMILY WEBSITE JOURNAL</p><a href="index.html">News</a><time id="todayDate"></time>
+      </div>
+      <div class="search-drawer" id="searchDrawer" hidden>
+        <label for="searchInput">Search the journal</label>
+        <div><input id="searchInput" type="search" placeholder="Try “games”, “history” or “schedule”" autocomplete="off" /><button id="closeSearch" type="button">Close</button></div>
+      </div>
+    </header>
+    <main>
+      <section class="edition" aria-labelledby="editionTitle">
+        <div><p class="kicker">ISSUE 01 · THE NEW EDITION</p><h1 id="editionTitle">Everything new,<br /><em>all in one place.</em></h1></div>
+        <p>A visual journal of new rooms, refreshed tools, stories and small improvements across the F4M1LY website.</p>
+      </section>
+      <div class="topic-bar" aria-label="Filter stories by topic">
+        <button class="topic active" type="button" data-topic="All">All stories</button><button class="topic" type="button" data-topic="Family">Family</button><button class="topic" type="button" data-topic="Games">Games</button><button class="topic" type="button" data-topic="Learning">Learning</button><button class="topic" type="button" data-topic="Tools">Tools</button>
+      </div>
+      <section class="story-grid" id="storyGrid" aria-live="polite"></section>
+      <p class="empty-state" id="emptyState" hidden>No stories match that search.</p>
+    </main>
+    <footer>
+      <div><a class="footer-brand" href="../index.html">F4M1LY NEWS</a><p>Notes from the places we make, use and remember together.</p></div>
+      <div class="footer-meta"><p>© <span id="year"></span> F4M1LY</p><p>Design reference: <a href="https://github.com/abhinishere/nextjs-tech-magazine-template" target="_blank" rel="noopener noreferrer">Next.js Tech Magazine Template</a> by Abhin Mahipal · <a href="THIRD-PARTY-NOTICES.txt">MIT notice</a></p></div>
+    </footer>
+  </body>
+</html>
