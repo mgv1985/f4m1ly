@@ -78,3 +78,20 @@ main{width:min(1120px,calc(100% - 32px));margin:0 auto;padding:46px 0 80px}.pane
 .paired-option p{margin:0;white-space:pre-line;overflow-wrap:anywhere;font-size:.76rem;line-height:1.35}
 @media(max-width:900px){.fixed-meals-grid{grid-template-columns:1fr}.meal-group-heading{grid-template-columns:auto 1fr}.meal-group-heading span{grid-column:2;text-align:left}}
 @media(max-width:760px){#today-panel{width:100%;margin-left:0;transform:none}.paired-options{min-width:700px}.meal-group-heading h3{font-size:1.5rem}}
+
+/* Smartphone layout */
+@media(max-width:600px){
+  body{-webkit-text-size-adjust:100%;font-size:15px}
+  .gate{padding:14px}.gate-card{padding:28px 20px}.password-row input,.password-row button{min-height:48px}
+  .site-header{height:60px;padding:0 12px}.brand{gap:8px}.brand-mark{width:34px;height:34px}.brand b{font-size:1.08rem}.quiet-button{min-height:40px;padding:7px 11px}
+  .tabs{top:0;gap:2px;padding:7px 8px;overflow:hidden}.tab{flex:1;min-width:0;min-height:42px;padding:8px 7px}
+  main{width:100%;padding:22px 11px 100px}.page-heading{margin-bottom:18px}.page-heading h2{font-size:2.55rem}.eyebrow{font-size:.65rem}
+  .meal-list{gap:24px}.meal-group-heading{grid-template-columns:1fr;gap:4px;margin-bottom:10px}.meal-group-heading p{grid-row:auto;writing-mode:horizontal-tb;transform:none;font-size:.58rem}.meal-group-heading h3{font-size:1.42rem}.meal-group-heading span{grid-column:auto;font-size:.7rem;text-align:left}
+  .fixed-meals-grid{gap:10px}.compact-meal-card>header{padding:10px 11px}.compact-meal-card h3{font-size:1.12rem}.compact-meal-card .option{min-height:48px;padding:9px 10px;font-size:.77rem}.compact-meal-card .option-number{min-width:52px}.compact-meal-card .option-text{min-width:0;overflow-wrap:anywhere}
+  .paired-options-scroll{overflow:visible;border:0;background:transparent}.paired-options{min-width:0;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--line);background:var(--paper)}
+  .paired-column-heading{position:sticky;top:57px;z-index:3;gap:7px;padding:9px 8px}.paired-column-heading>span{font-size:.72rem}.paired-column-heading h3{font-size:1.02rem}.paired-column-heading small{font-size:.58rem}.paired-column-heading b{font-size:.45rem}
+  .paired-option{grid-template-columns:1fr;align-content:start;gap:4px;min-height:88px;padding:8px}.paired-option>span{font-size:.55rem}.paired-option p{font-size:.7rem;line-height:1.32}.paired-option-row.selected .paired-option{box-shadow:inset 3px 0 var(--green)}
+  .save-day-bar{bottom:0;margin:18px -1px 0;padding:10px 11px;gap:8px}.save-day-bar p{font-size:.72rem;line-height:1.3}.save-day-bar button{width:100%;min-height:46px;padding:10px 14px}
+  .history-empty{padding:30px 18px}.history-card>header{padding:14px}.history-card section{padding:14px}.history-card section p{font-size:.86rem}
+  .portion-card{padding:17px}.fruit{display:grid;gap:2px;padding:10px}.fruit span{font-size:.84rem}
+}
