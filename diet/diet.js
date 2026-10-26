@@ -89,22 +89,45 @@ function optionMarkup(choices,mealId,draft){
   const selected=draft[mealId];
   return `<div class="options">${choices.map((text,i)=>`<button class="option ${selected===i?'selected':''}" data-meal="${mealId}" data-choice="${i}" type="button"><span class="option-number">OPTION ${i+1}</span><span class="option-text">${escapeHtml(text)}</span></button>`).join("")}</div>`;
 }
+function fixedMealMarkup(meal,draft,isNext){
+  return `<article class="compact-meal-card ${isNext?'next':''}">
+    <header><div><span class="compact-meal-time">${meal.time}</span>${isNext?'<span class="next-label">NEXT MEAL</span>':''}</div><h3>${meal.label}</h3><small>${meal.name}</small></header>
+    ${optionMarkup(meal.choices,meal.id,draft)}
+  </article>`;
+}
+function pairedMealsMarkup(draft,isLunchNext,isDinnerNext){
+  return `<div class="paired-options-scroll"><div class="paired-options">
+    <div class="paired-column-heading ${isLunchNext?'next':''}"><span>15:00${isLunchNext?'<b>NEXT MEAL</b>':''}</span><div><h3>Lunch</h3><small>Μεσημεριανό</small></div></div>
+    <div class="paired-column-heading ${isDinnerNext?'next':''}"><span>21:00${isDinnerNext?'<b>NEXT MEAL</b>':''}</span><div><h3>Dinner</h3><small>Βραδινό</small></div></div>
+    ${linkedOptions.map((pair,index)=>`
+      <div class="paired-option-row ${draft.lunch===index?'selected':''}">
+        <button class="paired-option" data-meal="lunch" data-choice="${index}" type="button"><span>OPTION ${index+1}</span><p>${escapeHtml(pair.lunch)}</p></button>
+        <button class="paired-option" data-meal="dinner" data-choice="${index}" type="button"><span>OPTION ${index+1}</span><p>${escapeHtml(pair.dinner)}</p></button>
+      </div>`).join('')}
+  </div></div>`;
+}
 function renderToday(){
   const now=new Date(), dateKey=localDateKey(now), draft=drafts[dateKey]||{};
   $("#today-weekday").textContent=now.toLocaleDateString("en-GB",{weekday:"long"});
   $("#today-date").textContent=now.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
   const meals=[
-    {id:"breakfast",...fixedMeals.breakfast},
-    {id:"snack",...fixedMeals.snack},
+    {id:"breakfast",label:"Breakfast",...fixedMeals.breakfast},
+    {id:"snack",label:"Morning snack",...fixedMeals.snack},
     {id:"lunch",name:"Μεσημεριανό",time:"15:00",choices:linkedOptions.map(option=>option.lunch)},
-    {id:"afternoon",...fixedMeals.afternoon},
+    {id:"afternoon",label:"Afternoon snack",...fixedMeals.afternoon},
     {id:"dinner",name:"Βραδινό",time:"21:00",choices:linkedOptions.map(option=>option.dinner)}
   ];
   const minutes=now.getHours()*60+now.getMinutes(), next=meals.findIndex(m=>{const [h,min]=m.time.split(':').map(Number);return h*60+min>minutes});
-  $("#today-meals").innerHTML=meals.map((meal,i)=>{
-    const linked=meal.name==="Μεσημεριανό"||meal.name==="Βραδινό";
-    return `<article class="meal-card ${i===next?'next':''} ${linked?'linked-meal':''}"><div class="meal-time">${meal.time}${i===next?'<span class="next-label">NEXT MEAL</span>':''}</div><div class="meal-content"><div class="meal-title-row"><h3>${meal.name}</h3>${linked?'<span class="linked-label">LINKED OPTIONS</span>':''}</div>${optionMarkup(meal.choices,meal.id,draft)}</div></article>`;
-  }).join("");
+  const fixed=[meals[0],meals[1],meals[3]];
+  $("#today-meals").innerHTML=`
+    <section class="meal-group" aria-labelledby="fixedMealsTitle">
+      <div class="meal-group-heading"><p>SECTION 01</p><h3 id="fixedMealsTitle">Breakfast &amp; snacks</h3><span>Choose one option from each column.</span></div>
+      <div class="fixed-meals-grid">${fixed.map(meal=>fixedMealMarkup(meal,draft,meals.indexOf(meal)===next)).join('')}</div>
+    </section>
+    <section class="meal-group linked-group" aria-labelledby="linkedMealsTitle">
+      <div class="meal-group-heading"><p>SECTION 02</p><h3 id="linkedMealsTitle">Lunch &amp; dinner</h3><span>Matching option numbers form one linked pair.</span></div>
+      ${pairedMealsMarkup(draft,next===2,next===4)}
+    </section>`;
   $$('[data-meal]').forEach(button=>button.addEventListener('click',()=>selectMeal(dateKey,button.dataset.meal,Number(button.dataset.choice))));
   const saved=history[dateKey];
   $("#save-status").textContent=saved?"This date is saved. Change any option and press OK to update it.":"Select one option for every meal, then save your day.";
